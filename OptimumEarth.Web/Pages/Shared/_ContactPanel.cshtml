@@ -1,0 +1,66 @@
+@model OptimumEarth.Web.Models.ContactPanelViewModel
+
+<div class="contact-panel" id="contact" data-reveal>
+    <div class="contact-panel__info">
+        <span class="eyebrow">Get in touch</span>
+        <h2>@Model.Heading</h2>
+        <p>@Model.Intro</p>
+        <ul class="contact-panel__list">
+            @foreach (var item in Model.InfoItems)
+            {
+                <li><b>@item.Label</b>@item.Value</li>
+            }
+        </ul>
+    </div>
+
+    <div>
+        @if (Model.Submitted)
+        {
+            <div role="status" style="background:var(--oe-accent-tint); border:1px solid var(--oe-accent); border-radius:12px; padding:20px; margin-bottom:18px;">
+                <strong>Thank you — your message is in.</strong>
+                <p style="margin:.4em 0 0;">A member of the team will be in touch shortly.</p>
+            </div>
+        }
+
+        <form method="post" asp-page-handler="Contact">
+            <div asp-validation-summary="ModelOnly" class="visually-hidden" role="alert"></div>
+            <input type="hidden" asp-for="Contact.Destination" />
+
+            <div class="form-grid">
+                <div class="form-field">
+                    <label asp-for="Contact.FullName">Full name</label>
+                    <input asp-for="Contact.FullName" autocomplete="name" required />
+                    <span asp-validation-for="Contact.FullName" style="color:#B3261E; font-size:.8rem;"></span>
+                </div>
+                <div class="form-field">
+                    <label asp-for="Contact.Email">Email</label>
+                    <input asp-for="Contact.Email" type="email" autocomplete="email" required />
+                    <span asp-validation-for="Contact.Email" style="color:#B3261E; font-size:.8rem;"></span>
+                </div>
+                <div class="form-field">
+                    <label asp-for="Contact.Phone">Phone <span style="font-weight:400; text-transform:none;">(optional)</span></label>
+                    <input asp-for="Contact.Phone" type="tel" autocomplete="tel" />
+                    <span asp-validation-for="Contact.Phone" style="color:#B3261E; font-size:.8rem;"></span>
+                </div>
+                <div class="form-field">
+                    <label asp-for="Contact.Reason">I'm getting in touch about</label>
+                    <select asp-for="Contact.Reason" required>
+                        <option value="">Choose one</option>
+                        @foreach (var reason in Model.Reasons)
+                        {
+                            <option value="@reason">@reason</option>
+                        }
+                    </select>
+                    <span asp-validation-for="Contact.Reason" style="color:#B3261E; font-size:.8rem;"></span>
+                </div>
+                <div class="form-field form-field--full">
+                    <label asp-for="Contact.Message">Message</label>
+                    <textarea asp-for="Contact.Message" required></textarea>
+                    <span asp-validation-for="Contact.Message" style="color:#B3261E; font-size:.8rem;"></span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn--primary">Send message</button>
+        </form>
+    </div>
+</div>

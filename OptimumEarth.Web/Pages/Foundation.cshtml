@@ -1,0 +1,167 @@
+@page
+@model OptimumEarth.Web.Pages.FoundationModel
+@{
+    ViewData["Theme"] = "foundation";
+    ViewData["Title"] = "Optimum Earth Foundation — Access, Resilience, Impact";
+    ViewData["Description"] = "The Optimum Earth Foundation is the community-led, non-profit arm of Optimum Earth, focused on Access, Resilience and Impact across water, energy and climate.";
+}
+
+<section class="page-hero">
+    <div class="shell page-hero__inner">
+        <div class="breadcrumb"><a href="/">Optimum Earth</a> / Foundation</div>
+        <span class="eyebrow" style="color:#F3D9BB;">The Optimum Earth Foundation</span>
+        <h1>Access. Resilience. Impact.</h1>
+        <p>The Optimum Earth Foundation is the community-led, non-profit arm of the Optimum Earth family — turning technical expertise into lasting community impact.</p>
+        <div class="hero__ctas" style="margin-top:24px;">
+            <a href="#pillars" class="btn btn--ghost">Our approach</a>
+            <a href="#contact" class="btn" style="background:#fff; color:var(--oe-ochre-600);">Get involved</a>
+        </div>
+    </div>
+</section>
+
+<section class="section section--white">
+    <div class="shell split">
+        <div class="split__art" aria-hidden="true">
+            <svg viewBox="0 0 400 300"><circle cx="120" cy="150" r="70" fill="none" stroke="#C97B36" stroke-width="2" opacity=".5"/>
+                <circle cx="230" cy="120" r="46" fill="none" stroke="#0D4695" stroke-width="2" opacity=".4"/>
+                <path d="M20 220c80-40 140 30 220 0s90-60 140-10" stroke="#C97B36" stroke-width="3" fill="none" opacity=".6"/></svg>
+        </div>
+        <div>
+            <span class="eyebrow">Who we are</span>
+            <h2>Development that's community-led and evidence-informed.</h2>
+            <p>The Foundation channels Optimum Earth's engineering and environmental expertise into practical, scalable programmes — built with communities, grounded in evidence and delivered in partnership.</p>
+            <ul class="check-list">
+                <li>Community-led design and delivery</li>
+                <li>Evidence-informed programme decisions</li>
+                <li>Partnership-driven, not top-down</li>
+                <li>Practical and built to scale</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="section section--paper" id="pillars">
+    <div class="shell">
+        <div class="section-head">
+            <span class="eyebrow">Our approach</span>
+            <h2>Three strategic pillars</h2>
+        </div>
+        <div class="pillars">
+            <div class="pillar-card" data-reveal>
+                <div class="pillar-card__num">01</div>
+                <h3>Access</h3>
+                <p>Expanding access to clean water and sanitation, and to affordable, clean energy, in the communities where we work.</p>
+            </div>
+            <div class="pillar-card" data-reveal>
+                <div class="pillar-card__num">02</div>
+                <h3>Resilience</h3>
+                <p>Building climate resilience so communities and infrastructure can withstand and adapt to a changing environment.</p>
+            </div>
+            <div class="pillar-card" data-reveal>
+                <div class="pillar-card__num">03</div>
+                <h3>Impact</h3>
+                <p>Mobilising partnerships and resources so programmes deliver measurable, lasting community impact.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section--white">
+    <div class="shell">
+        <div class="section-head">
+            <span class="eyebrow">Focus areas</span>
+            <h2>Where we work</h2>
+        </div>
+        <div class="capability-grid">
+            @{
+                var focus = new (string Title, string Desc, string Icon)[]
+                {
+                    ("Clean Water & Sanitation", "Community water access and sanitation programmes.", "M12 2s7 8 7 13a7 7 0 1 1-14 0c0-5 7-13 7-13z"),
+                    ("Affordable Clean Energy", "Expanding access to affordable, clean household and community energy.", "M13 2 4 14h7l-1 8 10-13h-7l0-7z"),
+                    ("Climate Action & Resilience", "Programmes that help communities adapt to climate impacts.", "M12 3c4 3 7 7 7 11a7 7 0 0 1-14 0c0-4 3-8 7-11z"),
+                    ("Partnerships & Resource Mobilisation", "Building the funding and partner relationships that sustain programmes.", "M17 8a5 5 0 1 0-10 0 5 5 0 0 0 10 0zM3 21a9 9 0 0 1 18 0"),
+                };
+            }
+            @foreach (var f in focus)
+            {
+                <div class="capability-card" data-reveal>
+                    <span class="capability-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="@f.Icon"/></svg>
+                    </span>
+                    <h3>@f.Title</h3>
+                    <p>@f.Desc</p>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section section--paper">
+    <div class="shell">
+        <div class="section-head">
+            <span class="eyebrow">Evidence</span>
+            <h2>Programmes &amp; stories</h2>
+            <p>Featured programmes across our three pillars, with impact numbers added as results develop.</p>
+        </div>
+        <div class="project-grid">
+            @foreach (var p in Model.Programmes)
+            {
+                <article class="project-card" data-reveal>
+                    <div class="project-card__media"></div>
+                    <div class="project-card__body">
+                        <div class="project-card__meta">@p.Service</div>
+                        <h3>@p.Title</h3>
+                        <p style="font-size:.9rem;">@p.Client</p>
+                        <div class="project-card__foot"><span>@p.Location</span><span>@p.Year</span></div>
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section section--white">
+    <div class="shell">
+        <div class="section-head">
+            <span class="eyebrow">Ways to engage</span>
+            <h2>Get involved</h2>
+        </div>
+        <div class="capability-grid">
+            @{
+                var engage = new (string Title, string Desc)[]
+                {
+                    ("Partner", "Bring your organisation's expertise or reach into a Foundation programme."),
+                    ("Fund", "Support a focus area or a specific community programme."),
+                    ("Collaborate", "Work with us on shared research, pilots or delivery."),
+                    ("Learn & Get Involved", "Follow our progress and find out how else you can help."),
+                };
+            }
+            @foreach (var e in engage)
+            {
+                <div class="capability-card" data-reveal>
+                    <h3>@e.Title</h3>
+                    <p>@e.Desc</p>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section section--paper">
+    <div class="shell">
+        <div class="cta-banner" data-reveal>
+            <span class="eyebrow" style="color:#F3D9BB;">Optimum Earth Foundation</span>
+            <h2>Help turn expertise into lasting impact.</h2>
+            <p>Partner, fund or collaborate with the Foundation — or just reach out to learn more.</p>
+            <div class="cta-banner__actions">
+                <a href="#contact" class="btn" style="background:#fff; color:var(--oe-ochre-600);">Contact the Foundation</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section--white">
+    <div class="shell">
+        <partial name="_ContactPanel" model="Model.Panel" />
+    </div>
+</section>

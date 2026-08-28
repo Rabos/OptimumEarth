@@ -1,0 +1,185 @@
+@page
+@model OptimumEarth.Web.Pages.IndexModel
+@{
+    ViewData["Theme"] = "gateway";
+    ViewData["Title"] = "One Optimum Earth. Three Destinations.";
+    ViewData["Description"] = "Optimum Earth is a regional engineering, water, energy and environmental services platform across Uganda and Zambia, alongside the community-led Optimum Earth Foundation.";
+}
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+    <div class="shell hero__row">
+        <div>
+            <span class="eyebrow hero__eyebrow">Uganda &middot; Zambia &middot; Optimum Earth Foundation</span>
+            <h1>One Optimum Earth.<br />Three destinations.<br />One commitment to sustainable development.</h1>
+            <p class="hero__lede">Engineering, water, energy and environmental solutions across East and Southern Africa — and, alongside it, the community-led work of the Optimum Earth Foundation.</p>
+            <div class="hero__ctas">
+                <a href="#destinations" class="btn btn--primary">Explore Optimum Earth</a>
+                <a href="#contact" class="btn btn--ghost">Work With Us</a>
+            </div>
+            <div class="hero__stats">
+                <div class="hero__stat"><b>2017</b><span>Operating since</span></div>
+                <div class="hero__stat"><b>2</b><span>Country operations</span></div>
+                <div class="hero__stat"><b>3</b><span>Strategic pillars</span></div>
+            </div>
+        </div>
+        <div class="hero__art" aria-hidden="true">
+            <svg viewBox="0 0 320 320" fill="none">
+                <circle cx="160" cy="160" r="150" stroke="rgba(255,255,255,.25)" stroke-width="1.5"/>
+                <circle cx="160" cy="160" r="112" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>
+                <circle cx="160" cy="160" r="74" stroke="rgba(255,255,255,.18)" stroke-width="1.5"/>
+                <path d="M20 190c40-30 70 20 110 6s70-40 110-4" stroke="#9FD6C0" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <path d="M28 140c42-24 66 14 104 4s72-30 108 0" stroke="rgba(255,255,255,.5)" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+                <circle cx="118" cy="118" r="6" fill="#fff"/>
+                <circle cx="205" cy="176" r="6" fill="#C97B36"/>
+                <circle cx="150" cy="212" r="6" fill="#9FD6C0"/>
+            </svg>
+        </div>
+    </div>
+</section>
+
+<!-- ============ WHO WE ARE ============ -->
+<section class="section section--white">
+    <div class="shell split">
+        <div class="split__art" aria-hidden="true">
+            <svg viewBox="0 0 400 300"><rect width="400" height="300" fill="none"/>
+                <path d="M0 220c60-40 100 30 160 8s110-70 240-30" stroke="#0D4695" stroke-width="3" fill="none" opacity=".5"/>
+                <path d="M0 180c70-30 110 20 170 4s110-50 230-14" stroke="#3E7C59" stroke-width="3" fill="none" opacity=".5"/>
+                <path d="M0 140c70-20 120 12 180 0s110-30 220 2" stroke="#0D4695" stroke-width="2" fill="none" opacity=".3"/>
+            </svg>
+        </div>
+        <div>
+            <span class="eyebrow">Who we are</span>
+            <h2>Regional expertise, built for East &amp; Southern Africa.</h2>
+            <p>Optimum Earth has served clients across East and Southern Africa since 2017, delivering water, energy, environment, engineering, GIS/mapping and infrastructure capability across the region.</p>
+            <ul class="check-list">
+                <li>Country-embedded teams in Uganda and Zambia</li>
+                <li>Water supply, energy and infrastructure engineering</li>
+                <li>Environmental services, GIS, mapping and remote sensing</li>
+                <li>A dedicated Foundation channelling impact into communities</li>
+            </ul>
+            <a href="#destinations" class="btn btn--outline" style="margin-top:8px;">More about our regions</a>
+        </div>
+    </div>
+</section>
+
+<!-- ============ THREE DESTINATIONS (signature gateway) ============ -->
+<section class="section section--paper" id="destinations">
+    <div class="shell">
+        <div class="section-head">
+            <span class="eyebrow">Discover</span>
+            <h2>Choose your destination</h2>
+            <p>Three connected parts of one Optimum Earth — commercial operations in Uganda and Zambia, and community-led impact through the Foundation.</p>
+        </div>
+
+        <div class="gateway">
+            <article class="gateway-card" style="--gc-color:#0D4695;" data-reveal>
+                <span class="gateway-card__bg"></span>
+                <span class="gateway-card__topo"></span>
+                <span class="gateway-card__compass" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><path d="M9 15l3-6 3 6-3-1.5z" fill="#fff" stroke="none"/></svg>
+                </span>
+                <div class="gateway-card__kicker">Country operation</div>
+                <h3 class="gateway-card__title">Uganda</h3>
+                <p class="gateway-card__desc">Local engineering and environmental services, projects and partnerships across the country.</p>
+                <span class="gateway-card__cta">Explore Uganda <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                <a class="gateway-card__link" href="/uganda" aria-label="Explore Optimum Earth Uganda"></a>
+            </article>
+
+            <article class="gateway-card" style="--gc-color:#154F9F;" data-reveal>
+                <span class="gateway-card__bg"></span>
+                <span class="gateway-card__topo"></span>
+                <span class="gateway-card__compass" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><path d="M9 15l3-6 3 6-3-1.5z" fill="#fff" stroke="none"/></svg>
+                </span>
+                <div class="gateway-card__kicker">Country operation</div>
+                <h3 class="gateway-card__title">Zambia</h3>
+                <p class="gateway-card__desc">Emerging regional operations, localized services and a growing project pipeline.</p>
+                <span class="gateway-card__cta">Explore Zambia <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                <a class="gateway-card__link" href="/zambia" aria-label="Explore Optimum Earth Zambia"></a>
+            </article>
+
+            <article class="gateway-card" style="--gc-color:#C97B36;" data-reveal>
+                <span class="gateway-card__bg"></span>
+                <span class="gateway-card__topo"></span>
+                <span class="gateway-card__compass" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><path d="M9 15l3-6 3 6-3-1.5z" fill="#fff" stroke="none"/></svg>
+                </span>
+                <div class="gateway-card__kicker">Foundation</div>
+                <h3 class="gateway-card__title">Optimum Earth Foundation</h3>
+                <p class="gateway-card__desc">Social impact, community-led development and catalytic philanthropy across Access, Resilience and Impact.</p>
+                <span class="gateway-card__cta">Explore the Foundation <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                <a class="gateway-card__link" href="/foundation" aria-label="Explore the Optimum Earth Foundation"></a>
+            </article>
+        </div>
+    </div>
+</section>
+
+<!-- ============ REGIONAL CAPABILITY ============ -->
+<section class="section section--white">
+    <div class="shell">
+        <div class="section-head">
+            <span class="eyebrow">What we do</span>
+            <h2>Regional capability</h2>
+            <p>One set of technical disciplines applied across every Optimum Earth destination.</p>
+        </div>
+        <div class="capability-grid">
+            @{
+                var capabilities = new (string Title, string Desc, string Icon)[]
+                {
+                    ("Water Supply Solutions", "Water supply engineering and water resources planning and delivery.", "M12 2s7 8 7 13a7 7 0 1 1-14 0c0-5 7-13 7-13z"),
+                    ("Energy", "Energy and related infrastructure solutions for growing regional demand.", "M13 2 4 14h7l-1 8 10-13h-7l0-7z"),
+                    ("Environment & Sustainability", "Environmental services and sustainability advisory across sectors.", "M12 3c4 3 7 7 7 11a7 7 0 0 1-14 0c0-4 3-8 7-11z"),
+                    ("GIS & Remote Sensing", "GIS, mapping and remote sensing to support planning and decisions.", "M3 12h18M12 3v18M5 5l14 14M19 5 5 19"),
+                    ("Engineering & Infrastructure", "Engineering, construction and infrastructure delivery support.", "M3 21h18M5 21V10l7-6 7 6v11M9 21v-6h6v6"),
+                };
+            }
+            @foreach (var c in capabilities)
+            {
+                <div class="capability-card" data-reveal>
+                    <span class="capability-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="@c.Icon"/></svg>
+                    </span>
+                    <h3>@c.Title</h3>
+                    <p>@c.Desc</p>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- ============ IMPACT / EXPERIENCE STRIP ============ -->
+<section class="impact-strip">
+    <div class="shell impact-grid">
+        <div class="impact-item"><b>2017</b><span>Founded &amp; operating in-region</span></div>
+        <div class="impact-item"><b>2</b><span>Countries: Uganda &amp; Zambia</span></div>
+        <div class="impact-item"><b>5</b><span>Core service disciplines</span></div>
+        <div class="impact-item"><b>3</b><span>Foundation pillars: Access, Resilience, Impact</span></div>
+    </div>
+</section>
+
+<!-- ============ CLOSING CTA + CONTACT ============ -->
+<section class="section section--paper">
+    <div class="shell">
+        <div class="cta-banner" data-reveal>
+            <span class="eyebrow" style="color:#9FD6C0;">Let's work together</span>
+            <h2>One team, three ways to get involved.</h2>
+            <p>Whether you're a prospective client, a regional partner, or interested in supporting the Foundation, there's a direct path to the right team.</p>
+            <div class="cta-banner__paths">
+                <span>Clients &rarr; Uganda / Zambia teams</span>
+                <span>Partners &rarr; Regional office</span>
+                <span>Supporters &rarr; Foundation team</span>
+            </div>
+            <div class="cta-banner__actions">
+                <a href="#contact" class="btn btn--ghost">Get in touch</a>
+                <a href="/foundation" class="btn" style="background:#fff; color:var(--oe-blue-700);">Support the Foundation</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section--white">
+    <div class="shell">
+        <partial name="_ContactPanel" model="Model.Panel" />
+    </div>
+</section>
