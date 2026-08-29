@@ -1,0 +1,79 @@
+@model OptimumEarth.Models.CountryInfo
+
+<div class="hero-country">
+    <div class="hero-img">@Model.Key.ToUpperInvariant() hero image</div>
+    <div class="hero-scrim-side"></div>
+    <div class="hero-content-center">
+        <div class="eyebrow" style="color:#9CCB6B">@Model.Eyebrow</div>
+        <div class="hero-title-country">@Model.Headline</div>
+        <div class="hero-sub-country">@Model.Sub</div>
+    </div>
+</div>
+
+<div class="country-body-grid">
+    <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="kicker">COUNTRY OVERVIEW</div>
+        <div class="about-copy">@Model.Overview</div>
+        <div style="font-size:16px;line-height:1.7;color:#5C6061;max-width:680px">@Model.Overview2</div>
+    </div>
+    <div class="at-a-glance">
+        <div class="kicker" style="letter-spacing:.14em">AT A GLANCE</div>
+        @foreach (var f in Model.Facts)
+        {
+            <div class="fact-row"><span class="fact-k">@f.K</span><span class="fact-v">@f.V</span></div>
+        }
+    </div>
+</div>
+
+<div class="services-panel">
+    <div class="section-title-row">
+        <div class="h2">@Model.ServicesTitle</div>
+        <a asp-page="/Services" style="font-size:14.5px;font-weight:600">All services →</a>
+    </div>
+    <div class="services-panel-grid">
+        @foreach (var s in Model.Services)
+        {
+            <div class="service-card">
+                <div class="card-title">@s.T</div>
+                <div class="card-desc">@s.D</div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="projects-panel">
+    <div class="section-title-row">
+        <div class="h2">@Model.ProjectsTitle</div>
+        <a asp-page="/Projects" style="font-size:14.5px;font-weight:600">All projects →</a>
+    </div>
+    <div class="project-grid">
+        @foreach (var p in Model.Projects)
+        {
+            <div class="project-card">
+                <div class="project-thumb">Project photo</div>
+                <div class="project-tag">@p.Tag</div>
+                <div class="project-title">@p.Title</div>
+                <div class="project-meta">@p.Meta</div>
+            </div>
+        }
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Model.ProjectsNote))
+    {
+        <div style="font-size:14px;color:#8A8F92;font-style:italic">@Model.ProjectsNote</div>
+    }
+</div>
+
+<div class="cta-band">
+    <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="cta-title">@Model.CtaTitle</div>
+        <div class="cta-sub">@Model.Contact</div>
+    </div>
+    <div class="fake-form">
+        <div class="fake-form-row2">
+            <div class="fake-input">Full name</div>
+            <div class="fake-input">Email</div>
+        </div>
+        <div class="fake-input">Service of interest ▾</div>
+        <a asp-page="/Contact" class="fake-submit">Send enquiry</a>
+    </div>
+</div>

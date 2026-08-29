@@ -1,15 +1,13 @@
 @page
-@model OptimumEarth.Web.Pages.ErrorModel
+@model OptimumEarth.Pages.ErrorModel
 @{
-    ViewData["Theme"] = "gateway";
-    ViewData["Title"] = "Something went wrong";
+    ViewData["Title"] = "Error";
 }
 
-<section class="section section--white" style="min-height:50vh; display:flex; align-items:center;">
-    <div class="shell" style="text-align:center;">
-        <span class="eyebrow" style="justify-content:center;">Error</span>
-        <h1>Something went wrong.</h1>
-        <p>Please try again, or head back to the Optimum Earth gateway.</p>
-        <a href="/" class="btn btn--primary">Back to Optimum Earth</a>
-    </div>
-</section>
+<div style="padding:80px 56px">
+    <h1 class="h2-lg">Something went wrong.</h1>
+    @if (Model.ShowRequestId)
+    {
+        <p><strong>Request ID:</strong> @Model.RequestId</p>
+    }
+</div>

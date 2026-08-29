@@ -1,106 +1,79 @@
 @{
-    var theme = ViewData["Theme"] as string ?? "gateway";
-    var title = ViewData["Title"] as string ?? "Optimum Earth";
-    var description = ViewData["Description"] as string ??
-        "Optimum Earth delivers engineering, water, energy and environmental solutions across East and Southern Africa, alongside the community-led work of the Optimum Earth Foundation.";
+    // Razor Pages stores the page path (e.g. "/Uganda") in RouteData.Values["page"].
+    string current = (ViewContext.RouteData.Values["page"]?.ToString() ?? "").TrimStart('/');
+    string NavClass(string pageName) => current.Equals(pageName, StringComparison.OrdinalIgnoreCase) ? "navlink active" : "navlink";
 }
 <!DOCTYPE html>
-<html lang="en" data-theme="@theme">
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@title | Optimum Earth</title>
-    <meta name="description" content="@description" />
-    <meta name="theme-color" content="#0D4695" />
-    <link rel="icon" href="data:," />
+    <title>@ViewData["Title"] – Optimum Earth</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body class="theme-@theme">
+<body>
+    <div class="page-wrap">
 
-    <a class="skip-link" href="#main">Skip to content</a>
+        <div class="topbar">
+            <div class="left">
+                <span>Roston House, Plot 56/57, P.O Box 200032, Kampala, Uganda</span>
+                <span>uganda@optimum-earth.com</span>
+            </div>
+            <div class="social"><span>LinkedIn</span><span>X</span><span>Facebook</span></div>
+        </div>
 
-    <header class="site-header" data-site-header>
-        <div class="shell site-header__row">
-            <a class="brand" href="/" aria-label="Optimum Earth — regional gateway">
-                <span class="brand__mark" aria-hidden="true">
-                    <svg viewBox="0 0 40 40" width="34" height="34">
-                        <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" stroke-width="2"/>
-                        <path d="M4 22c6-4 10 4 16 0s10-6 16 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        <path d="M8 13c5-3 8 2 12 1s9-4 12 1" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".55"/>
-                    </svg>
-                </span>
-                <span class="brand__text">
-                    <span class="brand__name">Optimum Earth</span>
-                    <span class="brand__tag">@(theme == "foundation" ? "Foundation" : theme == "uganda" ? "Uganda" : theme == "zambia" ? "Zambia" : "Regional Gateway")</span>
-                </span>
+        <div class="mainnav">
+            <a asp-page="/Index" class="brand">
+                <div class="brand-mark"></div>
+                <div class="brand-text">
+                    <span class="brand-title">OPTIMUM EARTH</span>
+                    <span class="brand-sub">ENGINEERING · ENVIRONMENT</span>
+                </div>
             </a>
-
-            <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="primary-nav">
-                <span class="nav-toggle__bar"></span>
-                <span class="nav-toggle__bar"></span>
-                <span class="nav-toggle__bar"></span>
-                <span class="visually-hidden">Menu</span>
-            </button>
-
-            <nav class="primary-nav" id="primary-nav" data-primary-nav aria-label="Primary">
-                <div class="primary-nav__destinations">
-                    <span class="primary-nav__label">Destinations</span>
-                    <a href="/uganda" class="@(theme == "uganda" ? "is-current" : "")">Uganda</a>
-                    <a href="/zambia" class="@(theme == "zambia" ? "is-current" : "")">Zambia</a>
-                    <a href="/foundation" class="@(theme == "foundation" ? "is-current" : "")">Foundation</a>
-                </div>
-                <a href="/#contact" class="btn btn--nav-cta">Work With Us</a>
-            </nav>
+            <div class="navlinks">
+                <a asp-page="/Uganda" class="@NavClass("Uganda")">Uganda</a>
+                <a asp-page="/Zambia" class="@NavClass("Zambia")">Zambia</a>
+                <a asp-page="/Foundation" class="@NavClass("Foundation")">Foundation</a>
+                <span class="navsep"></span>
+                <a asp-page="/Services" class="@NavClass("Services")">Services</a>
+                <a asp-page="/Projects" class="@NavClass("Projects")">Projects</a>
+                <a asp-page="/Contact" class="btn-cta">Work With Us</a>
+            </div>
         </div>
 
-        @if (theme != "gateway")
-        {
-            <div class="return-strip">
-                <div class="shell return-strip__row">
-                    <a href="/" class="return-strip__link">
-                        <span aria-hidden="true">&larr;</span> Back to Optimum Earth — three destinations, one commitment
-                    </a>
-                </div>
-            </div>
-        }
-    </header>
-
-    <main id="main">
         @RenderBody()
-    </main>
 
-    <footer class="site-footer">
-        <div class="shell site-footer__grid">
-            <div class="site-footer__about">
-                <span class="brand__name brand__name--footer">Optimum Earth</span>
-                <p>Engineering, water, energy, environment, GIS and infrastructure solutions across East and Southern Africa since 2017 — and the community-led work of the Optimum Earth Foundation.</p>
+        <div class="site-footer">
+            <div class="footer-col">
+                <div class="footer-brand">OPTIMUM EARTH</div>
+                <div class="footer-address">
+                    Roston House, Plot 56/57<br />
+                    P.O Box 200032, Kampala, Uganda<br />
+                    +256 784 080551<br />
+                    uganda@optimum-earth.com
+                </div>
             </div>
-
-            <nav class="site-footer__col" aria-label="Destinations">
-                <h3>Destinations</h3>
-                <ul>
-                    <li><a href="/">Regional Gateway</a></li>
-                    <li><a href="/uganda">Optimum Earth Uganda</a></li>
-                    <li><a href="/zambia">Optimum Earth Zambia</a></li>
-                    <li><a href="/foundation">Optimum Earth Foundation</a></li>
-                </ul>
-            </nav>
-
-            <div class="site-footer__col">
-                <h3>Get in touch</h3>
-                <ul>
-                    <li><a href="mailto:info@optimum-earth.com">info@optimum-earth.com</a></li>
-                    <li>Kampala, Uganda</li>
-                    <li>Lusaka, Zambia</li>
-                </ul>
+            <div class="footer-col">
+                <div class="footer-heading">Destinations</div>
+                <a asp-page="/Uganda">Uganda</a>
+                <a asp-page="/Zambia">Zambia</a>
+                <a asp-page="/Foundation">Foundation</a>
+            </div>
+            <div class="footer-col">
+                <div class="footer-heading">Services</div>
+                <a asp-page="/Services">Water supply</a>
+                <a asp-page="/Services">GIS &amp; mapping</a>
+                <a asp-page="/Services">Groundwater monitoring</a>
+                <a asp-page="/Services">Geothermal consulting</a>
+            </div>
+            <div class="footer-col">
+                <div class="footer-heading">Company</div>
+                <a asp-page="/Index">Home</a>
+                <a asp-page="/Projects">Projects</a>
+                <a asp-page="/Contact">Work With Us</a>
             </div>
         </div>
-        <div class="shell site-footer__bottom">
-            <span>&copy; @DateTime.Now.Year Optimum Earth. All rights reserved.</span>
-            <span class="site-footer__pillars">Access &middot; Resilience &middot; Impact</span>
-        </div>
-    </footer>
 
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    </div>
 </body>
 </html>

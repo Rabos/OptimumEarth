@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace OptimumEarth.Pages;
 
-public class FoundationModel : PageModel
+public class ContactModel : PageModel
 {
     public void OnGet()
     {

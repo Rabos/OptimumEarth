@@ -1,0 +1,54 @@
+@page
+@model OptimumEarth.Pages.ContactModel
+@{
+    ViewData["Title"] = "Contact";
+}
+
+<div class="contact-grid">
+    <div class="contact-left">
+        <div style="display:flex;flex-direction:column;gap:14px">
+            <div class="eyebrow" style="color:#214292">WORK WITH US</div>
+            <div class="contact-title">Tell us what you need and where.</div>
+            <div class="contact-sub">Pick your route below – we will send the enquiry to the Uganda team, the Zambia team or the Foundation and reply within two working days.</div>
+        </div>
+        <div class="role-row">
+            <span class="role-chip primary">I'm a client</span>
+            <span class="role-chip outline">I'm a partner</span>
+            <span class="role-chip outline2">Foundation supporter</span>
+        </div>
+        <div class="fake-form">
+            <div class="fake-form-row2">
+                <div class="form-field"><span class="form-label">Full name</span><div class="form-fake">Jane Doe</div></div>
+                <div class="form-field"><span class="form-label">Organisation</span><div class="form-fake">Company or institution</div></div>
+                <div class="form-field"><span class="form-label">Email</span><div class="form-fake">jane@example.com</div></div>
+                <div class="form-field"><span class="form-label">Phone</span><div class="form-fake">+256 …</div></div>
+                <div class="form-field"><span class="form-label">Country</span><div class="form-fake dark">Uganda <span style="color:#A0A5A8">▾</span></div></div>
+                <div class="form-field"><span class="form-label">Service</span><div class="form-fake dark">Water supply solutions <span style="color:#A0A5A8">▾</span></div></div>
+            </div>
+            <div class="form-field"><span class="form-label">How can we help?</span><div class="form-fake tall">Describe the site, scope or timeline …</div></div>
+            <span class="fake-submit" style="margin-top:6px">Send enquiry</span>
+        </div>
+    </div>
+    <div class="contact-right">
+        <div class="contact-map">Map or office photo</div>
+        <div class="contact-list">
+            <div class="kicker">REGIONAL CONTACTS</div>
+            <div class="contact-entry">
+                <div class="contact-entry-title">Optimum Earth Uganda</div>
+                <div class="contact-entry-body">Roston House, Plot 56/57, P.O Box 200032, Kampala<br />+256 784 080551 / +256 751 584035<br />uganda@optimum-earth.com</div>
+            </div>
+            <div class="contact-entry">
+                <div class="contact-entry-title">Optimum Earth Zambia</div>
+                <div class="contact-entry-body">Office address to be confirmed<br />zambia@optimum-earth.com</div>
+            </div>
+            <div class="contact-entry">
+                <div class="contact-entry-title">Optimum Earth Foundation</div>
+                <div class="contact-entry-body">Partner · Fund · Collaborate<br />foundation@optimum-earth.com</div>
+            </div>
+        </div>
+        <div class="hours-panel">
+            <div class="hours-title">Office hours</div>
+            <div style="font-size:15px;color:#5C6061;line-height:1.7">Monday – Friday, 9am – 5pm EAT<br />No soliciting</div>
+        </div>
+    </div>
+</div>

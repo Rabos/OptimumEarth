@@ -1,0 +1,37 @@
+@page
+@model OptimumEarth.Pages.ProjectsModel
+@{
+    ViewData["Title"] = "Projects";
+}
+
+<div class="projects-hero">
+    <div class="eyebrow" style="color:#214292">PROJECT EVIDENCE</div>
+    <div class="h1-lg">Work delivered, with the client, service and year attached.</div>
+</div>
+
+<div class="filter-row">
+    <span class="filter-label">FILTER</span>
+    @foreach (var f in Model.Filters)
+    {
+        <a asp-page="/Projects" asp-route-filter="@f.Key"
+           class="filter-chip @(Model.Filter == f.Key ? "active" : "")">@f.Label</a>
+    }
+</div>
+
+<div class="projects-grid">
+    @foreach (var p in Model.VisibleProjects)
+    {
+        <div class="project-tile">
+            <div class="project-tile-img"></div>
+            <div class="project-tile-body">
+                <div class="project-tag">@p.Tag</div>
+                <div class="project-title">@p.Title</div>
+                <div class="project-meta">@p.Meta</div>
+            </div>
+        </div>
+    }
+    @if (!Model.VisibleProjects.Any())
+    {
+        <div style="color:#8A8F92;font-size:15px">No projects match this filter yet.</div>
+    }
+</div>

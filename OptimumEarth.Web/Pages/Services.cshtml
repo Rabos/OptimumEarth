@@ -1,0 +1,32 @@
+@page
+@model OptimumEarth.Pages.ServicesModel
+@{
+    ViewData["Title"] = "Services";
+}
+
+<div class="services-hero">
+    <div class="eyebrow" style="color:#214292">WHAT WE DO</div>
+    <div class="h2-lg">Five service lines across water, energy, environment and the ground beneath them.</div>
+    <div style="font-size:17px;line-height:1.65;color:#5C6061;max-width:660px">Delivered by the same technical team in Uganda and Zambia, scoped to the regulator, the lender and the reality of the site.</div>
+</div>
+
+@foreach (var s in Model.ServiceRows)
+{
+    <div class="service-row">
+        <div class="service-row-num">@s.N</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+            <div class="service-row-title">@s.T</div>
+            <div class="service-row-desc">@s.D</div>
+            <div class="service-row-where">@s.Where</div>
+        </div>
+        <div class="service-row-img"></div>
+    </div>
+}
+
+<div class="services-cta">
+    <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="cta-title">Not sure which service you need?</div>
+        <div style="font-size:16px;color:#9DA2A5">Describe the site and we will scope it with you.</div>
+    </div>
+    <a asp-page="/Contact" class="btn-primary">Work With Us</a>
+</div>
