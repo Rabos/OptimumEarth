@@ -1,0 +1,55 @@
+name: Deploy OptimumEarth
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0'
+      
+      - name: Restore dependencies
+        run: dotnet restore OptimumEarth.Web
+      
+      - name: Build
+        run: dotnet build OptimumEarth.Web --no-restore --configuration Release
+      
+      - name: Publish OptimumEarth
+        run: dotnet publish OptimumEarth.Web -c Release -o ./publish
+      
+      - name: Package OptimumEarth
+        run: tar -czf OptimumEarth.tar.gz -C publish .
+      
+      - name: Deploy to Server
+        env:
+          DEPLOY_KEY: ${{ secrets.SSH_KEY }}
+          DEPLOY_HOST: ${{ secrets.SERVER_IP }}
+          DEPLOY_USER: ${{ secrets.SSH_USER }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts
+          
+          scp -i ~/.ssh/deploy_key OptimumEarth.tar.gz $DEPLOY_USER@$DEPLOY_HOST:/tmp/
+          
+          ssh -i ~/.ssh/deploy_key $DEPLOY_USER@$DEPLOY_HOST << 'EOF'
+            cd /var/www/optimumearth
+            sudo systemctl stop optimumearth || true
+            tar -xzf /tmp/OptimumEarth.tar.gz -C /var/www/optimumearth
+            sudo systemctl start optimumearth
+            sleep 2
+            systemctl is-active optimumearth && echo "✅ OptimumEarth.Web deployed!" || echo "⚠️ Check logs"
+            rm /tmp/OptimumEarth.tar.gz
+          EOF
