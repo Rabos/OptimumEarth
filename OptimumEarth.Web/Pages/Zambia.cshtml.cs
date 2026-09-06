@@ -7,58 +7,78 @@ namespace OptimumEarth.Web.Pages;
 public class ZambiaModel : PageModel
 {
     [BindProperty]
-    public ContactInquiry Contact { get; set; } = new() { Destination = "Zambia" };
+    public QuickInquiry Quick { get; set; } = new() { Destination = "Zambia" };
 
-    public ContactPanelViewModel Panel { get; set; } = null!;
+    public bool Submitted { get; set; }
 
-    public List<ProjectCaseStudy> Projects { get; } = new()
+    private static readonly List<string> ServiceOptions = new()
     {
-        new("Energy Infrastructure Feasibility Study", "Regional Client", "Energy", "Lusaka, Zambia", "2024"),
-        new("Water Resources Baseline Assessment", "Development Partner", "Water Supply", "Copperbelt, Zambia", "2023"),
-        new("Environmental Screening & GIS Support", "Infrastructure Client", "Environmental Services", "Zambia", "2024"),
+        "Water supply solutions",
+        "Energy & infrastructure",
+        "Groundwater monitoring",
+        "GIS & mapping",
     };
 
-    private static readonly List<string> Reasons = new()
+    public DestinationPageViewModel BuildContent() => new()
     {
-        "Energy / infrastructure project",
-        "Water supply project",
-        "GIS & mapping services",
-        "Environmental assessment",
-        "General enquiry — Zambia"
+        Theme = "zambia",
+        HeroImageLabel = "Zambia hero image",
+        HeroEyebrow = "OPTIMUM EARTH ZAMBIA",
+        HeroHeadline = "Bringing regional engineering and environmental capability to the Zambian market.",
+        HeroSub = "Energy, water, infrastructure and environmental services delivered by the same technical team that operates across East and Southern Africa.",
+        OverviewEyebrow = "COUNTRY OVERVIEW",
+        OverviewQuote = "Zambia is our emerging Southern Africa operation. We bring the hydrogeology, water management, environmental and geo-intelligence capability built over years of regional delivery to Zambian clients in mining, energy, utilities and development.",
+        OverviewBody = "Local partnerships and regulatory alignment are being established now, so early clients work directly with senior technical staff and a mobilised regional field team.",
+        Facts = new()
+        {
+            ("Status", "Establishing"),
+            ("Office", "To be confirmed"),
+            ("Service lines", "4"),
+            ("Sectors", "Mining · Energy · Water"),
+        },
+        SectionOneTitle = "Services in Zambia",
+        SectionOneLinkText = "All services",
+        SectionOneLinkHref = "/services",
+        SectionOneCards = new()
+        {
+            new("Water supply solutions", "Groundwater assessment, borehole siting and supervision, supply planning for industry and institutions."),
+            new("Energy & infrastructure", "Support to energy projects and the infrastructure that surrounds them."),
+            new("Groundwater monitoring", "Monitoring networks and reporting regimes for mining and industrial operations."),
+            new("GIS & mapping", "Spatial analysis, remote sensing and field data systems."),
+        },
+        SectionTwoTitle = "Projects & pipeline",
+        SectionTwoLinkText = "All projects",
+        SectionTwoLinkHref = "/projects",
+        SectionTwoCards = new()
+        {
+            new("Project photo", "ZAMBIA", "Project to be confirmed", "Case study to be published as evidence becomes available"),
+            new("Project photo", "ZAMBIA", "Project to be confirmed", "Case study to be published as evidence becomes available"),
+            new("Project photo", "REGIONAL", "Regional experience applies here", "Delivery record from Uganda and the wider region"),
+        },
+        SectionTwoNote = "Zambia case studies will be published as projects are delivered and client permissions are confirmed.",
+        CtaTitle = "Work with our Zambia team",
+        CtaBody = "Office address to be confirmed · zambia@optimum-earth.com",
+        CtaServiceLabel = "Service of interest",
+        CtaServiceOptions = ServiceOptions,
+        Quick = Quick,
+        Submitted = Submitted,
     };
 
-    public void OnGet() => BuildPanel();
-
-    public IActionResult OnPostContact()
+    public void OnGet()
     {
-        Contact.Destination = "Zambia";
+    }
+
+    public IActionResult OnPostQuick()
+    {
+        Quick.Destination = "Zambia";
         if (!ModelState.IsValid)
         {
-            BuildPanel();
             return Page();
         }
 
         ModelState.Clear();
-        Contact = new ContactInquiry { Destination = "Zambia" };
-        BuildPanel(submitted: true);
+        Quick = new QuickInquiry { Destination = "Zambia" };
+        Submitted = true;
         return Page();
-    }
-
-    private void BuildPanel(bool submitted = false)
-    {
-        Panel = new ContactPanelViewModel
-        {
-            Contact = Contact,
-            Heading = "Talk to the Zambia team",
-            Intro = "Tell us about your project — our regional team supporting Zambia will follow up.",
-            Reasons = Reasons,
-            Submitted = submitted,
-            InfoItems = new()
-            {
-                ("Office", "Lusaka, Zambia"),
-                ("Email", "zambia@optimum-earth.com"),
-                ("Coverage", "Nationwide, project-dependent"),
-            }
-        };
     }
 }

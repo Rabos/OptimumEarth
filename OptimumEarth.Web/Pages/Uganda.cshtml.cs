@@ -7,58 +7,81 @@ namespace OptimumEarth.Web.Pages;
 public class UgandaModel : PageModel
 {
     [BindProperty]
-    public ContactInquiry Contact { get; set; } = new() { Destination = "Uganda" };
+    public QuickInquiry Quick { get; set; } = new() { Destination = "Uganda" };
 
-    public ContactPanelViewModel Panel { get; set; } = null!;
+    public bool Submitted { get; set; }
 
-    public List<ProjectCaseStudy> Projects { get; } = new()
+    private static readonly List<string> ServiceOptions = new()
     {
-        new("Rural Water Supply Expansion", "District Local Government", "Water Supply", "Central Region, Uganda", "2023"),
-        new("Catchment & GIS Mapping Study", "Development Partner", "GIS & Remote Sensing", "Western Uganda", "2022"),
-        new("Environmental & Social Impact Assessment", "Infrastructure Client", "Environmental Services", "Kampala, Uganda", "2024"),
+        "Water supply solutions",
+        "Groundwater monitoring",
+        "Environmental services",
+        "GIS & mapping",
+        "Mines, oil & gas",
     };
 
-    private static readonly List<string> Reasons = new()
+    public DestinationPageViewModel BuildContent() => new()
     {
-        "Water supply project",
-        "Energy / infrastructure project",
-        "GIS & mapping services",
-        "Environmental assessment",
-        "General enquiry — Uganda"
+        Theme = "uganda",
+        HeroImageLabel = "Uganda hero image",
+        HeroEyebrow = "OPTIMUM EARTH UGANDA",
+        HeroHeadline = "Water, environment and engineering expertise, delivered in Uganda since 2017.",
+        HeroSub = "Kampala-based teams supporting national utilities, energy operators, industry and development partners across the country.",
+        OverviewEyebrow = "COUNTRY OVERVIEW",
+        OverviewQuote = "Uganda is our home market. From Kampala we deliver hydrogeology, borehole development, groundwater monitoring, environmental assessment and geo-intelligence for national utilities, oil and gas operators, cement and quarry industry and humanitarian organisations.",
+        OverviewBody = "Our Ugandan team combines field capability with in-house analysis, so surveys, testing and reporting run under one accountable contract — with the compliance documentation regulators and lenders expect.",
+        Facts = new()
+        {
+            ("Established", "2017"),
+            ("Office", "Kampala"),
+            ("Service lines", "5"),
+            ("Sectors", "Water · Energy · Mining"),
+        },
+        SectionOneTitle = "Services in Uganda",
+        SectionOneLinkText = "All services",
+        SectionOneLinkHref = "/services",
+        SectionOneCards = new()
+        {
+            new("Water supply solutions", "Surface and groundwater diagnostics, borehole siting, drilling supervision and test pumping."),
+            new("Groundwater monitoring", "Monitoring well networks, water-level and quality regimes, long-term reporting."),
+            new("Environmental services", "ESIA, environmental audits and compliance support for regulated projects."),
+            new("GIS & mapping", "Geo-intelligence products, remote sensing and spatial analysis for decision-making."),
+            new("Mines, oil & gas", "Integrated water management for quarry, mining and petroleum operations."),
+        },
+        SectionTwoTitle = "Featured projects",
+        SectionTwoLinkText = "All projects",
+        SectionTwoLinkHref = "/projects",
+        SectionTwoCards = new()
+        {
+            new("Project photo", "WATER SUPPLY · 2020", "Uganda Production Wells Survey", "National Water and Sewerage Corporation · 13 production wells across multiple districts"),
+            new("Project photo", "GROUNDWATER · 2022", "Kingfisher Monitoring Wells", "CNOOC · Monitoring well design and installation, Albertine region"),
+            new("Project photo", "ENVIRONMENT · 2023", "Pivot Irrigation ESIA Initiative", "NASECO · Environmental and social impact assessment"),
+        },
+        CtaTitle = "Work with our Uganda team",
+        CtaBody = "Roston House, Plot 56/57, P.O Box 200032, Kampala · +256 784 080551 · uganda@optimum-earth.com",
+        CtaServiceLabel = "Service of interest",
+        CtaServiceOptions = ServiceOptions,
+        Quick = Quick,
+        Submitted = Submitted,
     };
 
-    public void OnGet() => BuildPanel();
-
-    public IActionResult OnPostContact()
+    public void OnGet()
     {
-        Contact.Destination = "Uganda";
+    }
+
+    public IActionResult OnPostQuick()
+    {
+        Quick.Destination = "Uganda";
         if (!ModelState.IsValid)
         {
-            BuildPanel();
             return Page();
         }
 
+        // In production this would persist the enquiry and route it to the
+        // Uganda team's inbox.
         ModelState.Clear();
-        Contact = new ContactInquiry { Destination = "Uganda" };
-        BuildPanel(submitted: true);
+        Quick = new QuickInquiry { Destination = "Uganda" };
+        Submitted = true;
         return Page();
-    }
-
-    private void BuildPanel(bool submitted = false)
-    {
-        Panel = new ContactPanelViewModel
-        {
-            Contact = Contact,
-            Heading = "Talk to the Uganda team",
-            Intro = "Tell us about your project and our Uganda-based engineers and environmental specialists will follow up.",
-            Reasons = Reasons,
-            Submitted = submitted,
-            InfoItems = new()
-            {
-                ("Office", "Kampala, Uganda"),
-                ("Email", "uganda@optimum-earth.com"),
-                ("Coverage", "Nationwide, project-dependent"),
-            }
-        };
     }
 }

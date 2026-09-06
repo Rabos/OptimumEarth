@@ -1,6 +1,8 @@
 (function () {
   "use strict";
 
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   // Mobile navigation toggle
   var toggle = document.querySelector("[data-nav-toggle]");
   var nav = document.querySelector("[data-primary-nav]");
@@ -22,32 +24,52 @@
     });
   }
 
-  // Reveal-on-scroll for sections/cards marked [data-reveal]
-  var revealTargets = document.querySelectorAll("[data-reveal]");
-  if ("IntersectionObserver" in window && revealTargets.length) {
-    var observer = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
-    );
-    revealTargets.forEach(function (el) { observer.observe(el); });
-  } else {
-    revealTargets.forEach(function (el) { el.classList.add("is-visible"); });
-  }
+  // Home hero carousel: auto-advance every 6s, pause on hover/focus,
+  // real buttons for indicators, and no autoplay under reduced motion.
+  var carousel = document.querySelector("[data-hero-carousel]");
+  if (carousel) {
+    var slides = carousel.querySelectorAll("[data-hero-slide]");
+    var copies = carousel.querySelectorAll("[data-hero-copy]");
+    var dots = carousel.querySelectorAll("[data-hero-dot]");
+    var current = 0;
+    var timer = null;
 
-  // Subtle shrink/shadow on the sticky header once the page scrolls
-  var header = document.querySelector("[data-site-header]");
-  if (header) {
-    var onScroll = function () {
-      header.classList.toggle("is-scrolled", window.scrollY > 8);
+    var show = function (index) {
+      current = index;
+      slides.forEach(function (slide, i) { slide.classList.toggle("is-active", i === index); });
+      copies.forEach(function (copy, i) { copy.hidden = i !== index; });
+      dots.forEach(function (dot, i) {
+        dot.classList.toggle("is-active", i === index);
+        dot.setAttribute("aria-pressed", i === index ? "true" : "false");
+      });
     };
-    document.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
+
+    var next = function () { show((current + 1) % slides.length); };
+
+    var start = function () {
+      if (reduceMotion || timer || slides.length < 2) return;
+      timer = window.setInterval(next, 6000);
+    };
+
+    var stop = function () {
+      if (timer) { window.clearInterval(timer); timer = null; }
+    };
+
+    dots.forEach(function (dot, i) {
+      dot.addEventListener("click", function () {
+        show(i);
+        stop();
+        start();
+      });
+    });
+
+    carousel.addEventListener("mouseenter", stop);
+    carousel.addEventListener("mouseleave", start);
+    carousel.addEventListener("focusin", stop);
+    carousel.addEventListener("focusout", function (e) {
+      if (!carousel.contains(e.relatedTarget)) start();
+    });
+
+    start();
   }
 })();

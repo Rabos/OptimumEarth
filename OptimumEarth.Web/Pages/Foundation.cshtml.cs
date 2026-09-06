@@ -7,58 +7,74 @@ namespace OptimumEarth.Web.Pages;
 public class FoundationModel : PageModel
 {
     [BindProperty]
-    public ContactInquiry Contact { get; set; } = new() { Destination = "Foundation" };
+    public QuickInquiry Quick { get; set; } = new() { Destination = "Foundation" };
 
-    public ContactPanelViewModel Panel { get; set; } = null!;
+    public bool Submitted { get; set; }
 
-    public List<ProjectCaseStudy> Programmes { get; } = new()
+    private static readonly List<string> EngagementOptions = new()
     {
-        new("Community Water Access Programme", "Local communities", "Access", "Uganda", "Ongoing"),
-        new("Climate Resilience Pilot", "Community partners", "Resilience", "East Africa", "Ongoing"),
-        new("Clean Energy for Households", "Community partners", "Impact", "Uganda & Zambia", "Ongoing"),
-    };
-
-    private static readonly List<string> Reasons = new()
-    {
-        "Partner with the Foundation",
+        "Partner with a programme",
         "Fund a programme",
-        "Collaborate on a project",
-        "Media / press",
-        "General enquiry — Foundation"
+        "Collaborate on research or delivery",
+        "Learn more",
     };
 
-    public void OnGet() => BuildPanel();
-
-    public IActionResult OnPostContact()
+    public DestinationPageViewModel BuildContent() => new()
     {
-        Contact.Destination = "Foundation";
+        Theme = "foundation",
+        HeroImageLabel = "Foundation hero image",
+        HeroEyebrow = "OPTIMUM EARTH FOUNDATION",
+        HeroHeadline = "Communities designing the infrastructure they need.",
+        HeroSub = "Engineering capability channelled into community-led development: clean water, affordable energy and climate resilience, delivered with partners and measured by results.",
+        OverviewEyebrow = "FOUNDATION OVERVIEW",
+        OverviewQuote = "The Foundation exists to put engineering capability where the market does not reach, working with communities that will own and maintain what gets built.",
+        OverviewBody = "Programmes are designed with their communities, baselined before work starts and reported honestly afterwards. Government, funders, NGOs and private operators work to one plan, and solutions are engineered to be repeated rather than demonstrated once.",
+        Facts = new()
+        {
+            ("Mandate", "Non-profit arm"),
+            ("Pillars", "Access · Resilience · Impact"),
+            ("Model", "Community-led"),
+            ("Reach", "Uganda · Zambia"),
+        },
+        SectionOneTitle = "Three pillars, one mandate",
+        UsePillarCards = true,
+        SectionOneCards = new()
+        {
+            new("Access", "Clean water, sanitation and affordable energy reaching households and institutions the market has not served.", "01"),
+            new("Resilience", "Climate adaptation, water security and systems that keep working through drought, flood and disruption.", "02"),
+            new("Impact", "Evidence-informed delivery, measured outcomes and partnerships that mobilise resources where they count.", "03"),
+        },
+        SectionTwoTitle = "Programmes & stories",
+        SectionTwoCards = new()
+        {
+            new("Programme photo", "ACCESS", "Community water points", "Programme description to be confirmed."),
+            new("Programme photo", "RESILIENCE", "Climate-smart water security", "Programme description to be confirmed."),
+            new("Programme photo", "IMPACT", "Clean energy for institutions", "Programme description to be confirmed."),
+        },
+        SectionTwoNote = "Programme case studies will be published as delivery progresses and partner permissions are confirmed.",
+        CtaTitle = "Work with the Foundation",
+        CtaBody = "Partner, fund or collaborate. Tell us which and we will route your enquiry to the right programme lead.",
+        CtaServiceLabel = "How would you like to engage?",
+        CtaServiceOptions = EngagementOptions,
+        Quick = Quick,
+        Submitted = Submitted,
+    };
+
+    public void OnGet()
+    {
+    }
+
+    public IActionResult OnPostQuick()
+    {
+        Quick.Destination = "Foundation";
         if (!ModelState.IsValid)
         {
-            BuildPanel();
             return Page();
         }
 
         ModelState.Clear();
-        Contact = new ContactInquiry { Destination = "Foundation" };
-        BuildPanel(submitted: true);
+        Quick = new QuickInquiry { Destination = "Foundation" };
+        Submitted = true;
         return Page();
-    }
-
-    private void BuildPanel(bool submitted = false)
-    {
-        Panel = new ContactPanelViewModel
-        {
-            Contact = Contact,
-            Heading = "Partner with the Foundation",
-            Intro = "Whether you want to fund, collaborate or simply learn more, tell us how you'd like to get involved.",
-            Reasons = Reasons,
-            Submitted = submitted,
-            InfoItems = new()
-            {
-                ("Email", "foundation@optimum-earth.com"),
-                ("Based in", "Kampala, Uganda"),
-                ("Focus", "Access · Resilience · Impact"),
-            }
-        };
     }
 }

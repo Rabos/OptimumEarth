@@ -1,0 +1,42 @@
+@page
+@model OptimumEarth.Web.Pages.ProjectsModel
+@{
+    ViewData["Theme"] = "projects";
+    ViewData["Title"] = "Projects — Work delivered across Uganda and Zambia";
+    ViewData["Description"] = "Optimum Earth project evidence: work delivered, with the client, service and year attached, across water supply, groundwater monitoring, environment and GIS.";
+}
+
+<section class="projects-hero">
+    <span class="eyebrow" style="letter-spacing:.16em;">Project evidence</span>
+    <h1 class="projects-hero__title">Work delivered, with the client, service and year attached.</h1>
+</section>
+
+<nav class="projects-filter" aria-label="Filter projects">
+    <span class="projects-filter__label">Filter</span>
+    @foreach (var filter in OptimumEarth.Web.Pages.ProjectsModel.Filters)
+    {
+        var isActive = filter.Key == Model.ActiveFilter;
+        <a class="filter-chip" href="/projects?filter=@filter.Key" aria-pressed="@(isActive ? "true" : "false")" aria-current="@(isActive ? "true" : null)">@filter.Label</a>
+    }
+</nav>
+
+@if (Model.VisibleProjects.Count == 0)
+{
+    <p class="projects-empty">No projects match this filter yet — check back as more Zambia case studies are published, or <a class="text-link" href="/projects">view all projects</a>.</p>
+}
+else
+{
+    <div class="projects-grid">
+        @foreach (var project in Model.VisibleProjects)
+        {
+            <article class="project-card project-card--lg">
+                <div class="project-card__media img-slot" role="img" aria-label="@project.ImageLabel"></div>
+                <div class="project-card__body">
+                    <span class="project-card__tag">@project.Tag</span>
+                    <h2 class="project-card__title" style="font-size:19px; font-weight:600;">@project.Title</h2>
+                    <p class="project-card__meta">@project.Meta</p>
+                </div>
+            </article>
+        }
+    </div>
+}
