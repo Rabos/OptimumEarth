@@ -4,8 +4,8 @@
     var description = ViewData["Description"] as string ??
         "Optimum Earth delivers water, energy, environment, GIS and engineering solutions across East and Southern Africa, alongside the community-led work of the Optimum Earth Foundation.";
 
-    string NavClass(string key, bool foundation = false) =>
-        "primary-nav__link" + (foundation ? " primary-nav__link--foundation" : "") + (theme == key ? " is-current" : "");
+    string NavClass(string key, string? variant = null) =>
+        "primary-nav__link" + (variant != null ? " primary-nav__link--" + variant : "") + (theme == key ? " is-current" : "");
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -39,13 +39,23 @@
             </button>
 
             <nav class="primary-nav" id="primary-nav" data-primary-nav aria-label="Primary" data-open="false">
-                <a href="/uganda" class="@NavClass("uganda")">Uganda</a>
-                <a href="/zambia" class="@NavClass("zambia")">Zambia</a>
-                <a href="/foundation" class="@NavClass("foundation", true)">Foundation</a>
+                <div class="primary-nav__head">
+                    <a class="brand" href="/">
+                        <img class="brand__logo" src="~/img/logo.svg" alt="Optimum Earth" />
+                    </a>
+                    <button type="button" class="primary-nav__close" data-nav-close aria-label="Close menu">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+                    </button>
+                </div>
+                <div class="primary-nav__destinations">
+                    <a href="/uganda" class="@NavClass("uganda", "uganda")">Uganda</a>
+                    <a href="/zambia" class="@NavClass("zambia", "zambia")">Zambia</a>
+                    <a href="/foundation" class="@NavClass("foundation", "foundation")">Foundation</a>
+                </div>
                 <span class="primary-nav__divider" aria-hidden="true"></span>
                 <a href="/services" class="@NavClass("services")">Services</a>
                 <a href="/projects" class="@NavClass("projects")">Projects</a>
-                <a href="/contact" class="btn btn--nav btn--nav-cta">Work With Us</a>
+                <a href="/contact" class="btn btn--nav btn--nav-cta primary-nav__cta">Work With Us</a>
             </nav>
         </div>
     </header>

@@ -209,9 +209,20 @@ img { max-width: 100%; display: block; }
   position: sticky;
   top: 0;
   z-index: 20;
+  border-bottom: 1px solid var(--grey-150);
+}
+/* The blur lives on a pseudo-element rather than .site-header itself:
+   backdrop-filter on an ancestor becomes the containing block for any
+   position:fixed descendant, which broke the full-page mobile nav's
+   inset:0 sizing when it was set directly on the header. */
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
   background: rgba(255, 255, 255, .96);
   backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--grey-150);
+  pointer-events: none;
 }
 
 .site-header__row {
@@ -255,6 +266,12 @@ img { max-width: 100%; display: block; }
 .primary-nav__link--foundation.is-current { color: var(--green); }
 
 .primary-nav__divider { width: 1px; height: 16px; background: var(--grey-300); flex: none; }
+
+/* Head (logo + close) and destination pills only appear in the
+   full-page mobile nav; on desktop the nav stays a plain inline row. */
+.primary-nav__head { display: none; }
+.primary-nav__close { display: none; }
+.primary-nav__destinations { display: contents; }
 
 /* ---------- Footer ---------- */
 
@@ -893,19 +910,94 @@ img { max-width: 100%; display: block; }
 }
 
 @media (max-width: 960px) {
+  /* Full-page takeover: sits above the header itself (inset:0, z-index
+     above .site-header's 20), with its own logo + close row standing
+     in for the header while it's open. */
   .primary-nav {
     position: fixed;
-    inset: var(--header-height) 0 0 0;
+    inset: 0;
+    z-index: 45;
     background: #fff;
     flex-direction: column;
-    align-items: flex-start;
-    padding: 28px 32px;
-    gap: 20px;
+    align-items: stretch;
+    gap: 0;
+    padding: 0;
     display: none;
     overflow-y: auto;
   }
   .primary-nav[data-open="true"] { display: flex; }
+
+  .primary-nav__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: none;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #fff;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--grey-150);
+  }
+  .primary-nav__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--navy-ink);
+    cursor: pointer;
+  }
+  .primary-nav__close svg { width: 22px; height: 22px; }
+
+  .primary-nav__destinations {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 28px 24px 8px;
+  }
+  .primary-nav__link--uganda,
+  .primary-nav__link--zambia,
+  .primary-nav__link--foundation {
+    justify-content: center;
+    padding: 16px 24px;
+    border-radius: var(--radius);
+    font-size: 15.5px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .primary-nav__link--uganda { background: var(--blue); }
+  .primary-nav__link--zambia { background: var(--grey); }
+  .primary-nav__link--foundation { background: var(--green); }
+  .primary-nav__link--uganda:hover, .primary-nav__link--uganda:focus-visible,
+  .primary-nav__link--zambia:hover, .primary-nav__link--zambia:focus-visible,
+  .primary-nav__link--foundation:hover, .primary-nav__link--foundation:focus-visible { opacity: .88; color: #fff; }
+  /* .is-current normally recolors the link text (desktop); the pills
+     are already brand-colored, so keep the label white instead. */
+  .primary-nav__link--uganda.is-current,
+  .primary-nav__link--zambia.is-current,
+  .primary-nav__link--foundation.is-current { color: #fff; }
+
   .primary-nav__divider { display: none; }
+
+  .primary-nav > a.primary-nav__link {
+    padding: 16px 24px;
+    font-size: 16px;
+    border-top: 1px solid var(--grey-150);
+  }
+
+  .primary-nav__cta { margin: 28px 24px; justify-content: center; padding: 16px 24px; }
+
+  /* The header sits underneath the open overlay (lower z-index) and
+     stays fully covered, but hide it so its hamburger drops out of
+     the tab order instead of lurking behind the menu. */
+  body[data-nav-open="true"] .site-header { visibility: hidden; }
+  body[data-nav-open="true"] .primary-nav { visibility: visible; }
+  body[data-nav-open="true"] .back-to-top { display: none; }
+
   .nav-toggle { display: flex; }
   .site-header__row { padding: 14px 24px; }
 }
