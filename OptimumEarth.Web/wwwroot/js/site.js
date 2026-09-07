@@ -3,24 +3,32 @@
 
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // Mobile navigation toggle
+  // Mobile navigation: full-page overlay, opened by the header hamburger
+  // and closed via its own close button, a link tap, or Escape.
   var toggle = document.querySelector("[data-nav-toggle]");
+  var navClose = document.querySelector("[data-nav-close]");
   var nav = document.querySelector("[data-primary-nav]");
 
   if (toggle && nav) {
-    toggle.addEventListener("click", function () {
-      var isOpen = nav.getAttribute("data-open") === "true";
-      nav.setAttribute("data-open", String(!isOpen));
-      toggle.setAttribute("aria-expanded", String(!isOpen));
-      document.body.style.overflow = !isOpen ? "hidden" : "";
-    });
+    var setNavOpen = function (open) {
+      nav.setAttribute("data-open", String(open));
+      toggle.setAttribute("aria-expanded", String(open));
+      document.body.setAttribute("data-nav-open", String(open));
+      document.body.style.overflow = open ? "hidden" : "";
+    };
+
+    toggle.addEventListener("click", function () { setNavOpen(true); });
+
+    if (navClose) {
+      navClose.addEventListener("click", function () { setNavOpen(false); });
+    }
 
     nav.querySelectorAll("a").forEach(function (link) {
-      link.addEventListener("click", function () {
-        nav.setAttribute("data-open", "false");
-        toggle.setAttribute("aria-expanded", "false");
-        document.body.style.overflow = "";
-      });
+      link.addEventListener("click", function () { setNavOpen(false); });
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && nav.getAttribute("data-open") === "true") setNavOpen(false);
     });
   }
 
