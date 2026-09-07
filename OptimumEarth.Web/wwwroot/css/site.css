@@ -884,7 +884,7 @@ img { max-width: 100%; display: block; }
 .contact-form__submit:hover, .contact-form__submit:focus-visible { background: #fff; color: var(--blue); }
 
 .contact-panel-right { display: flex; flex-direction: column; }
-.contact-panel-right__media { height: 300px; position: relative; }
+.contact-panel-right__media { height: 300px; min-height: 0; flex: none; position: relative; }
 .contact-info { padding: 44px var(--gutter); display: flex; flex-direction: column; gap: 22px; border-bottom: 1px solid var(--grey-150); }
 .contact-info__label { font-size: 12px; font-weight: 700; letter-spacing: .16em; color: var(--grey-500); }
 .contact-office { display: flex; flex-direction: column; gap: 6px; padding-bottom: 20px; border-bottom: 1px solid var(--grey-150); }
