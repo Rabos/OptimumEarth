@@ -55,6 +55,8 @@
 
 html { scroll-behavior: smooth; }
 
+[id] { scroll-margin-top: calc(var(--header-height) + 16px); }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
@@ -184,6 +186,9 @@ img { max-width: 100%; display: block; }
 
 .btn--white { background: #fff; color: var(--blue); border-color: #fff; box-shadow: var(--shadow-btn-white); }
 .btn--white:hover, .btn--white:focus-visible { background: transparent; color: #fff; }
+
+.btn--ghost { background: rgba(15, 23, 42, .22); color: #fff; border-color: rgba(255, 255, 255, .55); }
+.btn--ghost:hover, .btn--ghost:focus-visible { background: #fff; color: var(--blue); border-color: #fff; }
 
 .btn--nav-cta { background: var(--blue); color: #fff; border-color: var(--blue); }
 .btn--nav-cta:hover, .btn--nav-cta:focus-visible { background: #fff; color: var(--blue); }
@@ -319,6 +324,34 @@ img { max-width: 100%; display: block; }
 .site-footer__social a { color: inherit; transition: color .18s; }
 .site-footer__social a:hover, .site-footer__social a:focus-visible { color: #fff; }
 
+/* ---------- Back to top ---------- */
+
+.back-to-top {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  z-index: 40;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1.5px solid transparent;
+  background: var(--blue);
+  color: #fff;
+  box-shadow: var(--shadow-btn-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity .2s, transform .2s, visibility .2s, background-color .18s, color .18s;
+}
+.back-to-top.is-visible { opacity: 1; visibility: visible; transform: translateY(0); }
+.back-to-top:hover, .back-to-top:focus-visible { background: #fff; color: var(--blue); border-color: var(--blue); }
+.back-to-top svg { width: 20px; height: 20px; }
+
 /* ---------- Home: hero carousel ---------- */
 
 .hero-carousel {
@@ -373,28 +406,43 @@ img { max-width: 100%; display: block; }
   position: absolute;
   left: 0; right: 0; bottom: 0;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  gap: 24px;
   padding: 0 var(--gutter) 44px;
-  flex-wrap: nowrap;
 }
 
 .hero-carousel__actions { display: flex; align-items: center; gap: 12px; flex: none; }
 .hero-carousel__pip { width: 2px; height: 24px; background: rgba(255, 255, 255, .72); margin: 0 8px; flex: none; }
 
-.hero-carousel__right { display: flex; align-items: center; gap: 20px; flex: none; margin-left: auto; }
-
-.hero-carousel__indicators { display: flex; gap: 8px; flex: none; }
-.hero-carousel__dot {
-  width: 30px; height: 3px;
-  padding: 0;
-  border: 0;
-  background: rgba(255, 255, 255, .34);
-  cursor: pointer;
-  transition: background .3s;
+.hero-carousel__who-btn {
+  position: absolute;
+  top: 24px;
+  left: var(--gutter);
+  z-index: 5;
 }
-.hero-carousel__dot.is-active { background: #fff; }
+
+.hero-carousel__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, .5);
+  background: rgba(15, 23, 42, .28);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color .18s, border-color .18s;
+}
+.hero-carousel__arrow:hover, .hero-carousel__arrow:focus-visible { background: rgba(255, 255, 255, .18); border-color: #fff; }
+.hero-carousel__arrow svg { width: 20px; height: 20px; }
+.hero-carousel__arrow--prev { left: var(--gutter); }
+.hero-carousel__arrow--next { right: var(--gutter); }
 
 /* ---------- Home: who we are ---------- */
 
@@ -889,10 +937,12 @@ img { max-width: 100%; display: block; }
 }
 
 @media (max-width: 780px) {
-  .hero-carousel__row { flex-direction: column; align-items: stretch; gap: 16px; }
   .hero-carousel__actions { flex-wrap: wrap; justify-content: center; }
-  .hero-carousel__right { margin-left: 0; justify-content: center; }
   .hero-carousel__copy { padding: 0 24px 210px; }
+  .hero-carousel__who-btn { left: 24px; }
+  .hero-carousel__arrow { width: 40px; height: 40px; }
+  .hero-carousel__arrow--prev { left: 12px; }
+  .hero-carousel__arrow--next { right: 12px; }
 
   .who-we-are, .evidence, .dest-overview, .dest-section { padding-left: 24px; padding-right: 24px; }
   .capability-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }

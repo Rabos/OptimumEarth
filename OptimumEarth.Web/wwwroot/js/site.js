@@ -30,7 +30,8 @@
   if (carousel) {
     var slides = carousel.querySelectorAll("[data-hero-slide]");
     var copies = carousel.querySelectorAll("[data-hero-copy]");
-    var dots = carousel.querySelectorAll("[data-hero-dot]");
+    var prevBtn = carousel.querySelector("[data-hero-prev]");
+    var nextBtn = carousel.querySelector("[data-hero-next]");
     var current = 0;
     var timer = null;
 
@@ -38,13 +39,10 @@
       current = index;
       slides.forEach(function (slide, i) { slide.classList.toggle("is-active", i === index); });
       copies.forEach(function (copy, i) { copy.hidden = i !== index; });
-      dots.forEach(function (dot, i) {
-        dot.classList.toggle("is-active", i === index);
-        dot.setAttribute("aria-pressed", i === index ? "true" : "false");
-      });
     };
 
     var next = function () { show((current + 1) % slides.length); };
+    var prev = function () { show((current - 1 + slides.length) % slides.length); };
 
     var start = function () {
       if (reduceMotion || timer || slides.length < 2) return;
@@ -55,13 +53,21 @@
       if (timer) { window.clearInterval(timer); timer = null; }
     };
 
-    dots.forEach(function (dot, i) {
-      dot.addEventListener("click", function () {
-        show(i);
+    if (prevBtn) {
+      prevBtn.addEventListener("click", function () {
+        prev();
         stop();
         start();
       });
-    });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener("click", function () {
+        next();
+        stop();
+        start();
+      });
+    }
 
     carousel.addEventListener("mouseenter", stop);
     carousel.addEventListener("mouseleave", start);
@@ -71,5 +77,20 @@
     });
 
     start();
+  }
+
+  // Back to top: appears once the page has scrolled past one viewport.
+  var backToTop = document.querySelector("[data-back-to-top]");
+  if (backToTop) {
+    var toggleBackToTop = function () {
+      backToTop.classList.toggle("is-visible", window.scrollY > window.innerHeight * 0.6);
+    };
+
+    backToTop.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+    });
+
+    window.addEventListener("scroll", toggleBackToTop, { passive: true });
+    toggleBackToTop();
   }
 })();
