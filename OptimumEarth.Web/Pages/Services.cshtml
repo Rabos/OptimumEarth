@@ -1,0 +1,34 @@
+@page
+@model OptimumEarth.Web.Pages.ServicesModel
+@{
+    ViewData["Theme"] = "services";
+    ViewData["Title"] = "Services - Water, Energy, Environment, GIS & Engineering";
+    ViewData["Description"] = "Five service lines across water, energy, environment and the ground beneath them, delivered by the same technical team in Uganda and Zambia.";
+}
+
+<section class="services-hero">
+    <span class="eyebrow" style="letter-spacing:.16em;">What we do</span>
+    <h1 class="services-hero__title">Five service lines across water, energy, environment and the ground beneath them.</h1>
+    <p class="services-hero__lede">Delivered by the same technical team in Uganda and Zambia, scoped to the regulator, the lender and the reality of the site.</p>
+</section>
+
+@foreach (var row in Model.Rows)
+{
+    <article class="service-row">
+        <span class="service-row__index" aria-hidden="true">@row.Index</span>
+        <div class="service-row__body">
+            <h2 class="service-row__title">@row.Title</h2>
+            <p class="service-row__desc">@row.Description</p>
+            <span class="service-row__where">@row.Coverage</span>
+        </div>
+        <div class="service-row__media img-slot" role="img" aria-label="@row.ImageLabel"></div>
+    </article>
+}
+
+<section class="split-cta">
+    <div>
+        <h2 class="split-cta__title">Not sure which service you need?</h2>
+        <p class="split-cta__body">Describe the site and we will scope it with you.</p>
+    </div>
+    <a href="/contact" class="btn btn--nav btn--nav-cta" style="padding:15px 28px; font-size:15px;">Work With Us</a>
+</section>

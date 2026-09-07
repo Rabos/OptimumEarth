@@ -1,0 +1,130 @@
+@model OptimumEarth.Web.Models.DestinationPageViewModel
+
+<div class="dest-hero">
+    <div class="img-slot" role="img" aria-label="@Model.HeroImageLabel"></div>
+    <div class="dest-hero__scrim" aria-hidden="true"></div>
+    <div class="dest-hero__copy">
+        <span class="dest-hero__eyebrow">@Model.HeroEyebrow</span>
+        <h1 class="dest-hero__headline">@Model.HeroHeadline</h1>
+        <p class="dest-hero__sub">@Model.HeroSub</p>
+    </div>
+</div>
+
+<section class="dest-overview" aria-labelledby="overview-heading">
+    <div class="dest-overview__main">
+        <span class="dest-overview__eyebrow" id="overview-heading">@Model.OverviewEyebrow</span>
+        <p class="dest-overview__quote">@Model.OverviewQuote</p>
+        <p class="dest-overview__body">@Model.OverviewBody</p>
+    </div>
+    <aside class="glance-panel" aria-label="At a glance">
+        <span class="glance-panel__title">At a glance</span>
+        @foreach (var fact in Model.Facts)
+        {
+            <div class="glance-row">
+                <span class="glance-row__key">@fact.Key</span>
+                <span class="glance-row__value">@fact.Value</span>
+            </div>
+        }
+    </aside>
+</section>
+
+<section class="dest-section dest-section--tint" aria-labelledby="section-one-heading">
+    <div class="dest-section__head">
+        <h2 id="section-one-heading">@Model.SectionOneTitle</h2>
+        @if (!string.IsNullOrEmpty(Model.SectionOneLinkText))
+        {
+            <a class="text-link" href="@Model.SectionOneLinkHref">@Model.SectionOneLinkText &rarr;</a>
+        }
+    </div>
+    <div class="plain-card-grid">
+        @foreach (var card in Model.SectionOneCards)
+        {
+            @if (Model.UsePillarCards)
+            {
+                <article class="pillar-card">
+                    <span class="pillar-card__index">@card.Index</span>
+                    <h3 class="pillar-card__title">@card.Title</h3>
+                    <p class="pillar-card__desc">@card.Description</p>
+                </article>
+            }
+            else
+            {
+                <article class="service-card">
+                    <h3 class="service-card__title">@card.Title</h3>
+                    <p class="service-card__desc">@card.Description</p>
+                </article>
+            }
+        }
+    </div>
+</section>
+
+<section class="dest-section" aria-labelledby="section-two-heading">
+    <div class="dest-section__head">
+        <h2 id="section-two-heading">@Model.SectionTwoTitle</h2>
+        @if (!string.IsNullOrEmpty(Model.SectionTwoLinkText))
+        {
+            <a class="text-link" href="@Model.SectionTwoLinkHref">@Model.SectionTwoLinkText &rarr;</a>
+        }
+    </div>
+    <div class="card-grid">
+        @foreach (var card in Model.SectionTwoCards)
+        {
+            <article class="project-card">
+                <div class="project-card__media img-slot" role="img" aria-label="@card.ImageLabel"></div>
+                <div class="project-card__body">
+                    <span class="project-card__tag">@card.Tag</span>
+                    <h3 class="project-card__title">@card.Title</h3>
+                    <p class="project-card__meta">@card.Meta</p>
+                </div>
+            </article>
+        }
+    </div>
+    @if (!string.IsNullOrEmpty(Model.SectionTwoNote))
+    {
+        <p class="section-note">@Model.SectionTwoNote</p>
+    }
+</section>
+
+<section class="dest-cta" aria-labelledby="cta-heading" id="contact">
+    <div>
+        <h2 class="dest-cta__title" id="cta-heading">@Model.CtaTitle</h2>
+        <p class="dest-cta__body">@Model.CtaBody</p>
+    </div>
+    <div>
+        @if (Model.Submitted)
+        {
+            <p class="form-success" role="status">Thank you - your enquiry is in. Our team will be in touch shortly.</p>
+        }
+        else
+        {
+            <form class="mini-form" method="post" asp-page-handler="Quick">
+                <div asp-validation-summary="ModelOnly" class="visually-hidden" role="alert"></div>
+                <input type="hidden" asp-for="Quick.Destination" />
+                <div class="mini-form__row">
+                    <div>
+                        <label class="visually-hidden" asp-for="Quick.FullName">Full name</label>
+                        <input asp-for="Quick.FullName" placeholder="Full name" autocomplete="name" />
+                        <span asp-validation-for="Quick.FullName" class="field-error"></span>
+                    </div>
+                    <div>
+                        <label class="visually-hidden" asp-for="Quick.Email">Email</label>
+                        <input asp-for="Quick.Email" type="email" placeholder="Email" autocomplete="email" />
+                        <span asp-validation-for="Quick.Email" class="field-error"></span>
+                    </div>
+                </div>
+                <div>
+                    <label class="visually-hidden" asp-for="Quick.Service">@Model.CtaServiceLabel</label>
+                    <select asp-for="Quick.Service">
+                        <option value="">@Model.CtaServiceLabel</option>
+                        @foreach (var option in Model.CtaServiceOptions)
+                        {
+                            <option value="@option">@option</option>
+                        }
+                    </select>
+                    <span asp-validation-for="Quick.Service" class="field-error"></span>
+                </div>
+                <button type="submit" class="mini-form__submit">Send enquiry</button>
+            </form>
+        }
+    </div>
+</section>
