@@ -13,7 +13,7 @@
     {
         var slide = Model.HeroSlides[i];
         <div class="hero-carousel__slide@(i == 0 ? " is-active" : "")" data-hero-slide="@i">
-            <div class="img-slot" role="img" aria-label="@slide.ImageLabel"></div>
+            <div class="img-slot" role="img" aria-label="@slide.ImageLabel" style="background-image: url('/img/optimum-earth-images/heroslide@(i + 1).jpg')"></div>
         </div>
     }
     <div class="hero-carousel__scrim" aria-hidden="true"></div>
