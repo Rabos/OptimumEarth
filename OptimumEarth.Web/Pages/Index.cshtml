@@ -7,6 +7,8 @@
 }
 
 <section class="hero-carousel" data-hero-carousel aria-roledescription="carousel" aria-label="Optimum Earth destinations">
+    <a href="#who-we-are-heading" class="hero-carousel__who-btn btn btn--nav btn--ghost">Who We Are</a>
+
     @for (var i = 0; i < Model.HeroSlides.Count; i++)
     {
         var slide = Model.HeroSlides[i];
@@ -26,22 +28,22 @@
         </div>
     }
 
+    @if (Model.HeroSlides.Count > 1)
+    {
+        <button type="button" class="hero-carousel__arrow hero-carousel__arrow--prev" data-hero-prev aria-label="Previous slide">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </button>
+        <button type="button" class="hero-carousel__arrow hero-carousel__arrow--next" data-hero-next aria-label="Next slide">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </button>
+    }
+
     <div class="hero-carousel__row">
         <div class="hero-carousel__actions">
             <a href="/uganda" class="btn btn--lg btn--blue">Uganda</a>
             <a href="/zambia" class="btn btn--lg btn--grey">Zambia</a>
             <span class="hero-carousel__pip" aria-hidden="true"></span>
             <a href="/foundation" class="btn btn--lg btn--green">Foundation</a>
-        </div>
-        <div class="hero-carousel__right">
-            <div class="hero-carousel__indicators" role="group" aria-label="Choose a slide">
-                @for (var i = 0; i < Model.HeroSlides.Count; i++)
-                {
-                    var slide = Model.HeroSlides[i];
-                    <button type="button" class="hero-carousel__dot@(i == 0 ? " is-active" : "")" data-hero-dot="@i" aria-label="Show slide @(i + 1): @slide.Eyebrow" aria-pressed="@(i == 0 ? "true" : "false")"></button>
-                }
-            </div>
-            <a href="/contact" class="btn btn--lg btn--white">Contact Us</a>
         </div>
     </div>
 </section>
