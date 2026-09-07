@@ -15,6 +15,7 @@ public class IndexModel : PageModel
             "Engineering capability channelled into community-led development, measured by results."),
     };
 
+
     public List<CapabilityItem> Capabilities { get; } = new()
     {
         new("01", "Water resources", "Supply, diagnostics, monitoring"),
