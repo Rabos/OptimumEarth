@@ -29,7 +29,7 @@ public class UgandaModel : PageModel
         HeroSub = "Kampala-based teams supporting national utilities, energy operators, industry and development partners across the country.",
         OverviewEyebrow = "COUNTRY OVERVIEW",
         OverviewQuote = "Uganda is our home market. From Kampala we deliver hydrogeology, borehole development, groundwater monitoring, environmental assessment and geo-intelligence for national utilities, oil and gas operators, cement and quarry industry and humanitarian organisations.",
-        OverviewBody = "Our Ugandan team combines field capability with in-house analysis, so surveys, testing and reporting run under one accountable contract — with the compliance documentation regulators and lenders expect.",
+        OverviewBody = "Our Ugandan team combines field capability with in-house analysis, so surveys, testing and reporting run under one accountable contract - with the compliance documentation regulators and lenders expect.",
         Facts = new()
         {
             ("Established", "2017"),

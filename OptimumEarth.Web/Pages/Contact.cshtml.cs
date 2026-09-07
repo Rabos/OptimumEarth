@@ -37,8 +37,8 @@ public class ContactModel : PageModel
             return Page();
         }
 
-        // In production this would persist the enquiry and route it — by
-        // Contact.Destination — to the Uganda team, the Zambia team or the
+        // In production this would persist the enquiry and route it - by
+        // Contact.Destination - to the Uganda team, the Zambia team or the
         // Foundation, and reply within two working days.
         ModelState.Clear();
         Contact = new ContactInquiry { Audience = "Client" };

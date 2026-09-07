@@ -17,7 +17,7 @@ public class ServicesModel : PageModel
             "Environmental and social impact assessment, audits, management plans and ongoing compliance support for regulated and lender-financed projects.",
             "Environmental services"),
         new("04", "GIS, mapping & remote sensing", "Uganda · Zambia",
-            "Geo-intelligence products for water, energy, humanitarian relief and infrastructure — spatial analysis, basemaps, dashboards and field data systems.",
+            "Geo-intelligence products for water, energy, humanitarian relief and infrastructure - spatial analysis, basemaps, dashboards and field data systems.",
             "GIS, mapping and remote sensing"),
         new("05", "Solutions for mines, oil & gas", "Uganda · Zambia",
             "Integrated water management for mineral, metal and aggregate operations, plus geothermal consulting and hydrogeology for the extractives sector.",
