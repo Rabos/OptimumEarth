@@ -1,25 +1,124 @@
+@using System.Text.Json
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @{
     var theme = ViewData["Theme"] as string ?? "home";
     var title = ViewData["Title"] as string ?? "Optimum Earth";
     var description = ViewData["Description"] as string ??
         "Optimum Earth delivers water, energy, environment, GIS and engineering solutions across East and Southern Africa, alongside the community-led work of the Optimum Earth Foundation.";
+    var robots = ViewData["Robots"] as string ?? "index, follow";
+
+    // Canonical/OG URLs are built from a configured production host rather
+    // than the incoming request, so staging/dev hits never leak into
+    // indexable metadata; only the path comes from the current request.
+    var siteUrl = (Configuration["SiteUrl"] ?? "https://optimum-earth.com").TrimEnd('/');
+    var path = Context.Request.Path.Value?.ToLowerInvariant().TrimEnd('/') ?? "";
+    var canonicalUrl = siteUrl + (path.Length == 0 ? "/" : path);
+    var ogImageUrl = siteUrl + "/img/og-image.png";
+    var logoUrl = siteUrl + "/img/logo-icon.png";
+
+    // Most page titles are already brand-qualified ("Optimum Earth Foundation
+    // - ...", "Contact Us - Work With Optimum Earth"); only append the
+    // " | Optimum Earth" suffix when the brand isn't already in there, so we
+    // never end up with the name repeated two or three times in a <title>.
+    var pageTitle = title.Contains("Optimum Earth", StringComparison.OrdinalIgnoreCase)
+        ? title
+        : title + " | Optimum Earth";
 
     string NavClass(string key, string? variant = null) =>
         "primary-nav__link" + (variant != null ? " primary-nav__link--" + variant : "") + (theme == key ? " is-current" : "");
+
+    var breadcrumbNames = new Dictionary<string, string>
+    {
+        ["uganda"] = "Uganda",
+        ["zambia"] = "Zambia",
+        ["foundation"] = "Foundation",
+        ["services"] = "Services",
+        ["projects"] = "Projects",
+        ["contact"] = "Contact",
+    };
+
+    var organizationJsonLd = JsonSerializer.Serialize(new Dictionary<string, object>
+    {
+        ["@context"] = "https://schema.org",
+        ["@type"] = "Organization",
+        ["name"] = "Optimum Earth",
+        ["url"] = siteUrl + "/",
+        ["logo"] = logoUrl,
+        ["description"] = "Optimum Earth delivers water, energy, environment, GIS and engineering solutions across East and Southern Africa, alongside the community-led work of the Optimum Earth Foundation.",
+        ["address"] = new Dictionary<string, object>
+        {
+            ["@type"] = "PostalAddress",
+            ["streetAddress"] = "Roston House, Plot 56/57",
+            ["postOfficeBoxNumber"] = "P.O Box 200032",
+            ["addressLocality"] = "Kampala",
+            ["addressCountry"] = "UG",
+        },
+        ["contactPoint"] = new[]
+        {
+            new Dictionary<string, object>
+            {
+                ["@type"] = "ContactPoint",
+                ["telephone"] = "+256-784-080551",
+                ["contactType"] = "customer service",
+                ["email"] = "uganda@optimum-earth.com",
+                ["areaServed"] = new[] { "UG", "ZM" },
+            },
+        },
+    });
+
+    string? breadcrumbJsonLd = null;
+    if (breadcrumbNames.TryGetValue(theme, out var crumbName))
+    {
+        breadcrumbJsonLd = JsonSerializer.Serialize(new Dictionary<string, object>
+        {
+            ["@context"] = "https://schema.org",
+            ["@type"] = "BreadcrumbList",
+            ["itemListElement"] = new object[]
+            {
+                new Dictionary<string, object> { ["@type"] = "ListItem", ["position"] = 1, ["name"] = "Home", ["item"] = siteUrl + "/" },
+                new Dictionary<string, object> { ["@type"] = "ListItem", ["position"] = 2, ["name"] = crumbName, ["item"] = canonicalUrl },
+            },
+        });
+    }
 }
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@title | Optimum Earth</title>
+    <title>@pageTitle</title>
     <meta name="description" content="@description" />
+    <meta name="robots" content="@robots" />
+    <link rel="canonical" href="@canonicalUrl" />
     <meta name="theme-color" content="#214292" />
     <link rel="icon" type="image/png" href="~/favicon.png" asp-append-version="true" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Optimum Earth" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="@pageTitle" />
+    <meta property="og:description" content="@description" />
+    <meta property="og:url" content="@canonicalUrl" />
+    <meta property="og:image" content="@ogImageUrl" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Optimum Earth" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@pageTitle" />
+    <meta name="twitter:description" content="@description" />
+    <meta name="twitter:image" content="@ogImageUrl" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300&amp;display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <script type="application/ld+json">@Html.Raw(organizationJsonLd)</script>
+    @if (breadcrumbJsonLd != null)
+    {
+        <script type="application/ld+json">@Html.Raw(breadcrumbJsonLd)</script>
+    }
 </head>
 <body class="theme-@theme">
 

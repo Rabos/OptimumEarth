@@ -2,6 +2,10 @@
 @model PrivacyModel
 @{
     ViewData["Title"] = "Privacy Policy";
+    ViewData["Description"] = "Optimum Earth's privacy policy.";
+    // Placeholder boilerplate and not linked from navigation - keep it out
+    // of search results until it has real policy content.
+    ViewData["Robots"] = "noindex, nofollow";
 }
 <h1>@ViewData["Title"]</h1>
 
