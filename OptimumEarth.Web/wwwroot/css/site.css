@@ -550,10 +550,58 @@ img { max-width: 100%; display: block; }
 .service-panel--white .service-panel__eyebrow { color: var(--blue); }
 .service-panel--white .service-panel__headline { color: var(--navy-ink); }
 
-@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: reduce) {
   .service-sequence__intro,
   .service-panel { position: static; height: auto; min-height: 70vh; z-index: auto !important; }
   .service-panel__copy-wrap { position: relative; padding: 48px var(--gutter); }
+  /* Pre-existing issue, unrelated to the mobile work below: once
+     .service-panel loses position:sticky its absolutely-positioned
+     .service-panel__scrim resolves against the wrong ancestor and
+     mispositions the gradient, leaving white-on-white text. Same fix
+     as the mobile layout: drop the scrim, give the copy a solid
+     brand-colored background instead. */
+  .service-panel__scrim { display: none; }
+  .service-panel--navy .service-panel__copy-wrap { background: var(--navy-deep); }
+  .service-panel--white .service-panel__copy-wrap { background: #fff; }
+}
+
+@media (max-width: 900px) {
+  /* Below 900px the pinned photo panels (and the reduced-motion
+     fallback above) are both replaced by a compact card list: the
+     gradient scrim only reads correctly when text sits over roughly
+     half a wide image, so on a narrow phone the text spans the full
+     width and drifts into the faded, low-contrast end of it. A small
+     thumbnail with a solid-color copy block below removes that
+     contrast problem entirely and cuts six ~100vh screens down to
+     six short cards. */
+  .service-sequence__intro {
+    height: auto;
+    min-height: 0;
+    position: static;
+    padding: 56px var(--gutter) 32px;
+  }
+
+  .service-panel {
+    position: static;
+    height: auto;
+    z-index: auto !important;
+    border-bottom: 1px solid var(--grey-150);
+  }
+  .service-panel .img-slot { height: 180px; }
+
+  .service-panel__scrim { display: none; }
+
+  .service-panel__copy-wrap {
+    position: static;
+    display: block;
+    padding: 0;
+    pointer-events: auto;
+  }
+
+  .service-panel__copy { max-width: none; gap: 12px; padding: 24px var(--gutter); }
+
+  .service-panel--navy .service-panel__copy-wrap { background: var(--navy-deep); }
+  .service-panel--white .service-panel__copy-wrap { background: #fff; }
 }
 
 @media print {
