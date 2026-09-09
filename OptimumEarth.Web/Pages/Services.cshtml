@@ -12,8 +12,9 @@
     <p class="services-hero__lede">Delivered by the same technical team in Uganda and Zambia, scoped to the regulator, the lender and the reality of the site.</p>
 </section>
 
-@foreach (var row in Model.Rows)
+@for (var i = 0; i < Model.Rows.Count; i++)
 {
+    var row = Model.Rows[i];
     <article class="service-row">
         <span class="service-row__index" aria-hidden="true">@row.Index</span>
         <div class="service-row__body">
@@ -21,7 +22,7 @@
             <p class="service-row__desc">@row.Description</p>
             <span class="service-row__where">@row.Coverage</span>
         </div>
-        <div class="service-row__media img-slot" role="img" aria-label="@row.ImageLabel"></div>
+        <div class="service-row__media img-slot" role="img" aria-label="@row.ImageLabel" style="background-image: url('/img/optimum-earth-images/servicepanel@(i + 1).jpg')"></div>
     </article>
 }
 

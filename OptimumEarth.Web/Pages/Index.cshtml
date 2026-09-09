@@ -13,7 +13,7 @@
     {
         var slide = Model.HeroSlides[i];
         <div class="hero-carousel__slide@(i == 0 ? " is-active" : "")" data-hero-slide="@i">
-            <div class="img-slot" role="img" aria-label="@slide.ImageLabel"></div>
+            <div class="img-slot" role="img" aria-label="@slide.ImageLabel" style="background-image: url('/img/optimum-earth-images/heroslide@(i + 1).jpg')"></div>
         </div>
     }
     <div class="hero-carousel__scrim" aria-hidden="true"></div>
@@ -43,7 +43,7 @@
             <a href="/uganda" class="btn btn--lg btn--blue">Uganda</a>
             <a href="/zambia" class="btn btn--lg btn--grey">Zambia</a>
             <span class="hero-carousel__pip" aria-hidden="true"></span>
-            <a href="/foundation" class="btn btn--lg btn--green">Foundation</a>
+            <a href="/foundation" class="btn btn--lg btn--green">Our Foundation</a>
         </div>
     </div>
 </section>
@@ -92,7 +92,7 @@
             ? "service-panel__scrim service-panel__scrim--navy-left"
             : "service-panel__scrim service-panel__scrim--white-right";
         <div class="service-panel @sideClass @scrimClass" style="z-index:@(i + 1);">
-            <div class="img-slot" role="img" aria-label="@panel.ImageLabel"></div>
+            <div class="img-slot" role="img" aria-label="@panel.ImageLabel" style="background-image: url('/img/optimum-earth-images/servicepanel@(i + 1).jpg')"></div>
             <div class="@scrimDivClass" aria-hidden="true"></div>
             <div class="service-panel__copy-wrap">
                 <div class="service-panel__copy">
@@ -125,16 +125,18 @@
             <a class="text-link" href="/projects">All projects &rarr;</a>
         </div>
         <div class="card-grid">
-            @foreach (var project in Model.RecentWork)
+            @for (var i = 0; i < Model.RecentWork.Count; i++)
             {
-                <a class="project-card" href="/projects">
-                    <div class="project-card__media img-slot" role="img" aria-label="@project.ImageLabel"></div>
+                var project = Model.RecentWork[i];
+                <article class="project-card">
+                    <div class="project-card__media img-slot" role="img" aria-label="@project.ImageLabel" style="background-image: url('/img/optimum-earth-images/recentwork@(i + 1).jpg')"></div>
                     <div class="project-card__body">
                         <span class="project-card__tag">@project.Tag</span>
                         <h3 class="project-card__title">@project.Title</h3>
                         <p class="project-card__meta">@project.Meta</p>
                     </div>
-                </a>
+                    <a href="/projects" class="project-card__link"></a>
+                </article>
             }
         </div>
     </div>
