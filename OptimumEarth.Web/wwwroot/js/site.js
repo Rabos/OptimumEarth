@@ -87,6 +87,58 @@
     start();
   }
 
+  // Foundation page sub-nav: highlights the section currently in view as
+  // the visitor scrolls (scroll-spy), on top of the browser's native
+  // smooth-scroll-to-anchor on click.
+  var subNav = document.querySelector("[data-sub-nav]");
+  if (subNav) {
+    var subNavLinks = subNav.querySelectorAll("[data-sub-nav-link]");
+    var subNavSections = Array.prototype.map.call(subNavLinks, function (link) {
+      return document.getElementById(link.getAttribute("data-sub-nav-link"));
+    });
+
+    var setActiveSection = function (id) {
+      subNavLinks.forEach(function (link) {
+        link.classList.toggle("is-active", link.getAttribute("data-sub-nav-link") === id);
+      });
+    };
+
+    if (window.IntersectionObserver) {
+      var visible = new Map();
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          visible.set(entry.target.id, entry.isIntersecting);
+        });
+        var current = subNavSections.find(function (section) { return section && visible.get(section.id); });
+        if (current) setActiveSection(current.id);
+      }, { rootMargin: "-45% 0px -50% 0px" });
+
+      subNavSections.forEach(function (section) {
+        if (section) observer.observe(section);
+      });
+    }
+  }
+
+  // Foundation "Stories & Impact" tiles: each opens a native <dialog> with
+  // the fuller story text, closed via its own button, Esc (native to
+  // <dialog>) or a click on the backdrop.
+  var storyTriggers = document.querySelectorAll("[data-story-trigger]");
+  storyTriggers.forEach(function (trigger) {
+    var dialog = document.getElementById("story-" + trigger.getAttribute("data-story-trigger"));
+    if (!dialog) return;
+
+    trigger.addEventListener("click", function () { dialog.showModal(); });
+
+    var closeBtn = dialog.querySelector("[data-story-close]");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", function () { dialog.close(); });
+    }
+
+    dialog.addEventListener("click", function (e) {
+      if (e.target === dialog) dialog.close();
+    });
+  });
+
   // Back to top: appears once the page has scrolled past one viewport.
   var backToTop = document.querySelector("[data-back-to-top]");
   if (backToTop) {

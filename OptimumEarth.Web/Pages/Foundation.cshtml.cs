@@ -11,7 +11,7 @@ public class FoundationModel : PageModel
 
     public bool Submitted { get; set; }
 
-    private static readonly List<string> EngagementOptions = new()
+    public static readonly List<string> EngagementOptions = new()
     {
         "Partner with a programme",
         "Fund a programme",
@@ -19,45 +19,58 @@ public class FoundationModel : PageModel
         "Learn more",
     };
 
-    public DestinationPageViewModel BuildContent() => new()
+    public List<(string Number, string Label)> SdgGoals { get; } = new()
     {
-        Theme = "foundation",
-        HeroImageLabel = "Foundation hero image",
-        HeroEyebrow = "OPTIMUM EARTH FOUNDATION",
-        HeroHeadline = "Communities designing the infrastructure they need.",
-        HeroSub = "Engineering capability channelled into community-led development: clean water, affordable energy and climate resilience, delivered with partners and measured by results.",
-        OverviewEyebrow = "FOUNDATION OVERVIEW",
-        OverviewQuote = "The Foundation exists to put engineering capability where the market does not reach, working with communities that will own and maintain what gets built.",
-        OverviewBody = "Programmes are designed with their communities, baselined before work starts and reported honestly afterwards. Government, funders, NGOs and private operators work to one plan, and solutions are engineered to be repeated rather than demonstrated once.",
-        Facts = new()
-        {
-            ("Mandate", "Non-profit arm"),
-            ("Pillars", "Access · Resilience · Impact"),
-            ("Model", "Community-led"),
-            ("Reach", "Uganda · Zambia"),
-        },
-        SectionOneTitle = "Three pillars, one mandate",
-        UsePillarCards = true,
-        SectionOneCards = new()
-        {
-            new("Access", "Clean water, sanitation and affordable energy reaching households and institutions the market has not served.", "01"),
-            new("Resilience", "Climate adaptation, water security and systems that keep working through drought, flood and disruption.", "02"),
-            new("Impact", "Evidence-informed delivery, measured outcomes and partnerships that mobilise resources where they count.", "03"),
-        },
-        SectionTwoTitle = "Programmes & stories",
-        SectionTwoCards = new()
-        {
-            new("Programme photo", "ACCESS", "Community water points", "Programme description to be confirmed."),
-            new("Programme photo", "RESILIENCE", "Climate-smart water security", "Programme description to be confirmed."),
-            new("Programme photo", "IMPACT", "Clean energy for institutions", "Programme description to be confirmed."),
-        },
-        SectionTwoNote = "Programme case studies will be published as delivery progresses and partner permissions are confirmed.",
-        CtaTitle = "Work with the Foundation",
-        CtaBody = "Partner, fund or collaborate. Tell us which and we will route your enquiry to the right programme lead.",
-        CtaServiceLabel = "How would you like to engage?",
-        CtaServiceOptions = EngagementOptions,
-        Quick = Quick,
-        Submitted = Submitted,
+        ("06", "Clean Water & Sanitation"),
+        ("07", "Affordable & Clean Energy"),
+        ("13", "Climate Action"),
+        ("17", "Partnerships for the Goals"),
+    };
+
+    public List<PillarDetail> Pillars { get; } = new()
+    {
+        new("access", "SDG 6 & 7", "Access",
+            "Expanding access to essential services and practical climate solutions, particularly clean water, clean energy and appropriate climate technologies.",
+            new() { "Water", "Clean Energy", "Climate Solutions" }),
+        new("resilience", "SDG 13", "Resilience",
+            "Strengthening the ability of communities and local actors to anticipate, respond to and recover from climate and development pressures.",
+            new() { "Community resilience & capacity strengthening", "Local leadership and capabilities", "Climate preparedness and adaptation" }),
+        new("impact", "SDG 17", "Impact",
+            "Connecting local solutions to partnerships, finance and knowledge so effective approaches can be sustained, adapted and scaled responsibly.",
+            new() { "Partnerships", "Finance & resource mobilisation", "Knowledge sharing & learning" }),
+    };
+
+    public List<string> FocusAreas { get; } = new()
+    {
+        "Water & WASH",
+        "Clean Energy",
+        "Climate Action",
+        "Community Resilience",
+        "Partnerships & Finance",
+        "Knowledge & Learning",
+    };
+
+    public List<WorkPrinciple> WorkPrinciples { get; } = new()
+    {
+        new("Community-led", "We start with the lived realities, priorities and capabilities of the communities and local actors we work with, not with pre-set solutions."),
+        new("Evidence-informed", "We draw on evidence, local knowledge and continuous learning to shape our decisions and improve our approach."),
+        new("Partnership-driven", "We bring together communities, philanthropy, public institutions, private capital and technical actors around a shared goal."),
+        new("Practical and scalable", "We focus on solutions that work in real settings, and that we can adapt or expand responsibly as they prove out."),
+        new("Locally grounded", "We prioritise African leadership, local ownership and context-specific solutions in everything we do."),
+        new("Learning-oriented", "We document what works and what doesn't, so our learning contributes to wider practice across the region."),
+    };
+
+    public List<StoryTile> StoryTiles { get; } = new()
+    {
+        new("communities", "Communities", "Stories from the field, in the words of the people we work with.",
+            "Stories from the field, in the words of the people we work with. This space holds community voices, before/after and challenge/response stories, and photography from the field — the human face of OEF's work.",
+            "Community story photo"),
+        new("partnerships", "Partnerships", "A look at what we're building together.",
+            "A look at what we're building together. This space features project and partnership case studies, impact indicators and simple dashboards as data becomes available, and news or updates on active collaborations.",
+            "Partnership story photo"),
+        new("learning", "Learning", "Where OEF shares what it's discovering and who it's growing with.",
+            "Where OEF shares what it's discovering and who it's growing with. This space holds practical learning notes and insights, alongside our Academic & Learning Partnerships — joint research, student placements and fellowships, mentorship, and career-pathway stories connecting young African talent to climate, water and energy work.",
+            "Learning story photo"),
     };
 
     public void OnGet()
