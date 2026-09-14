@@ -27,10 +27,11 @@
 else
 {
     <div class="projects-grid">
-        @foreach (var project in Model.VisibleProjects)
+        @for (var i = 0; i < Model.VisibleProjects.Count; i++)
         {
+            var project = Model.VisibleProjects[i];
             <article class="project-card project-card--lg">
-                <div class="project-card__media img-slot" role="img" aria-label="@project.ImageLabel"></div>
+                <div class="project-card__media img-slot" role="img" aria-label="@project.ImageLabel" style="background-image: url('/img/optimum-earth-images/project@(i + 1).jpg')"></div>
                 <div class="project-card__body">
                     <span class="project-card__tag">@project.Tag</span>
                     <h2 class="project-card__title" style="font-size:19px; font-weight:600;">@project.Title</h2>
