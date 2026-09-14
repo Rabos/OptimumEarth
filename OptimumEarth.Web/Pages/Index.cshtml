@@ -25,7 +25,7 @@
     {
         var slide = Model.HeroSlides[i];
         <div class="hero-carousel__copy" data-hero-copy="@i" hidden="@(i == 0 ? null : "hidden")">
-            <span class="hero-carousel__eyebrow">@slide.Eyebrow</span>
+            @* <span class="hero-carousel__eyebrow">@slide.Eyebrow</span> *@
             <h1 class="hero-carousel__headline">@slide.Headline</h1>
             <p class="hero-carousel__body">@slide.Body</p>
         </div>

@@ -7,10 +7,10 @@
 }
 
 <div class="dest-hero">
-    <div class="img-slot" role="img" aria-label="Foundation community photo"></div>
+    <div class="img-slot" role="img" aria-label="Foundation community photo" style="background-image: url('/img/optimum-earth-images/foundation1.jpg')"></div>
     <div class="dest-hero__scrim" aria-hidden="true"></div>
     <div class="dest-hero__copy">
-        <span class="dest-hero__eyebrow">OPTIMUM EARTH FOUNDATION</span>
+        @* <span class="dest-hero__eyebrow">OPTIMUM EARTH FOUNDATION</span> *@
         <h1 class="dest-hero__headline">Building resilient communities with access to practical climate solutions.</h1>
         <p class="dest-hero__sub">A corporate foundation connecting community priorities with the partnerships, knowledge and resources needed to turn practical ideas into lasting impact.</p>
     </div>
@@ -176,10 +176,11 @@
     <p class="dest-overview__body" style="max-width:760px;">OEF's story is best told through the people and partners who shape it. We capture our stories and impact through three lenses Communities, Partnerships and Learning each one gathering real voices, projects and evidence as our work takes root and grows.</p>
 
     <div class="card-grid">
-        @foreach (var tile in Model.StoryTiles)
+        @for (var i = 1; i < Model.StoryTiles.Count; i++)
         {
+            var tile = Model.StoryTiles[i];
             <button type="button" class="story-tile" data-story-trigger="@tile.Key" aria-haspopup="dialog">
-                <div class="project-card__media img-slot" role="img" aria-label="@tile.ImageLabel"></div>
+                <div class="project-card__media img-slot" role="img" aria-label="@tile.ImageLabel" style="background-image: url('/img/optimum-earth-images/foundation@(i + 1).jpg')"></div>
                 <div class="project-card__body">
                     <h3 class="project-card__title">@tile.Title</h3>
                     <p class="project-card__meta">@tile.Summary</p>

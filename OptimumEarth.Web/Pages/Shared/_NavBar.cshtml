@@ -10,13 +10,17 @@
 <header class="site-header" data-site-header>
     <div class="shell site-header__row">
         <div class="brand-group">
-            <a class="brand" href="/">
-                <img class="brand__logo" src="~/img/logo.svg" alt="Optimum Earth" />
-            </a>
+            
             @if (theme == "foundation")
             {
                 <a class="brand" href="/foundation">
-                    <img class="brand__logo" src="~/img/logo.svg" alt="Optimum Earth Foundation" />
+                    <img class="brand__logo" src="~/img/oem_foundation.svg" alt="Optimum Earth Foundation" />
+                </a>
+            }
+            else
+            {
+                <a class="brand" href="/">
+                    <img class="brand__logo" src="~/img/logo.svg" alt="Optimum Earth" />
                 </a>
             }
         </div>
@@ -43,8 +47,8 @@
                 <a href="/projects" class="@NavClass("projects")">Projects</a>
             </div>
             <span class="primary-nav__divider" aria-hidden="true"></span>
-            <a href="/foundation" class="btn btn--nav btn--nav-foundation-cta primary-nav__cta @NavClass("foundation", "foundation" )">Foundation</a>
-            <a href="/contact" class="btn btn--nav btn--nav-cta primary-nav__cta">Work With Us</a>
+            <a href="/foundation" class="btn btn--nav btn--nav-foundation-cta primary-nav__cta @NavClass("foundation", "foundation" )">Our Foundation</a>
+            <!--<a href="/contact" class="btn btn--nav btn--nav-cta primary-nav__cta">Work With Us</a>-->
         </nav>
     </div>
 </header>
