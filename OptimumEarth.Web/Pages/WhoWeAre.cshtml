@@ -1,0 +1,36 @@
+@page "/who-we-are"
+@model OptimumEarth.Web.Pages.WhoWeAreModel
+@{
+    ViewData["Theme"] = "who-we-are";
+    ViewData["Title"] = "Who We Are";
+    ViewData["Description"] = "Optimum Earth has served the East and Southern Africa water and energy industry since 2017, across the full project lifecycle.";
+}
+
+<section class="who-we-are" aria-labelledby="who-we-are-heading">
+    <div class="who-we-are__rule-row">
+        <span class="eyebrow" id="who-we-are-heading" style="letter-spacing:.2em;">Who we are</span>
+        <span class="who-we-are__rule" aria-hidden="true"></span>
+    </div>
+
+    <div class="who-we-are__split">
+        <h1 class="who-we-are__statement">Serving the East and Southern Africa water and energy industry since <em>2017</em>, across the full project lifecycle.</h1>
+        <div class="who-we-are__support">
+            <p class="who-we-are__lede">We support projects from first survey to commissioning, building the partnerships and delivering the infrastructure that meets environmental and quality standards.</p>
+            <div class="stat-pair">
+                <div class="stat"><b>100+</b><span>Organisations served</span></div>
+                <div class="stat"><b>02</b><span>Country operations</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="capability-grid">
+        @foreach (var c in Model.Capabilities)
+        {
+            <div class="capability-cell">
+                <span class="capability-cell__index">@c.Index</span>
+                <span class="capability-cell__title">@c.Title</span>
+                <span class="capability-cell__desc">@c.Description</span>
+            </div>
+        }
+    </div>
+</section>

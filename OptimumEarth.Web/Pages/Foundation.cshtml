@@ -6,4 +6,243 @@
     ViewData["Description"] = "The Optimum Earth Foundation is the community-led, non-profit arm of Optimum Earth, focused on Access, Resilience and Impact across water, energy and climate.";
 }
 
-<partial name="_DestinationTemplate" model="Model.BuildContent()" />
+<div class="dest-hero">
+    <div class="img-slot" role="img" aria-label="Foundation community photo"></div>
+    <div class="dest-hero__scrim" aria-hidden="true"></div>
+    <div class="dest-hero__copy">
+        <span class="dest-hero__eyebrow">OPTIMUM EARTH FOUNDATION</span>
+        <h1 class="dest-hero__headline">Building resilient communities with access to practical climate solutions.</h1>
+        <p class="dest-hero__sub">A corporate foundation connecting community priorities with the partnerships, knowledge and resources needed to turn practical ideas into lasting impact.</p>
+    </div>
+</div>
+
+<nav class="sub-nav" data-sub-nav aria-label="Foundation page sections">
+    <a href="#about" class="sub-nav__link" data-sub-nav-link="about">About</a>
+    <a href="#pillars" class="sub-nav__link" data-sub-nav-link="pillars">Pillars</a>
+    <a href="#how-we-work" class="sub-nav__link" data-sub-nav-link="how-we-work">How We Work</a>
+    <a href="#stories" class="sub-nav__link" data-sub-nav-link="stories">Stories &amp; Impact</a>
+    <a href="#connect" class="sub-nav__link" data-sub-nav-link="connect">Connect</a>
+</nav>
+
+<section class="dest-overview" id="about" aria-labelledby="about-heading">
+    <div class="dest-overview__main">
+        <span class="dest-overview__eyebrow" id="about-heading">ABOUT OEF</span>
+        <p class="dest-overview__quote">Optimum Earth Foundation (OEF) is a corporate foundation; a not-for-profit initiative focused on practical solutions that expand access to clean water, clean energy and climate solutions while strengthening community resilience. OEF connects community priorities with the partnerships, knowledge and resources needed to turn practical ideas into lasting impact.</p>
+        <p class="dest-overview__body">OEF was established as the not-for-profit arm of Optimum Earth Limited, building on the company's experience in energy, water and environmental infrastructure across East and Southern Africa. The Foundation operates as a distinct not-for-profit entity with its own governance, strategy and financing.</p>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+            <span class="dest-overview__eyebrow">VISION</span>
+            <p class="dest-overview__body">Resilient and sustainable communities with access to water, clean energy, climate solutions and inclusive systems.</p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+            <span class="dest-overview__eyebrow">MISSION</span>
+            <p class="dest-overview__body">To catalyse and scale inclusive, community-driven solutions that expand access to water, clean energy, and climate resilience through strategic partnerships, local capacity building, and innovative financing.</p>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <span class="dest-overview__eyebrow">SDG ALIGNMENT</span>
+            <div class="sdg-strip">
+                @foreach (var sdg in Model.SdgGoals)
+                {
+                    <span class="sdg-badge"><span class="sdg-badge__num">@sdg.Number</span>@sdg.Label</span>
+                }
+            </div>
+        </div>
+    </div>
+    <aside class="glance-panel" aria-label="At a glance">
+        <span class="glance-panel__title">At a glance</span>
+        <div class="glance-row"><span class="glance-row__key">Mandate</span><span class="glance-row__value">Non-profit arm of Optimum Earth Limited</span></div>
+        <div class="glance-row"><span class="glance-row__key">Governance</span><span class="glance-row__value">Advisory Board-led</span></div>
+        <div class="glance-row"><span class="glance-row__key">Pillars</span><span class="glance-row__value">Access &middot; Resilience &middot; Impact</span></div>
+        <div class="glance-row"><span class="glance-row__key">Geographic focus</span><span class="glance-row__value">Uganda &middot; Zambia</span></div>
+    </aside>
+</section>
+
+<section class="dest-section dest-section--tint" id="pillars" aria-labelledby="pillars-heading">
+    <div class="dest-section__head">
+        <h2 id="pillars-heading">Our Pillars</h2>
+    </div>
+    <div class="plain-card-grid">
+        @foreach (var pillar in Model.Pillars)
+        {
+            <article class="pillar-card">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                    <span class="pillar-card__index">@pillar.Title.ToUpperInvariant()</span>
+                    <span class="sdg-badge sdg-badge--sm">@pillar.SdgLabel</span>
+                </div>
+                <h3 class="pillar-card__title">@pillar.Title</h3>
+                <p class="pillar-card__desc">@pillar.Description</p>
+                <ul class="pillar-card__tags">
+                    @foreach (var item in pillar.Items)
+                    {
+                        <li>@item</li>
+                    }
+                </ul>
+            </article>
+        }
+    </div>
+    <div class="tag-strip">
+        @foreach (var area in Model.FocusAreas)
+        {
+            <span class="filter-chip">@area</span>
+        }
+    </div>
+</section>
+
+<section class="dest-section" id="how-we-work" aria-labelledby="how-we-work-heading">
+    <div class="dest-section__head">
+        <h2 id="how-we-work-heading">How We Work</h2>
+    </div>
+    <div class="plain-card-grid">
+        @foreach (var principle in Model.WorkPrinciples)
+        {
+            <article class="service-card">
+                <h3 class="service-card__title">@principle.Title</h3>
+                <p class="service-card__desc">@principle.Description</p>
+            </article>
+        }
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:10px; max-width:760px;">
+        <span class="dest-overview__eyebrow">GOVERNANCE &amp; STRUCTURE</span>
+        <p class="dest-overview__body">OEF is governed by an Advisory Board providing strategic oversight and accountability, with a small, lean team driving day-to-day delivery.</p>
+    </div>
+
+    <div class="gov-flow" aria-label="Governance structure. The Advisory Board leads the Team Lead, who oversees four tracks — Access, Resilience, Impact, and Partnerships and Strategy — each headed by one role: Innovation and Knowledge Lead, Programs and Community Lead, Environment and Sustainability, and Admin and Operations, respectively.">
+        <div class="gov-flow__row">
+            <div class="gov-flow__node">
+                <span class="gov-flow__node-title">Advisory Board</span>
+                <span class="gov-flow__node-desc">Strategic oversight &amp; accountability</span>
+            </div>
+        </div>
+
+        <div class="gov-flow__stem" aria-hidden="true"></div>
+
+        <div class="gov-flow__row">
+            <div class="gov-flow__node">
+                <span class="gov-flow__node-title">Team Lead</span>
+                <span class="gov-flow__node-desc">Day-to-day delivery</span>
+            </div>
+        </div>
+
+        <div class="gov-flow__branch" aria-hidden="true">
+            <svg viewBox="0 0 100 44" preserveAspectRatio="none">
+                <path d="M50 0 V18 M12.5 18 H87.5 M12.5 18 V44 M37.5 18 V44 M62.5 18 V44 M87.5 18 V44" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke" />
+            </svg>
+        </div>
+        <div class="gov-flow__stem gov-flow__stem--mobile" aria-hidden="true"></div>
+
+        <div class="gov-flow__branches">
+            <div class="gov-flow__node gov-flow__node--sm">
+                <span class="gov-flow__node-title">Access</span>
+            </div>
+            <span class="gov-flow__connector" aria-hidden="true"></span>
+            <div class="gov-flow__node gov-flow__node--sm gov-flow__node--leaf">
+                <span class="gov-flow__node-title">Innovation &amp; Knowledge Lead</span>
+            </div>
+
+            <div class="gov-flow__node gov-flow__node--sm">
+                <span class="gov-flow__node-title">Resilience</span>
+            </div>
+            <span class="gov-flow__connector" aria-hidden="true"></span>
+            <div class="gov-flow__node gov-flow__node--sm gov-flow__node--leaf">
+                <span class="gov-flow__node-title">Programs &amp; Community Lead</span>
+            </div>
+
+            <div class="gov-flow__node gov-flow__node--sm">
+                <span class="gov-flow__node-title">Impact</span>
+            </div>
+            <span class="gov-flow__connector" aria-hidden="true"></span>
+            <div class="gov-flow__node gov-flow__node--sm gov-flow__node--leaf">
+                <span class="gov-flow__node-title">Environment &amp; Sustainability</span>
+            </div>
+
+            <div class="gov-flow__node gov-flow__node--sm">
+                <span class="gov-flow__node-title">Partnerships &amp; Strategy</span>
+            </div>
+            <span class="gov-flow__connector" aria-hidden="true"></span>
+            <div class="gov-flow__node gov-flow__node--sm gov-flow__node--leaf">
+                <span class="gov-flow__node-title">Admin &amp; Operations</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="dest-section dest-section--tint" id="stories" aria-labelledby="stories-heading">
+    <div class="dest-section__head">
+        <h2 id="stories-heading">Stories &amp; Impact</h2>
+        <span class="section-note">Read our stories &middot; Explore our impact</span>
+    </div>
+    <p class="dest-overview__body" style="max-width:760px;">OEF's story is best told through the people and partners who shape it. We capture our stories and impact through three lenses &mdash; Communities, Partnerships and Learning &mdash; each one gathering real voices, projects and evidence as our work takes root and grows.</p>
+
+    <div class="card-grid">
+        @foreach (var tile in Model.StoryTiles)
+        {
+            <button type="button" class="story-tile" data-story-trigger="@tile.Key" aria-haspopup="dialog">
+                <div class="project-card__media img-slot" role="img" aria-label="@tile.ImageLabel"></div>
+                <div class="project-card__body">
+                    <h3 class="project-card__title">@tile.Title</h3>
+                    <p class="project-card__meta">@tile.Summary</p>
+                </div>
+            </button>
+        }
+    </div>
+
+    @foreach (var tile in Model.StoryTiles)
+    {
+        <dialog class="story-modal" id="story-@tile.Key" aria-labelledby="story-@(tile.Key)-title">
+            <div class="story-modal__panel">
+                <button type="button" class="story-modal__close" data-story-close aria-label="Close">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+                </button>
+                <span class="dest-overview__eyebrow">@tile.Title.ToUpperInvariant()</span>
+                <h3 id="story-@(tile.Key)-title" class="story-modal__title">@tile.Title</h3>
+                <p class="story-modal__body">@tile.ModalBody</p>
+            </div>
+        </dialog>
+    }
+</section>
+
+<section class="dest-cta" aria-labelledby="cta-heading" id="connect">
+    <div>
+        <h2 class="dest-cta__title" id="cta-heading">Connect With Us</h2>
+        <p class="dest-cta__body">Partner, fund or collaborate. Tell us which and we will route your enquiry to the right programme lead &mdash; full contact details and social links are in the footer below.</p>
+    </div>
+    <div>
+        @if (Model.Submitted)
+        {
+            <p class="form-success" role="status">Thank you - your enquiry is in. Our team will be in touch shortly.</p>
+        }
+        else
+        {
+            <form class="mini-form" method="post" asp-page-handler="Quick">
+                <div asp-validation-summary="ModelOnly" class="visually-hidden" role="alert"></div>
+                <input type="hidden" asp-for="Quick.Destination" />
+                <div class="mini-form__row">
+                    <div>
+                        <label class="visually-hidden" asp-for="Quick.FullName">Full name</label>
+                        <input asp-for="Quick.FullName" placeholder="Full name" autocomplete="name" />
+                        <span asp-validation-for="Quick.FullName" class="field-error"></span>
+                    </div>
+                    <div>
+                        <label class="visually-hidden" asp-for="Quick.Email">Email</label>
+                        <input asp-for="Quick.Email" type="email" placeholder="Email" autocomplete="email" />
+                        <span asp-validation-for="Quick.Email" class="field-error"></span>
+                    </div>
+                </div>
+                <div>
+                    <label class="visually-hidden" asp-for="Quick.Service">How would you like to engage?</label>
+                    <select asp-for="Quick.Service">
+                        <option value="">How would you like to engage?</option>
+                        @foreach (var option in OptimumEarth.Web.Pages.FoundationModel.EngagementOptions)
+                        {
+                            <option value="@option">@option</option>
+                        }
+                    </select>
+                    <span asp-validation-for="Quick.Service" class="field-error"></span>
+                </div>
+                <button type="submit" class="mini-form__submit">Send enquiry</button>
+            </form>
+        }
+    </div>
+</section>
