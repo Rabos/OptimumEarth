@@ -96,7 +96,7 @@
     <div class="plain-card-grid">
         @foreach (var principle in Model.WorkPrinciples)
         {
-            <article class="service-card">
+            <article class="service-card service-card__ct @principle.Slug">
                 <h3 class="service-card__title">@principle.Title</h3>
                 <p class="service-card__desc">@principle.Description</p>
             </article>

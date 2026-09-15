@@ -52,12 +52,12 @@ public class FoundationModel : PageModel
 
     public List<WorkPrinciple> WorkPrinciples { get; } = new()
     {
-        new("Community-led", "We start with the lived realities, priorities and capabilities of the communities and local actors we work with, not with pre-set solutions."),
-        new("Evidence-informed", "We draw on evidence, local knowledge and continuous learning to shape our decisions and improve our approach."),
-        new("Partnership-driven", "We bring together communities, philanthropy, public institutions, private capital and technical actors around a shared goal."),
-        new("Practical and scalable", "We focus on solutions that work in real settings, and that we can adapt or expand responsibly as they prove out."),
-        new("Locally grounded", "We prioritise African leadership, local ownership and context-specific solutions in everything we do."),
-        new("Learning-oriented", "We document what works and what doesn't, so our learning contributes to wider practice across the region."),
+        new("Community-led", "We start with the lived realities, priorities and capabilities of the communities and local actors we work with, not with pre-set solutions.", "community-led"),
+        new("Evidence-informed", "We draw on evidence, local knowledge and continuous learning to shape our decisions and improve our approach.", "evidence-informed"),
+        new("Partnership-driven", "We bring together communities, philanthropy, public institutions, private capital and technical actors around a shared goal.", "partnership-driven"),
+        new("Practical and scalable", "We focus on solutions that work in real settings, and that we can adapt or expand responsibly as they prove out.", "practical-and-scalable"),
+        new("Locally grounded", "We prioritise African leadership, local ownership and context-specific solutions in everything we do.", "locally-grounded"),
+        new("Learning-oriented", "We document what works and what doesn't, so our learning contributes to wider practice across the region.", "learning-oriented"),
     };
 
     public List<StoryTile> StoryTiles { get; } = new()

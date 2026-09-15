@@ -1445,6 +1445,93 @@ img {
     color: var(--grey);
 }
 
+.service-card__ct {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    color: var(--green);
+    
+
+&::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transform: scale(1);
+    transition: transform 0.7s ease;
+    z-index: -2;
+}
+
+&::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(242, 246, 238, 0.4);
+    transition: background 0.4s ease;
+    z-index: -1;
+    pointer-events: none;
+}
+
+&.community-led::before {
+    background-image: url('../img/optimum-earth-images/community-led.jpg');
+}
+
+&.evidence-informed::before {
+    background-image: url('../img/optimum-earth-images/heroslide3.jpg');
+}
+
+&.partnership-driven::before {
+    background-image: url('../img/optimum-earth-images/partnership-driven.jpg');
+}
+
+&.learning-oriented::before {
+    background-image: url('../img/optimum-earth-images/learning-oriented.jpg');
+}
+
+.service-card__title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% - 52px);
+    text-align: center;
+    transition: top 0.45s ease, left 0.45s ease, transform 0.45s ease, text-align 0.45s ease;
+    z-index: 2;
+}
+
+.service-card__desc {
+    opacity: 0;
+    visibility: hidden;
+    padding-top: 30px;
+    transition: opacity 0.35s ease 0.1s, visibility 0.35s ease;
+    z-index: 2;
+}
+
+&:hover::before {
+    transform: scale(1.08);
+}
+
+&:hover::after {
+    background: rgba(242, 246, 238, 0.75);
+}
+
+&:hover .service-card__title {
+    top: 26px;
+    left: 26px;
+    transform: translate(0, 0);
+    width: calc(100% - 52px);
+    text-align: left;
+}
+
+&:hover .service-card__desc {
+    opacity: 1;
+    visibility: visible;
+}
+
+}
+
 .pillar-card {
     background: #fff;
     border: 1.5px solid var(--green);
