@@ -1479,7 +1479,7 @@ img {
 }
 
 &.evidence-informed::before {
-    background-image: url('../img/optimum-earth-images/heroslide3.jpg');
+    background-image: url('../img/optimum-earth-images/evidence-informed.jpg');
 }
 
 &.partnership-driven::before {
@@ -1488,6 +1488,14 @@ img {
 
 &.learning-oriented::before {
     background-image: url('../img/optimum-earth-images/learning-oriented.jpg');
+}
+
+&.locally-grounded::before {
+    background-image: url('../img/optimum-earth-images/locally-grounded.jpg');
+}
+
+&.practical-and-scalable::before {
+    background-image: url('../img/optimum-earth-images/practical-and-scalable.jpg');
 }
 
 .service-card__title {
