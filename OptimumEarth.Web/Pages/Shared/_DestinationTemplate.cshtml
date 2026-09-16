@@ -69,8 +69,7 @@
     <div class="card-grid">
         @foreach (var card in Model.SectionTwoCards)
         {
-            <article class="project-card">
-                <div class="project-card__media img-slot" role="img" aria-label="@card.ImageLabel"></div>
+            <article class="project-card" style="background-image: linear-gradient(135deg, rgba(27, 42, 68, 0.6) 0%, rgba(27, 42, 68, 0.4) 100%), url('@card.ImagePath');">
                 <div class="project-card__body">
                     <span class="project-card__tag">@card.Tag</span>
                     <h3 class="project-card__title">@card.Title</h3>

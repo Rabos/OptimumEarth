@@ -53,9 +53,9 @@ public class UgandaModel : PageModel
         SectionTwoLinkHref = "/projects",
         SectionTwoCards = new()
         {
-            new("Project photo", "WATER SUPPLY · 2020", "Uganda Production Wells Survey", "National Water and Sewerage Corporation · 13 production wells across multiple districts"),
-            new("Project photo", "GROUNDWATER · 2022", "Kingfisher Monitoring Wells", "CNOOC · Monitoring well design and installation, Albertine region"),
-            new("Project photo", "ENVIRONMENT · 2023", "Pivot Irrigation ESIA Initiative", "NASECO · Environmental and social impact assessment"),
+            new("Project photo", "WATER SUPPLY · 2020", "Uganda Production Wells Survey", "National Water and Sewerage Corporation · 13 production wells across multiple districts", "", "", "/img/optimum-earth-images/project1.jpg"),
+            new("Project photo", "GROUNDWATER · 2022", "Kingfisher Monitoring Wells", "CNOOC · Monitoring well design and installation, Albertine region", "", "", "/img/optimum-earth-images/project2.jpg"),
+            new("Project photo", "ENVIRONMENT · 2023", "Pivot Irrigation ESIA Initiative", "NASECO · Environmental and social impact assessment", "", "", "/img/optimum-earth-images/project3.jpg"),
         },
         CtaTitle = "Work with our Uganda team",
         CtaBody = "Roston House, Plot 56/57, P.O Box 200032, Kampala · +256 784 080551 · uganda@optimum-earth.com",
