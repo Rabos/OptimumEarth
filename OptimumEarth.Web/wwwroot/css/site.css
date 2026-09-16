@@ -2067,20 +2067,57 @@ img {
 .pillar-card__tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
     margin-top: 4px;
     padding: 0;
 }
 
-    .pillar-card__tags li {
-        list-style: none;
-        padding: 5px 10px;
-        background: var(--green-wash);
-        color: var(--green-ink);
-        border-radius: var(--radius);
-        font-size: 12px;
-        font-weight: 600;
-    }
+.pillar-tag {
+    position: relative;
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    max-width: 32px;
+    margin-left: -12px;
+    border-radius: 16px;
+    border: 2px solid var(--white);
+    background: var(--green-wash);
+    color: var(--green-ink);
+    font-size: 12px;
+    font-weight: 600;
+    overflow: hidden;
+    white-space: nowrap;
+    cursor: default;
+    transition: max-width .35s ease, background-color .2s, color .2s;
+}
+
+.pillar-tag:first-child {
+    margin-left: 0;
+}
+
+.pillar-tag:hover,
+.pillar-tag:focus-visible {
+    max-width: 100%;
+    z-index: 5;
+    background: var(--green);
+    color: var(--white);
+    outline: none;
+}
+
+.pillar-tag__initial {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+}
+
+.pillar-tag__rest {
+    padding-right: 12px;
+    white-space: nowrap;
+}
 
 .tag-strip {
     display: flex;
