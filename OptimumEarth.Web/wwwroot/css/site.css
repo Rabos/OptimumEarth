@@ -1597,7 +1597,7 @@ img {
 
 .sdg-leaf__divider {
     flex-shrink: 0;
-    align-self: stretch;
+    height: 60%;
     width: 1px;
     background: var(--green-wash-border);
 }
