@@ -59,11 +59,29 @@
             @foreach (var sdg in Model.SdgGoals)
             {
                 <div class="sdg-leaf">
-                    <svg class="sdg-leaf__shape" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-                        <path d="M74 23 A42 42 0 1 0 74 77 L94 50 Z" />
+                    <svg class="sdg-leaf__shape" viewBox="0 0 32 32" preserveAspectRatio="none" aria-hidden="true">
+                        <path d="M16 2 C16 2 4 15 4 22 C4 27.523 9.477 30 16 30 C22.523 30 28 27.523 28 22 C28 15 16 2 16 2 Z" transform="rotate(90 16 16)" />
                     </svg>
                     <div class="sdg-leaf__content">
-                        <span class="sdg-leaf__num">@sdg.Number</span>
+                        <div class="sdg-leaf__icon-wrap">
+                            @if (sdg.Number == "06")
+                            {
+                                <svg class="sdg-leaf__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3C12 3 5 11.2 5 15.5 5 19.09 8.13 21 12 21S19 19.09 19 15.5C19 11.2 12 3 12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" /></svg>
+                            }
+                            else if (sdg.Number == "07")
+                            {
+                                <svg class="sdg-leaf__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" /></svg>
+                            }
+                            else if (sdg.Number == "13")
+                            {
+                                <svg class="sdg-leaf__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 18h9.5a3.5 3.5 0 0 0 .5-6.96A5 5 0 0 0 7.28 9.1 4 4 0 0 0 7 18Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" /></svg>
+                            }
+                            else
+                            {
+                                <svg class="sdg-leaf__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="8" width="11" height="8" rx="4" stroke="currentColor" stroke-width="1.6" /><rect x="10" y="8" width="11" height="8" rx="4" stroke="currentColor" stroke-width="1.6" /></svg>
+                            }
+                            <span class="sdg-leaf__num">@sdg.Number</span>
+                        </div>
                         <span class="sdg-leaf__divider" aria-hidden="true"></span>
                         <span class="sdg-leaf__title">@sdg.Label</span>
                     </div>
