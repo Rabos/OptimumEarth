@@ -1823,8 +1823,7 @@ img {
     background: #fff;
     border: 1.5px solid var(--green);
     border-radius: 90px 90px 90px 20px;
-    padding: 28px;
-    padding-bottom: 46px;
+    padding: 38px 36px 46px;
     display: flex;
     flex-direction: column;
     gap: 10px;
