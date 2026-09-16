@@ -1460,6 +1460,75 @@ img {
     font-size: 18px;
 }
 
+.vm-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.vm-card {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding: 28px 32px;
+}
+
+.vm-card--vision {
+    background: var(--green-wash);
+    color: var(--green-ink);
+}
+
+.vm-card--mission {
+    background: var(--green-deep);
+    color: var(--white);
+}
+
+.vm-card__head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vm-card__icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+}
+
+.vm-card__label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.vm-card__label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: currentColor;
+    opacity: .4;
+}
+
+.vm-card__text {
+    font-family: 'Newsreader', serif;
+    font-size: 20px;
+    line-height: 1.45;
+    font-weight: 400;
+}
+
+@media (max-width: 640px) {
+    .vm-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .glance-panel {
     display: flex;
     flex-direction: column;
