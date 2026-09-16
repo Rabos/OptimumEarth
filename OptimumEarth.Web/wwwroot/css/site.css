@@ -1530,6 +1530,73 @@ img {
     }
 }
 
+.dest-overview__full {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sdg-fan {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+}
+
+.sdg-fan__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 104px;
+    text-align: center;
+}
+
+.sdg-fan__shape {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: var(--green-wash);
+    border: 1px solid var(--green-wash-border);
+    overflow: hidden;
+}
+
+.sdg-fan__shape::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: -8%;
+    width: 62%;
+    height: 62%;
+    background: var(--white);
+    clip-path: polygon(0% 50%, 100% 4%, 100% 96%);
+    transform: translateY(-50%);
+}
+
+.sdg-fan__num {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--green);
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.sdg-fan__label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy-ink);
+}
+
 .glance-panel {
     display: flex;
     flex-direction: column;

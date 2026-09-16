@@ -29,16 +29,6 @@
         <span class="dest-overview__eyebrow" id="about-heading">ABOUT OEF</span>
         <p class="dest-overview__quote dest-overview__quote--intro">Optimum Earth Foundation (OEF) is a corporate foundation; a not-for-profit initiative focused on practical solutions that expand access to clean water, clean energy and climate solutions while strengthening community resilience. OEF connects community priorities with the partnerships, knowledge and resources needed to turn practical ideas into lasting impact.</p>
         <p class="dest-overview__body dest-overview__body--intro">OEF was established as the not-for-profit arm of Optimum Earth Limited, building on the company's experience in energy, water and environmental infrastructure across East and Southern Africa. The Foundation operates as a distinct not-for-profit entity with its own governance, strategy and financing.</p>
-
-        <div style="display:flex; flex-direction:column; gap:10px;">
-            <span class="dest-overview__eyebrow">SDG ALIGNMENT</span>
-            <div class="sdg-strip">
-                @foreach (var sdg in Model.SdgGoals)
-                {
-                    <span class="sdg-badge"><span class="sdg-badge__num">@sdg.Number</span>@sdg.Label</span>
-                }
-            </div>
-        </div>
     </div>
     <aside class="glance-panel" aria-label="At a glance">
         <span class="glance-panel__title">At a glance</span>
@@ -61,6 +51,20 @@
                 <span class="vm-card__label">Our Mission</span>
             </div>
             <p class="vm-card__text">To catalyse and scale inclusive, community-driven solutions that expand access to water, clean energy, and climate resilience through strategic partnerships, local capacity building, and innovative financing.</p>
+        </div>
+    </div>
+    <div class="dest-overview__full">
+        <span class="dest-overview__eyebrow">SDG ALIGNMENT</span>
+        <div class="sdg-fan">
+            @foreach (var sdg in Model.SdgGoals)
+            {
+                <div class="sdg-fan__item">
+                    <div class="sdg-fan__shape">
+                        <span class="sdg-fan__num">@sdg.Number</span>
+                    </div>
+                    <span class="sdg-fan__label">@sdg.Label</span>
+                </div>
+            }
         </div>
     </div>
 </section>
