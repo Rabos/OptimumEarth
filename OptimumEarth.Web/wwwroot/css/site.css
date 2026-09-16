@@ -1537,66 +1537,64 @@ img {
     gap: 20px;
 }
 
-.sdg-fan {
+.sdg-leaves {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    gap: 28px;
 }
 
-.sdg-fan__item {
+.sdg-leaf {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    width: 96px;
-    text-align: center;
+    width: 300px;
+    height: 168px;
 }
 
-.sdg-fan__item + .sdg-fan__item {
-    margin-left: -28px;
-}
-
-.sdg-fan__shape {
-    position: relative;
-    width: 96px;
-    height: 96px;
-}
-
-.sdg-fan__shape-svg {
+.sdg-leaf__shape {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
-    overflow: visible;
 }
 
-.sdg-fan__shape-svg path {
+.sdg-leaf__shape path {
     fill: var(--green-wash);
     stroke: var(--green-wash-border);
     stroke-width: 1px;
 }
 
-.sdg-fan__num {
-    position: absolute;
-    top: -6px;
-    left: -6px;
+.sdg-leaf__content {
+    position: relative;
     z-index: 1;
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: var(--green);
-    color: var(--white);
-    font-size: 13px;
-    font-weight: 700;
+    gap: 16px;
+    height: 100%;
+    padding: 0 120px 0 30px;
 }
 
-.sdg-fan__label {
-    max-width: 70px;
-    font-size: 12px;
-    line-height: 1.3;
+.sdg-leaf__num {
+    flex-shrink: 0;
+    font-family: 'Newsreader', serif;
+    font-size: 44px;
     font-weight: 600;
+    line-height: 1;
+    color: var(--green);
+    opacity: .55;
+}
+
+.sdg-leaf__divider {
+    flex-shrink: 0;
+    align-self: stretch;
+    width: 1px;
+    background: var(--green-wash-border);
+}
+
+.sdg-leaf__title {
+    font-family: 'Newsreader', serif;
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.3;
     color: var(--navy-ink);
 }
 
