@@ -1549,34 +1549,30 @@ img {
     flex-direction: column;
     align-items: center;
     gap: 12px;
-    width: 90px;
+    width: 96px;
     text-align: center;
 }
 
 .sdg-fan__item + .sdg-fan__item {
-    margin-left: -22px;
+    margin-left: -28px;
 }
 
 .sdg-fan__shape {
     position: relative;
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    background: var(--green-wash);
-    border: 1px solid var(--green-wash-border);
-    overflow: hidden;
+    width: 96px;
+    height: 96px;
 }
 
-.sdg-fan__shape::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    right: -8%;
-    width: 70%;
-    height: 70%;
-    background: var(--white);
-    clip-path: polygon(0% 50%, 100% 4%, 100% 96%);
-    transform: translateY(-50%);
+.sdg-fan__shape-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.sdg-fan__shape-svg path {
+    fill: var(--green-wash);
+    stroke: var(--green-wash-border);
+    stroke-width: 1px;
 }
 
 .sdg-fan__num {
