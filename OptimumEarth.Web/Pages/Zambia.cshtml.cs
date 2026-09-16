@@ -51,9 +51,9 @@ public class ZambiaModel : PageModel
         SectionTwoLinkHref = "/projects",
         SectionTwoCards = new()
         {
-            new("Project photo", "ZAMBIA", "Project to be confirmed", "Case study to be published as evidence becomes available"),
-            new("Project photo", "ZAMBIA", "Project to be confirmed", "Case study to be published as evidence becomes available"),
-            new("Project photo", "REGIONAL", "Regional experience applies here", "Delivery record from Uganda and the wider region"),
+            new("Project photo", "ZAMBIA", "Project to be confirmed", "Case study to be published as evidence becomes available", "", "", "/img/optimum-earth-images/project4.jpg"),
+            new("Project photo", "ZAMBIA", "Project to be confirmed", "Case study to be published as evidence becomes available", "", "", "/img/optimum-earth-images/project5.jpg"),
+            new("Project photo", "REGIONAL", "Regional experience applies here", "Delivery record from Uganda and the wider region", "", "", "/img/optimum-earth-images/project6.jpg"),
         },
         SectionTwoNote = "Zambia case studies will be published as projects are delivered and client permissions are confirmed.",
         CtaTitle = "Work with our Zambia team",

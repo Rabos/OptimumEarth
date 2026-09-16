@@ -18,12 +18,16 @@ public class ProjectsModel : PageModel
 
     private static readonly List<ProjectCard> AllProjects = new()
     {
-        new("Project photo", "UGANDA · 2020", "Uganda Production Wells Survey", "NWSC · Water supply solutions", "uganda", "water"),
-        new("Project photo", "UGANDA · 2022", "Kingfisher Monitoring Wells", "CNOOC · Groundwater monitoring", "uganda", "groundwater"),
-        new("Project photo", "UGANDA · 2023", "Pivot Irrigation ESIA Initiative", "NASECO · Environmental assessment", "uganda", "environment"),
-        new("Project photo", "UGANDA", "Hima Quarry Water Management", "Hima Cement · Groundwater monitoring", "uganda", "groundwater"),
-        new("Project photo", "UGANDA", "Makuutu Hydrogeology Programme", "Geothermal consulting · GIS & mapping", "uganda", "gis"),
-        new("Project photo", "UGANDA", "Quarry Site ERT Survey", "2D ERT survey · 3 quarry site assessments", "uganda", "water"),
+        new("Project photo", "UGANDA · 2020", "Uganda Production Wells Survey", "Client : National Water and Sewerage Cooperation", "uganda", "water", "/img/optimum-earth-images/recentwork1.jpg"),
+        new("Project photo", "UGANDA · 2022", "Kingfisher Monitoring Wells", "Client : CNOOC", "uganda", "groundwater", "/img/optimum-earth-images/recentwork2.jpg"),
+        new("Project photo", "UGANDA · 2023", "Pivot Irrigation ESIA Initiative", "Client : NASECO", "uganda", "environment", "/img/optimum-earth-images/recentwork3.jpg"),
+        new("Project photo", "UGANDA", "Hima Quarry Water Management", "Client : Hima Cement", "uganda", "groundwater", "/img/optimum-earth-images/hima-quarry.jpg"),
+        new("Project photo", "UGANDA", "Makuutu Hydrogeology Programme", "Client : Geothermal consulting · GIS & mapping", "uganda", "gis", "/img/optimum-earth-images/makuttu.jpg"),
+        new("Project photo", "UGANDA", "Quarry Site ERT Survey", "Client : Agaba South West Services", "uganda", "gis", "/img/optimum-earth-images/servicepanel4.jpg"),
+        new("Project photo", "UGANDA", "Uganda Borehole Testing Initiative", "Client: EPM Engineering Consults(U) Ltd", "uganda", "water", "/img/optimum-earth-images/borehole.jpg"),
+        new("Project photo", "UGANDA · 2021/2022", "Enhancing Climate Resilient WASH Initiatives", "Client: UNICEF / SGI – Studio Galli Ingegneria", "uganda", "groundwater", "/img/optimum-earth-images/enhancing-climate.jpg"),
+        new("Project photo", "UGANDA · 2021/2022", "Pivot Irrigation Development Assessment", "Client: NASECO", "uganda", "gis", "/img/optimum-earth-images/pivot-irrigation.jpg"),
+        new("Project photo", "UGANDA", "Mbale Industrial Infrastructure Consultancy", "Client: Tangshan Mbale Industrial Park", "uganda", "water", "/img/optimum-earth-images/waterweb.jpg"),
     };
 
     public string ActiveFilter { get; private set; } = "all";
