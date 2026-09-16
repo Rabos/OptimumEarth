@@ -1540,22 +1540,27 @@ img {
 .sdg-fan {
     display: flex;
     flex-wrap: wrap;
-    gap: 32px;
+    justify-content: center;
 }
 
 .sdg-fan__item {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 12px;
-    width: 104px;
+    width: 90px;
     text-align: center;
+}
+
+.sdg-fan__item + .sdg-fan__item {
+    margin-left: -22px;
 }
 
 .sdg-fan__shape {
     position: relative;
-    width: 96px;
-    height: 96px;
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
     background: var(--green-wash);
     border: 1px solid var(--green-wash-border);
@@ -1567,8 +1572,8 @@ img {
     position: absolute;
     top: 50%;
     right: -8%;
-    width: 62%;
-    height: 62%;
+    width: 70%;
+    height: 70%;
     background: var(--white);
     clip-path: polygon(0% 50%, 100% 4%, 100% 96%);
     transform: translateY(-50%);
@@ -1592,7 +1597,9 @@ img {
 }
 
 .sdg-fan__label {
-    font-size: 13px;
+    max-width: 70px;
+    font-size: 12px;
+    line-height: 1.3;
     font-weight: 600;
     color: var(--navy-ink);
 }
