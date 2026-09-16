@@ -1822,7 +1822,7 @@ img {
     position: relative;
     background: #fff;
     border: 1.5px solid var(--green);
-    border-radius: 20px 90px 90px 90px;
+    border-radius: 90px 90px 90px 20px;
     padding: 28px;
     padding-bottom: 46px;
     display: flex;
