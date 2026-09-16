@@ -769,6 +769,17 @@ img {
     align-items: start;
 }
 
+.who-we-are__left {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+}
+
+.who-we-are__right {
+    display: flex;
+    flex-direction: column;
+}
+
 .who-we-are__statement {
     font-size: clamp(1.75rem, 1.1rem + 2vw, 2.625rem);
     line-height: 1.14;
@@ -783,6 +794,101 @@ img {
         color: var(--blue);
         font-style: normal;
     }
+
+.who-we-are__mission-vision {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding: 36px;
+    background: linear-gradient(135deg, #F8FAFB 0%, #F4F6F8 100%);
+    border-radius: 8px;
+    border-left: 4px solid var(--blue);
+}
+
+.mission-vision-item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mission-vision-item__title {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--navy-ink);
+    letter-spacing: -0.01em;
+    margin: 0;
+}
+
+.mission-vision-item__text {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--grey-900);
+    margin: 0;
+}
+
+.values-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 56px var(--gutter);
+    background: #fff;
+}
+
+.values-section__title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy-ink);
+    letter-spacing: -0.01em;
+    margin: 0;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--blue-tint);
+}
+
+.values-section__intro {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--grey-600);
+    margin: 0;
+    padding: 16px 0;
+}
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+}
+
+.value-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 6px;
+    border: 1px solid var(--grey-200);
+    transition: all .3s ease;
+}
+
+    .value-item:hover {
+        border-color: var(--blue);
+        box-shadow: 0 8px 24px rgba(33, 66, 146, .1);
+        transform: translateY(-2px);
+    }
+
+.value-item__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--blue);
+    letter-spacing: -0.01em;
+    margin: 0;
+}
+
+.value-item__description {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--grey-600);
+    margin: 0;
+}
 
 .who-we-are__support {
     display: flex;
@@ -2289,6 +2395,230 @@ img {
         background: var(--blue);
         border-color: var(--blue);
         color: #fff;
+    }
+
+/* ---------- Responsive design: who-we-are ---------- */
+
+@media (max-width: 1024px) {
+    .who-we-are__split {
+        grid-template-columns: 1fr;
+        gap: 48px;
+    }
+
+    .who-we-are__statement {
+        font-size: clamp(1.5rem, 0.8rem + 1.8vw, 2.25rem);
+    }
+
+    .who-we-are__mission-vision {
+        padding: 28px;
+        gap: 24px;
+    }
+
+    .mission-vision-item__title {
+        font-size: 17px;
+    }
+
+    .mission-vision-item__text {
+        font-size: 14px;
+    }
+
+    .values-section__title {
+        font-size: 20px;
+    }
+
+    .values-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+    }
+
+    .value-item {
+        padding: 16px;
+    }
+
+    .capability-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .who-we-are {
+        padding: 40px 24px 72px;
+        gap: 48px;
+    }
+
+    .who-we-are__left {
+        gap: 36px;
+    }
+
+    .who-we-are__statement {
+        font-size: clamp(1.25rem, 0.6rem + 1.5vw, 1.875rem);
+        line-height: 1.2;
+    }
+
+    .who-we-are__mission-vision {
+        padding: 20px;
+        gap: 20px;
+        border-left-width: 3px;
+    }
+
+    .mission-vision-item__title {
+        font-size: 16px;
+    }
+
+    .mission-vision-item__text {
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .values-section__title {
+        font-size: 18px;
+    }
+
+    .values-section__intro {
+        font-size: 13px;
+    }
+
+    .values-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .value-item {
+        padding: 14px;
+        gap: 8px;
+    }
+
+    .value-item__title {
+        font-size: 15px;
+    }
+
+    .value-item__description {
+        font-size: 13px;
+    }
+
+    .who-we-are__lede {
+        font-size: 15px;
+        line-height: 1.65;
+    }
+
+    .stat-pair {
+        gap: 30px;
+    }
+
+    .stat b {
+        font-size: 28px;
+    }
+
+    .capability-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .capability-cell {
+        padding: 16px 0 0;
+    }
+
+    .capability-cell__title {
+        font-size: 15px;
+    }
+
+    .capability-cell__desc {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .who-we-are {
+        padding: 32px 16px 56px;
+        gap: 36px;
+    }
+
+    .who-we-are__left {
+        gap: 28px;
+    }
+
+    .who-we-are__statement {
+        font-size: clamp(1.125rem, 0.5rem + 1.3vw, 1.5rem);
+        line-height: 1.25;
+    }
+
+    .who-we-are__mission-vision {
+        padding: 16px;
+        gap: 16px;
+    }
+
+    .mission-vision-item__title {
+        font-size: 15px;
+    }
+
+    .mission-vision-item__text {
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    .values-section__title {
+        font-size: 16px;
+    }
+
+    .values-section__intro {
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    .values-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .value-item {
+        padding: 12px;
+    }
+
+    .value-item__title {
+        font-size: 14px;
+    }
+
+    .value-item__description {
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    .who-we-are__lede {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .stat-pair {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .stat {
+        text-align: center;
+    }
+
+    .stat b {
+        font-size: 24px;
+    }
+
+    .capability-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .capability-cell__index {
+        font-size: 10px;
+    }
+
+    .capability-cell__title {
+        font-size: 14px;
+    }
+
+    .capability-cell__desc {
+        font-size: 11px;
+    }
+}
     }
 
     .role-chip input:focus-visible + label {
