@@ -1444,6 +1444,22 @@ img {
     max-width: 680px;
 }
 
+.dest-overview__quote--intro {
+    font-family: 'Archivo', system-ui, sans-serif;
+    font-size: 18px;
+    line-height: 1.7;
+    color: var(--grey);
+    font-weight: 400;
+}
+
+.theme-foundation .dest-overview__quote--intro {
+    color: var(--grey);
+}
+
+.dest-overview__body--intro {
+    font-size: 18px;
+}
+
 .glance-panel {
     display: flex;
     flex-direction: column;
