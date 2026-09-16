@@ -96,11 +96,12 @@
         <h2 id="pillars-heading">Our Pillars</h2>
     </div>
     <div class="plain-card-grid">
-        @foreach (var pillar in Model.Pillars)
+        @for (var i = 0; i < Model.Pillars.Count; i++)
         {
+            var pillar = Model.Pillars[i];
             <article class="pillar-card">
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
-                    <span class="pillar-card__index">@pillar.Title.ToUpperInvariant()</span>
+                    <span class="pillar-card__index">@((i + 1).ToString("00"))</span>
                     <span class="sdg-badge sdg-badge--sm">@pillar.SdgLabel</span>
                 </div>
                 <h3 class="pillar-card__title">@pillar.Title</h3>
