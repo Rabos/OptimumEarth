@@ -1826,6 +1826,7 @@ img {
     padding: 38px 36px 46px;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: 10px;
 }
 
