@@ -26,8 +26,8 @@ public class ProjectsModel : PageModel
         new("Project photo", "UGANDA", "Quarry Site ERT Survey", "Client : Agaba South West Services", "uganda", "gis", "/img/optimum-earth-images/servicepanel4.jpg"),
         new("Project photo", "UGANDA", "Uganda Borehole Testing Initiative", "Client: EPM Engineering Consults(U) Ltd", "uganda", "water", "/img/optimum-earth-images/borehole.jpg"),
         new("Project photo", "UGANDA · 2021/2022", "Enhancing Climate Resilient WASH Initiatives", "Client: UNICEF / SGI – Studio Galli Ingegneria", "uganda", "groundwater", "/img/optimum-earth-images/enhancing-climate.jpg"),
-        new("Project photo", "UGANDA · 2021/2022", "Pivot Irrigation Development Assessment", "Client: NASECO", "uganda", "gis", "/img/optimum-earth-images/enhancing-climate.jpg"),
-        new("Project photo", "UGANDA", "Mbale Industrial Infrastructure Consultancy", "Client: Tangshan Mbale Industrial Park", "uganda", "water", "/img/optimum-earth-images/pivot-irrigation.jpg"),
+        new("Project photo", "UGANDA · 2021/2022", "Pivot Irrigation Development Assessment", "Client: NASECO", "uganda", "gis", "/img/optimum-earth-images/pivot-irrigation.jpg"),
+        new("Project photo", "UGANDA", "Mbale Industrial Infrastructure Consultancy", "Client: Tangshan Mbale Industrial Park", "uganda", "water", "/img/optimum-earth-images/waterweb.jpg"),
     };
 
     public string ActiveFilter { get; private set; } = "all";
