@@ -1819,20 +1819,21 @@ img {
 }
 
 .pillar-card {
+    position: relative;
     background: #fff;
     border: 1.5px solid var(--green);
-    border-radius: var(--radius);
+    border-radius: 20px 90px 90px 90px;
     padding: 28px;
+    padding-bottom: 46px;
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.pillar-card__index {
-    font-size: 11.5px;
-    font-weight: 700;
-    letter-spacing: .18em;
-    color: var(--grey-400);
+.pillar-card__sdg {
+    position: absolute;
+    left: 20px;
+    bottom: -14px;
 }
 
 .pillar-card__title {
