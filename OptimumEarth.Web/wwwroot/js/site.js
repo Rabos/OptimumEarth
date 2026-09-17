@@ -119,24 +119,76 @@
     }
   }
 
-  // Foundation "Stories & Impact" tiles: each opens a native <dialog> with
-  // the fuller story text, closed via its own button, Esc (native to
-  // <dialog>) or a click on the backdrop.
+  // Foundation "Stories & Impact" tiles: each opens a native <dialog> holding
+  // that story's gallery. <dialog> gives focus trapping and Esc for free; this
+  // adds the close button, the backdrop click, and moving between images.
+  //
+  // A tile whose key has no gallery renders no dialog, so it stays inert rather
+  // than opening an empty frame.
   var storyTriggers = document.querySelectorAll("[data-story-trigger]");
   storyTriggers.forEach(function (trigger) {
     var dialog = document.getElementById("story-" + trigger.getAttribute("data-story-trigger"));
     if (!dialog) return;
 
-    trigger.addEventListener("click", function () { dialog.showModal(); });
+    var slides = Array.prototype.slice.call(dialog.querySelectorAll("[data-lightbox-slide]"));
+    var thumbs = Array.prototype.slice.call(dialog.querySelectorAll("[data-lightbox-thumb]"));
+    var caption = dialog.querySelector("[data-lightbox-caption]");
+    var position = dialog.querySelector("[data-lightbox-position]");
+    var current = 0;
+
+    var show = function (next) {
+      if (!slides.length) return;
+      // wraps both ways, so the arrows never dead-end on the first or last image
+      current = (next + slides.length) % slides.length;
+
+      slides.forEach(function (slide, i) {
+        slide.classList.toggle("is-current", i === current);
+      });
+      thumbs.forEach(function (thumb, i) {
+        thumb.classList.toggle("is-current", i === current);
+        thumb.setAttribute("aria-current", i === current ? "true" : "false");
+      });
+
+      var img = slides[current].querySelector("img");
+      if (caption && img) caption.textContent = img.getAttribute("alt") || "";
+      if (position) position.textContent = String(current + 1);
+    };
+
+    trigger.addEventListener("click", function () {
+      show(0);
+      dialog.showModal();
+    });
 
     var closeBtn = dialog.querySelector("[data-story-close]");
     if (closeBtn) {
       closeBtn.addEventListener("click", function () { dialog.close(); });
     }
 
+    // the panel fills the dialog, so a click that lands on the dialog itself is
+    // a click on the backdrop
     dialog.addEventListener("click", function (e) {
       if (e.target === dialog) dialog.close();
     });
+
+    var prev = dialog.querySelector("[data-lightbox-prev]");
+    var next = dialog.querySelector("[data-lightbox-next]");
+    if (prev) prev.addEventListener("click", function () { show(current - 1); });
+    if (next) next.addEventListener("click", function () { show(current + 1); });
+
+    thumbs.forEach(function (thumb, i) {
+      thumb.addEventListener("click", function () { show(i); });
+    });
+
+    dialog.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowLeft") { e.preventDefault(); show(current - 1); }
+      if (e.key === "ArrowRight") { e.preventDefault(); show(current + 1); }
+    });
+
+    // a single-image gallery has nothing to page through
+    if (slides.length < 2) {
+      if (prev) prev.hidden = true;
+      if (next) next.hidden = true;
+    }
   });
 
   // Back to top: appears once the page has scrolled past one viewport.

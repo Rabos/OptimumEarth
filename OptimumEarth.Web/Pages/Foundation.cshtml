@@ -208,12 +208,17 @@
     </div>
     <p class="dest-overview__body" style="max-width:760px;">OEF's story is best told through the people and partners who shape it. We capture our stories and impact through three lenses Communities, Partnerships and Learning each one gathering real voices, projects and evidence as our work takes root and grows.</p>
 
+    @{
+        // Communities is held back for now, so the list starts at index 1. The
+        // tiles and their galleries both come off this one list so the two
+        // cannot drift — previously the tile loop skipped it while the dialog
+        // loop did not, leaving a modal nothing could open.
+        var visibleStories = Model.StoryTiles.Skip(1).ToList();
+    }
+
     <div class="card-grid card-grid--stories">
-        @* NOTE: starts at 1, so StoryTiles[0] ("Communities") renders no tile even
-           though it still gets a dialog below. Preserved as-is for now. *@
-        @for (var i = 1; i < Model.StoryTiles.Count; i++)
+        @foreach (var tile in visibleStories)
         {
-            var tile = Model.StoryTiles[i];
             <button type="button" class="story-tile" data-story-trigger="@tile.Key" aria-haspopup="dialog">
                 <div class="story-tile__media img-slot" role="img" aria-label="@tile.ImageLabel" style="background-image: url('@tile.Cover')"></div>
                 <div class="story-tile__body">
@@ -232,16 +237,66 @@
         }
     </div>
 
-    @foreach (var tile in Model.StoryTiles)
+    @foreach (var tile in visibleStories)
     {
-        <dialog class="story-modal" id="story-@tile.Key" aria-labelledby="story-@(tile.Key)-title">
-            <div class="story-modal__panel">
-                <button type="button" class="story-modal__close" data-story-close aria-label="Close">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
-                </button>
-                <span class="dest-overview__eyebrow">@tile.Title.ToUpperInvariant()</span>
-                <h3 id="story-@(tile.Key)-title" class="story-modal__title">@tile.Title</h3>
-                <p class="story-modal__body">@tile.ModalBody</p>
+        var gallery = Model.Galleries.FirstOrDefault(g => g.Key == tile.Key);
+        @* No gallery for this key means nothing to show, so no dialog is emitted
+           and site.js leaves the tile inert rather than opening an empty frame. *@
+        if (gallery is null || gallery.StoryGalleryItems.Count == 0)
+        {
+            continue;
+        }
+
+        var items = gallery.StoryGalleryItems;
+
+        <dialog class="lightbox" id="story-@tile.Key" aria-labelledby="story-@(tile.Key)-title" data-lightbox>
+            <div class="lightbox__panel">
+                <header class="lightbox__head">
+                    <div>
+                        <span class="dest-overview__eyebrow">@tile.Title.ToUpperInvariant()</span>
+                        <h3 id="story-@(tile.Key)-title" class="lightbox__title">@tile.Title</h3>
+                    </div>
+                    <p class="lightbox__count"><span data-lightbox-position>1</span> / @items.Count</p>
+                    <button type="button" class="lightbox__close" data-story-close aria-label="Close gallery">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+                    </button>
+                </header>
+
+                <div class="lightbox__stage">
+                    <button type="button" class="lightbox__nav lightbox__nav--prev" data-lightbox-prev aria-label="Previous image">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 4L7 12l8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    </button>
+
+                    <div class="lightbox__frame">
+                        @for (var j = 0; j < items.Count; j++)
+                        {
+                            var item = items[j];
+                            <figure class="lightbox__slide @(j == 0 ? "is-current" : "")" data-lightbox-slide>
+                                @* lazy so a closed dialog costs nothing; these are still
+                                   the full-size originals, several megabytes each *@
+                                <img src="@item.ImageUrl" alt="@item.Title" loading="lazy" decoding="async" />
+                            </figure>
+                        }
+                    </div>
+
+                    <button type="button" class="lightbox__nav lightbox__nav--next" data-lightbox-next aria-label="Next image">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 4l8 8-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    </button>
+                </div>
+
+                <p class="lightbox__caption" data-lightbox-caption>@items[0].Title</p>
+
+                <ul class="lightbox__thumbs">
+                    @for (var j = 0; j < items.Count; j++)
+                    {
+                        var item = items[j];
+                        <li>
+                            <button type="button" class="lightbox__thumb @(j == 0 ? "is-current" : "")"
+                                    data-lightbox-thumb style="background-image: url('@item.ImageUrl')"
+                                    aria-label="Show @item.Title"></button>
+                        </li>
+                    }
+                </ul>
             </div>
         </dialog>
     }

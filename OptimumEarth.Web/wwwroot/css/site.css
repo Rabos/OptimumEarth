@@ -2587,34 +2587,65 @@ img {
     }
 }
 
-.story-modal {
+/* ---- Stories & Impact lightbox ---------------------------------------------
+   A native <dialog>, so focus trapping and Esc come for free; site.js adds the
+   close button, the backdrop click and moving between images. */
+.lightbox {
     border: 0;
-    border-radius: 12px;
+    border-radius: 14px;
     padding: 0;
-    max-width: 560px;
-    width: calc(100% - 48px);
-    box-shadow: 0 24px 60px rgba(15, 23, 42, .28);
+    width: min(1040px, calc(100vw - 48px));
+    max-width: none;
+    max-height: calc(100vh - 56px);
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 30px 80px rgba(15, 23, 42, .34);
 }
 
-    .story-modal::backdrop {
-        background: rgba(15, 23, 42, .55);
-        backdrop-filter: blur(2px);
+    .lightbox::backdrop {
+        background: rgba(12, 22, 8, .7);
+        backdrop-filter: blur(3px);
     }
 
-.story-modal__panel {
-    position: relative;
-    padding: 40px 36px 36px;
+.lightbox__panel {
     display: flex;
     flex-direction: column;
+    /* the dialog's own max-height is a cap, not a size; without this the panel
+       lays out at content height and the stage below cannot shrink into it */
+    max-height: calc(100vh - 56px);
+    padding: 24px 26px 22px;
     gap: 14px;
 }
 
-.story-modal__close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 34px;
-    height: 34px;
+.lightbox__head {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+}
+
+.lightbox__title {
+    font-family: 'Newsreader', serif;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--green-ink);
+    margin: 4px 0 0;
+}
+
+.lightbox__count {
+    margin: 0 0 0 auto;
+    align-self: center;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    color: var(--grey);
+    font-variant-numeric: tabular-nums;
+}
+
+.lightbox__close {
+    flex: none;
+    width: 36px;
+    height: 36px;
     padding: 0;
     border: 0;
     border-radius: 50%;
@@ -2624,38 +2655,193 @@ img {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    transition: background .25s ease, color .25s ease;
 }
 
-    .story-modal__close:hover, .story-modal__close:focus-visible {
+    .lightbox__close:hover,
+    .lightbox__close:focus-visible {
         background: var(--green-wash);
         color: var(--green-ink);
     }
 
-    .story-modal__close svg {
+    .lightbox__close svg {
         width: 18px;
         height: 18px;
     }
 
-.story-modal__title {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--green-ink);
-    letter-spacing: -0.02em;
+.lightbox__stage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    /* min-height:0 lets this flex child shrink below its content so tall
+       photographs stay inside the dialog instead of pushing the thumbnails out */
+    min-height: 0;
+    flex: 1 1 auto;
 }
 
-.story-modal__body {
-    font-size: 15.5px;
-    line-height: 1.7;
+/* a fixed box, because the slides are stacked absolutely to cross-fade and so
+   contribute no height of their own. It carries no background: the images have
+   mixed proportions, and a tinted box turns every mismatch into letterbox bands
+   instead of plain panel whitespace. */
+.lightbox__frame {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    height: min(62vh, 560px);
+}
+
+/* every slide is stacked in the same box and cross-faded, so the frame never
+   resizes between images of different proportions */
+.lightbox__slide {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .35s ease, visibility 0s linear .35s;
+}
+
+    .lightbox__slide.is-current {
+        opacity: 1;
+        visibility: visible;
+        transition: opacity .35s ease, visibility 0s;
+    }
+
+    /* the image sizes itself inside the frame rather than filling it, so it
+       keeps its own proportions and shows whole — a gallery should never crop */
+    .lightbox__slide img {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        display: block;
+        border-radius: 10px;
+    }
+
+.lightbox__nav {
+    flex: none;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border: 1px solid var(--grey-200);
+    border-radius: 50%;
+    background: #fff;
+    color: var(--green-ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background .25s ease, border-color .25s ease, color .25s ease;
+}
+
+    .lightbox__nav:hover,
+    .lightbox__nav:focus-visible {
+        background: var(--green-wash);
+        border-color: var(--green);
+        color: var(--green-deep);
+    }
+
+    .lightbox__nav svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .lightbox__nav[hidden] {
+        display: none;
+    }
+
+.lightbox__caption {
+    margin: 0;
+    /* matches the frame's inset so the caption lines up with the image, not
+       with the arrows either side of it */
+    padding: 0 54px;
+    font-size: 14.5px;
+    line-height: 1.55;
     color: var(--grey);
+    text-align: center;
+}
+
+.lightbox__thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.lightbox__thumb {
+    width: 74px;
+    height: 52px;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    background-color: var(--grey-100);
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    opacity: .58;
+    transition: opacity .25s ease, border-color .25s ease;
+}
+
+    .lightbox__thumb:hover,
+    .lightbox__thumb:focus-visible {
+        opacity: 1;
+    }
+
+    .lightbox__thumb.is-current {
+        opacity: 1;
+        border-color: var(--green);
+    }
+
+@media (max-width: 780px) {
+    .lightbox {
+        width: calc(100vw - 24px);
+    }
+
+    .lightbox__panel {
+        padding: 18px 16px 16px;
+    }
+
+    .lightbox__frame {
+        height: min(42vh, 300px);
+    }
+
+    /* the arrows would eat the width a phone needs for the image; the
+       thumbnails and a swipe-sized target stay, so nothing becomes unreachable */
+    .lightbox__nav {
+        width: 34px;
+        height: 34px;
+    }
+
+    .lightbox__caption {
+        padding: 0 8px;
+        font-size: 13.5px;
+    }
+
+    .lightbox__thumb {
+        width: 58px;
+        height: 42px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lightbox__slide,
+    .lightbox__nav,
+    .lightbox__close,
+    .lightbox__thumb {
+        transition: none;
+    }
 }
 
 @media (max-width: 780px) {
     .sub-nav {
         padding: 12px 24px;
-    }
-
-    .story-modal__panel {
-        padding: 32px 24px 28px;
     }
 }
 
