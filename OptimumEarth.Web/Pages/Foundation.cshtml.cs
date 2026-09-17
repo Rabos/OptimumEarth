@@ -64,13 +64,49 @@ public class FoundationModel : PageModel
     {
         new("communities", "Communities", "Stories from the field, in the words of the people we work with.",
             "Stories from the field, in the words of the people we work with. This space holds community voices, before/after and challenge/response stories, and photography from the field — the human face of OEF's work.",
-            "Community story photo"),
+            "Community story photo", "/img/optimum-earth-images/foundation2.jpg"),
         new("partnerships", "Partnerships", "A look at what we're building together.",
             "A look at what we're building together. This space features project and partnership case studies, impact indicators and simple dashboards as data becomes available, and news or updates on active collaborations.",
-            "Partnership story photo"),
+            "Partnership story photo", "/img/optimum-earth-images/foundation3.jpg"),
         new("learning", "Learning", "Where OEF shares what it's discovering and who it's growing with.",
             "Where OEF shares what it's discovering and who it's growing with. This space holds practical learning notes and insights, alongside our Academic & Learning Partnerships — joint research, student placements and fellowships, mentorship, and career-pathway stories connecting young African talent to climate, water and energy work.",
-            "Learning story photo"),
+            "Learning story photo", "/img/optimum-earth-images/foundation4.jpg"),
+    };
+
+    // The lightbox gallery behind each tile. Key must match a StoryTile.Key or
+    // the tile opens nothing, and the first item is that tile's Cover so the
+    // gallery opens on the image the visitor just clicked.
+    //
+    // PLACEHOLDER MAPPING: which photograph belongs to which story has not been
+    // decided yet, so these are grouped by subject from what is already in
+    // wwwroot/img/optimum-earth-images, and the captions are descriptive
+    // stand-ins. Editing this one list is all that is needed to fix either.
+    public List<StoryGallery> Galleries { get; } = new()
+    {
+        new("communities", new List<StoryGalleryItem>
+        {
+            new("Community water committee, Karamoja", "/img/optimum-earth-images/foundation2.jpg"),
+            new("Planning a scheme with the households it will serve", "/img/optimum-earth-images/community-led.jpg"),
+            new("First draw from the new borehole", "/img/optimum-earth-images/borehole.jpg"),
+            new("Makuttu: the site before work began", "/img/optimum-earth-images/makuttu.jpg"),
+            new("Households on the extended network", "/img/optimum-earth-images/foundation1.jpg"),
+        }),
+        new("partnerships", new List<StoryGalleryItem>
+        {
+            new("Partners walking a proposed site together", "/img/optimum-earth-images/foundation3.jpg"),
+            new("Joint delivery with local contractors", "/img/optimum-earth-images/partnership-driven.jpg"),
+            new("Hima quarry: shared infrastructure works", "/img/optimum-earth-images/hima-quarry.jpg"),
+            new("Pivot irrigation commissioned with growers", "/img/optimum-earth-images/pivot-irrigation.jpg"),
+            new("Solar array sized against real demand", "/img/optimum-earth-images/enhancing-climate.jpg"),
+        }),
+        new("learning", new List<StoryGalleryItem>
+        {
+            new("A learning session with partner students", "/img/optimum-earth-images/foundation4.jpg"),
+            new("Documenting what worked and what did not", "/img/optimum-earth-images/learning-oriented.jpg"),
+            new("Field measurement feeding the evidence base", "/img/optimum-earth-images/evidence-informed.jpg"),
+            new("Local teams leading the technical work", "/img/optimum-earth-images/locally-grounded.jpg"),
+            new("Testing an approach before scaling it", "/img/optimum-earth-images/practical-and-scalable.jpg"),
+        }),
     };
 
     public void OnGet()

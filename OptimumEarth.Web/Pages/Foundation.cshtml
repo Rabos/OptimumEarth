@@ -27,27 +27,8 @@
 <section class="dest-overview" id="about" aria-labelledby="about-heading">
     <div class="dest-overview__main">
         <span class="dest-overview__eyebrow" id="about-heading">ABOUT OEF</span>
-        <p class="dest-overview__quote">Optimum Earth Foundation (OEF) is a corporate foundation; a not-for-profit initiative focused on practical solutions that expand access to clean water, clean energy and climate solutions while strengthening community resilience. OEF connects community priorities with the partnerships, knowledge and resources needed to turn practical ideas into lasting impact.</p>
-        <p class="dest-overview__body">OEF was established as the not-for-profit arm of Optimum Earth Limited, building on the company's experience in energy, water and environmental infrastructure across East and Southern Africa. The Foundation operates as a distinct not-for-profit entity with its own governance, strategy and financing.</p>
-
-        <div style="display:flex; flex-direction:column; gap:6px;">
-            <span class="dest-overview__eyebrow">VISION</span>
-            <p class="dest-overview__body">Resilient and sustainable communities with access to water, clean energy, climate solutions and inclusive systems.</p>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:6px;">
-            <span class="dest-overview__eyebrow">MISSION</span>
-            <p class="dest-overview__body">To catalyse and scale inclusive, community-driven solutions that expand access to water, clean energy, and climate resilience through strategic partnerships, local capacity building, and innovative financing.</p>
-        </div>
-
-        <div style="display:flex; flex-direction:column; gap:10px;">
-            <span class="dest-overview__eyebrow">SDG ALIGNMENT</span>
-            <div class="sdg-strip">
-                @foreach (var sdg in Model.SdgGoals)
-                {
-                    <span class="sdg-badge"><span class="sdg-badge__num">@sdg.Number</span>@sdg.Label</span>
-                }
-            </div>
-        </div>
+        <p class="dest-overview__quote dest-overview__quote--intro">Optimum Earth Foundation (OEF) is a corporate foundation; a not-for-profit initiative focused on practical solutions that expand access to clean water, clean energy and climate solutions while strengthening community resilience. OEF connects community priorities with the partnerships, knowledge and resources needed to turn practical ideas into lasting impact.</p>
+        <p class="dest-overview__body dest-overview__body--intro">OEF was established as the not-for-profit arm of Optimum Earth Limited, building on the company's experience in energy, water and environmental infrastructure across East and Southern Africa. The Foundation operates as a distinct not-for-profit entity with its own governance, strategy and financing.</p>
     </div>
     <aside class="glance-panel" aria-label="At a glance">
         <span class="glance-panel__title">At a glance</span>
@@ -56,6 +37,87 @@
         <div class="glance-row"><span class="glance-row__key">Pillars</span><span class="glance-row__value">Access &middot; Resilience &middot; Impact</span></div>
         <div class="glance-row"><span class="glance-row__key">Geographic focus</span><span class="glance-row__value">Uganda &middot; Zambia</span></div>
     </aside>
+    <div class="vm-grid">
+        <div class="vm-card vm-card--vision">
+            <div class="vm-card__head">
+                <svg class="vm-card__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" /><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5" /></svg>
+                <span class="vm-card__label">Our Vision</span>
+            </div>
+            <p class="vm-card__text">Resilient and sustainable communities with access to water, clean energy, climate solutions and inclusive systems.</p>
+        </div>
+        <div class="vm-card vm-card--mission">
+            <div class="vm-card__head">
+                <svg class="vm-card__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" /><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.5" /><circle cx="12" cy="12" r="1.5" fill="currentColor" /></svg>
+                <span class="vm-card__label">Our Mission</span>
+            </div>
+            <p class="vm-card__text">To catalyse and scale inclusive, community-driven solutions that expand access to water, clean energy, and climate resilience through strategic partnerships, local capacity building, and innovative financing.</p>
+        </div>
+    </div>
+    <div class="dest-overview__full">
+        <span class="dest-overview__eyebrow">SDG ALIGNMENT</span>
+        @{
+            // Hand-drawn "circled" annotation, one distinct stroke per goal so the
+            // gesture doesn't read as a repeated logo. Generated, not traced.
+            var sdgLoops = new[]
+            {
+                "M281.0 63.8L285.9 68.4L290.1 73.4L293.5 78.5L296.1 83.8L298.0 89.3L299.0 94.8L299.2 100.4L298.4 106.0L296.8 111.6L294.2 117.1L290.8 122.5L286.5 127.7L281.4 132.6L275.6 137.4L269.1 141.8L261.9 145.9L254.2 149.8L246.0 153.3L237.4 156.4L228.4 159.3L219.1 161.7L209.6 163.9L199.8 165.7L189.8 167.1L179.7 168.2L169.4 169.0L159.0 169.4L148.6 169.4L138.2 169.0L127.8 168.3L117.5 167.1L107.3 165.4L97.4 163.4L87.8 160.9L78.6 158.0L69.8 154.6L61.6 150.9L54.0 146.8L47.1 142.3L41.0 137.6L35.6 132.6L31.0 127.3L27.3 121.9L24.3 116.4L22.2 110.8L20.9 105.1L20.3 99.4L20.5 93.8L21.3 88.1L22.9 82.5L25.1 77.0L28.0 71.6L31.5 66.3L35.6 61.1L40.4 56.1L45.8 51.2L51.9 46.6L58.5 42.1L65.8 38.0L73.7 34.1L82.2 30.6L91.2 27.4L100.7 24.7L110.6 22.4L120.9 20.5L131.4 19.2L142.1 18.3L152.9 17.9L163.7 18.1L174.4 18.7L184.9 19.8L195.3 21.3L205.3 23.2L215.0 25.5L224.4 28.2L233.3 31.2L241.8 34.5L249.9 38.1L257.5 42.0L264.7 46.1L271.3 50.5L277.4 55.0L282.9 59.8L287.9 64.8L292.2 70.0L295.7 75.3L298.6 80.8L300.6 86.3L301.7 92.0L301.7 97.6L301.7 97.6L300.7 92.0L299.2 86.5L296.9 81.1L293.8 75.8L290.0 70.7L285.6 65.8L280.5 61.1L274.9 56.6L268.8 52.4L262.2 48.3L255.1 44.5L247.6 40.9L239.6 37.6L231.2 34.6L222.5 31.9L213.4 29.4L203.9 27.3L194.1 25.6L184.1 24.3L173.9 23.4L163.5 22.9L153.1 22.8L142.7 23.3L132.4 24.2L122.3 25.5L112.4 27.3L102.9 29.5L93.8 32.2L85.2 35.2L77.1 38.5L69.6 42.1L62.6 46.1L56.3 50.2L50.5 54.6L45.4 59.1L40.8 63.8L36.9 68.6L33.6 73.5L30.9 78.5L28.7 83.5L27.3 88.7L26.4 93.9L26.3 99.1L26.8 104.3L28.1 109.6L30.1 114.7L32.9 119.8L36.5 124.8L40.8 129.6L45.9 134.3L51.8 138.7L58.4 142.8L65.6 146.6L73.5 150.1L81.9 153.2L90.7 155.9L99.9 158.3L109.4 160.2L119.2 161.7L129.1 162.9L139.0 163.6L149.1 164.0L159.1 164.0L169.0 163.7L178.9 163.1L188.7 162.2L198.3 160.9L207.8 159.3L217.0 157.4L226.1 155.2L234.8 152.6L243.2 149.8L251.2 146.6L258.8 143.1L265.9 139.2L272.3 135.1L278.1 130.7L283.2 126.1L287.5 121.2L291.0 116.1L293.7 110.9L295.5 105.6L296.4 100.2L296.5 94.8L295.7 89.5L294.1 84.1L291.8 78.9L288.8 73.8L285.1 68.7L281.0 63.8Z",
+                "M37.4 129.5L32.5 125.0L28.6 120.1L25.4 115.0L23.0 109.8L21.3 104.5L20.5 99.2L20.4 93.8L21.1 88.4L22.6 83.1L24.8 77.8L27.8 72.7L31.4 67.7L35.6 62.9L40.5 58.2L46.0 53.7L52.0 49.5L58.6 45.5L65.6 41.7L73.1 38.2L81.0 35.0L89.3 32.1L97.9 29.5L106.8 27.2L115.9 25.3L125.3 23.6L134.9 22.3L144.7 21.3L154.6 20.7L164.5 20.5L174.5 20.7L184.5 21.2L194.4 22.1L204.2 23.3L213.8 25.0L223.2 27.0L232.4 29.5L241.2 32.2L249.6 35.4L257.6 38.9L265.1 42.7L272.0 46.8L278.3 51.3L284.0 55.9L289.0 60.8L293.3 65.9L296.8 71.2L299.5 76.6L301.5 82.1L302.6 87.6L303.0 93.2L302.6 98.8L301.4 104.3L299.4 109.7L296.7 115.0L293.3 120.2L289.2 125.3L284.5 130.1L279.1 134.8L273.2 139.2L266.8 143.3L259.8 147.2L252.4 150.8L244.5 154.2L236.3 157.2L227.7 160.0L218.8 162.4L209.7 164.4L200.3 166.2L190.7 167.6L180.9 168.7L171.0 169.4L161.0 169.7L150.9 169.7L140.9 169.3L130.9 168.5L121.0 167.3L111.3 165.8L101.7 163.9L92.4 161.6L83.5 158.9L74.9 155.9L66.7 152.5L59.0 148.8L51.9 144.8L45.3 140.5L39.5 136.0L34.2 131.2L29.8 126.2L26.1 121.1L23.4 115.7L23.4 115.7L27.0 120.7L31.1 125.6L35.9 130.3L41.3 134.8L47.3 139.1L53.9 143.1L61.1 146.7L68.8 150.1L76.9 153.2L85.4 155.9L94.2 158.3L103.3 160.3L112.7 162.0L122.2 163.3L131.8 164.2L141.5 164.8L151.2 165.0L160.9 164.9L170.6 164.5L180.1 163.7L189.5 162.6L198.7 161.2L207.8 159.5L216.5 157.4L225.0 155.1L233.2 152.5L241.1 149.7L248.5 146.5L255.6 143.1L262.2 139.5L268.4 135.7L274.0 131.6L279.1 127.3L283.6 122.8L287.5 118.2L290.7 113.4L293.3 108.5L295.1 103.5L296.3 98.5L296.7 93.4L296.3 88.2L295.2 83.1L293.3 78.1L290.7 73.2L287.3 68.3L283.2 63.7L278.5 59.2L273.1 54.9L267.0 50.8L260.4 47.0L253.3 43.5L245.7 40.3L237.6 37.4L229.2 34.8L220.5 32.6L211.5 30.7L202.3 29.1L192.9 27.9L183.4 27.0L173.9 26.5L164.3 26.4L154.8 26.5L145.3 27.0L135.9 27.8L126.7 29.0L117.7 30.4L108.8 32.1L100.2 34.2L91.9 36.5L83.9 39.1L76.2 42.0L68.9 45.2L62.0 48.6L55.6 52.3L49.6 56.2L44.2 60.3L39.3 64.6L35.0 69.1L31.3 73.8L28.3 78.7L25.9 83.6L24.3 88.7L23.4 93.8L23.2 99.0L23.8 104.2L25.1 109.4L27.2 114.5L30.0 119.6L33.4 124.5L37.4 129.5Z",
+                "M57.4 49.4L63.9 45.0L71.1 40.9L78.8 37.1L87.0 33.5L95.8 30.3L105.0 27.4L114.7 24.9L124.8 22.9L135.2 21.4L145.9 20.4L156.7 20.0L167.5 20.1L178.2 20.7L188.8 21.9L199.1 23.5L209.1 25.5L218.7 28.0L228.0 30.8L236.9 33.8L245.4 37.2L253.5 40.9L261.2 44.8L268.5 48.9L275.3 53.4L281.5 58.1L287.1 63.1L292.0 68.3L296.0 73.8L299.1 79.4L301.2 85.2L302.3 91.1L302.3 97.0L301.3 102.9L299.3 108.7L296.5 114.4L292.8 119.9L288.3 125.2L283.2 130.4L277.5 135.3L271.2 140.0L264.4 144.5L257.2 148.8L249.5 152.8L241.2 156.6L232.5 160.1L223.3 163.2L213.6 166.0L203.5 168.3L193.0 170.1L182.2 171.4L171.2 172.2L160.1 172.4L149.1 172.0L138.1 171.1L127.4 169.7L117.0 167.8L106.9 165.5L97.2 162.8L87.9 159.8L79.0 156.5L70.5 152.9L62.5 149.0L54.8 144.9L47.6 140.5L40.9 135.9L34.8 131.0L29.5 125.8L24.9 120.4L21.1 114.8L18.4 109.0L16.6 103.1L15.9 97.2L16.3 91.2L17.7 85.3L20.0 79.5L23.3 73.9L27.3 68.4L32.1 63.2L37.6 58.2L43.6 53.4L50.1 48.8L57.1 44.4L64.6 40.3L72.6 36.5L81.1 32.9L90.0 29.6L99.5 26.7L109.3 24.3L119.6 22.3L130.3 21.1L130.3 21.1L119.9 23.2L109.8 25.5L100.2 28.2L91.0 31.3L82.3 34.7L74.1 38.4L66.4 42.3L59.2 46.4L52.5 50.7L46.2 55.1L40.5 59.8L35.3 64.7L30.8 69.7L27.0 74.9L23.9 80.3L21.7 85.8L20.5 91.4L20.3 97.0L21.0 102.7L22.8 108.2L25.6 113.6L29.3 118.8L33.9 123.9L39.2 128.7L45.1 133.2L51.7 137.5L58.7 141.5L66.1 145.3L73.9 148.8L82.1 152.1L90.7 155.2L99.7 157.9L109.0 160.4L118.7 162.5L128.7 164.2L139.0 165.5L149.5 166.4L160.1 166.7L170.7 166.5L181.3 165.8L191.7 164.5L201.7 162.8L211.4 160.6L220.7 158.0L229.5 155.1L237.9 151.9L245.8 148.4L253.2 144.6L260.1 140.7L266.6 136.5L272.6 132.2L278.1 127.7L283.1 123.0L287.4 118.1L291.0 113.0L293.9 107.7L295.8 102.3L296.8 96.9L296.9 91.4L295.9 85.9L293.9 80.5L290.9 75.2L287.1 70.1L282.5 65.2L277.2 60.6L271.2 56.1L264.7 51.9L257.7 48.0L250.3 44.3L242.6 40.8L234.4 37.5L225.8 34.5L216.9 31.8L207.6 29.4L198.0 27.3L188.0 25.6L177.8 24.4L167.3 23.6L156.8 23.3L146.2 23.6L135.8 24.4L125.5 25.7L115.6 27.5L106.0 29.7L96.8 32.3L88.1 35.2L79.8 38.4L72.0 41.9L64.6 45.6L57.4 49.4Z",
+                "M271.8 138.0L266.1 142.7L259.5 146.9L252.2 150.9L244.4 154.5L236.0 157.7L227.1 160.6L217.9 163.0L208.3 165.1L198.4 166.7L188.4 167.9L178.2 168.7L168.0 169.1L157.9 169.1L147.7 168.7L137.7 167.8L127.8 166.7L118.2 165.1L108.7 163.3L99.6 161.0L90.7 158.5L82.1 155.7L73.9 152.5L66.1 149.1L58.7 145.3L51.7 141.3L45.3 137.1L39.4 132.5L34.1 127.8L29.5 122.8L25.5 117.6L22.3 112.3L19.8 106.8L18.1 101.3L17.3 95.6L17.3 89.9L18.1 84.2L19.8 78.6L22.4 73.1L25.8 67.7L30.0 62.4L35.0 57.4L40.7 52.6L47.1 48.1L54.1 43.9L61.6 39.9L69.7 36.4L78.2 33.1L87.0 30.2L96.2 27.7L105.7 25.5L115.4 23.7L125.3 22.2L135.3 21.1L145.5 20.4L155.7 20.0L165.9 20.0L176.2 20.3L186.4 21.0L196.5 22.1L206.4 23.6L216.2 25.4L225.8 27.6L235.1 30.2L244.0 33.2L252.5 36.5L260.5 40.2L268.0 44.2L274.9 48.6L281.2 53.2L286.7 58.1L291.5 63.2L295.4 68.5L298.6 74.0L300.9 79.5L302.4 85.2L303.0 90.8L302.7 96.5L301.6 102.1L299.8 107.6L297.1 113.0L293.8 118.3L289.7 123.3L285.0 128.2L279.7 132.9L273.8 137.4L267.4 141.5L260.4 145.5L253.0 149.1L245.2 152.4L236.7 155.2L236.7 155.2L244.5 151.6L252.0 148.0L259.1 144.2L265.6 140.1L271.7 135.9L277.3 131.5L282.3 126.9L286.7 122.1L290.5 117.2L293.6 112.1L296.0 107.0L297.6 101.7L298.5 96.4L298.6 91.1L297.9 85.7L296.3 80.5L294.0 75.3L290.8 70.2L286.9 65.3L282.1 60.6L276.7 56.1L270.6 51.8L263.9 47.9L256.6 44.2L248.8 40.9L240.6 37.9L231.9 35.2L223.0 32.9L213.8 31.0L204.4 29.3L194.8 28.1L185.2 27.2L175.4 26.6L165.7 26.3L155.9 26.4L146.2 26.8L136.5 27.5L126.9 28.5L117.5 29.9L108.3 31.5L99.2 33.5L90.4 35.8L82.0 38.5L73.9 41.4L66.2 44.7L59.0 48.3L52.3 52.1L46.2 56.2L40.7 60.6L36.0 65.2L31.9 70.0L28.6 74.9L26.2 80.0L24.5 85.1L23.6 90.3L23.6 95.5L24.4 100.7L26.0 105.9L28.3 110.9L31.3 115.8L35.1 120.6L39.5 125.2L44.5 129.6L50.1 133.8L56.2 137.8L62.8 141.5L69.8 145.0L77.3 148.3L85.1 151.3L93.3 154.0L101.8 156.5L110.6 158.7L119.6 160.6L128.9 162.1L138.4 163.4L148.1 164.3L157.9 164.9L167.8 165.1L177.7 164.9L187.6 164.3L197.5 163.4L207.1 162.0L216.6 160.3L225.8 158.1L234.6 155.6L243.0 152.7L251.0 149.4L258.4 145.8L265.3 142.0L271.8 138.0Z",
+            };
+            // centre line of each loop: stroked inside a mask and animated, which is
+            // what reveals the filled band on hover (a filled path cannot be drawn
+            // with stroke-dashoffset directly)
+            var sdgLines = new[]
+            {
+                "M281.0 63.8L285.5 68.6L289.4 73.6L292.6 78.7L295.1 84.0L296.9 89.4L297.8 94.8L297.8 100.3L297.0 105.8L295.2 111.3L292.6 116.6L289.2 121.8L284.9 126.9L279.8 131.7L273.9 136.2L267.5 140.5L260.4 144.5L252.7 148.2L244.6 151.5L236.1 154.5L227.2 157.2L218.1 159.6L208.7 161.6L199.0 163.3L189.2 164.6L179.3 165.7L169.2 166.4L159.1 166.7L148.8 166.7L138.6 166.3L128.4 165.6L118.3 164.4L108.4 162.8L98.7 160.8L89.2 158.4L80.2 155.6L71.6 152.4L63.6 148.7L56.2 144.8L49.5 140.5L43.5 135.9L38.2 131.1L33.7 126.1L30.1 120.9L27.2 115.6L25.1 110.2L23.8 104.7L23.3 99.3L23.4 93.8L24.3 88.4L25.8 83.0L28.0 77.7L30.8 72.5L34.2 67.4L38.2 62.4L42.9 57.6L48.2 52.9L54.1 48.4L60.6 44.1L67.7 40.1L75.4 36.3L83.7 32.9L92.5 29.8L101.8 27.1L111.5 24.8L121.6 23.0L131.9 21.7L142.4 20.8L153.0 20.4L163.6 20.5L174.1 21.0L184.5 22.0L194.7 23.4L204.6 25.3L214.2 27.5L223.4 30.0L232.3 32.9L240.7 36.1L248.7 39.5L256.3 43.3L263.4 47.2L270.0 51.4L276.2 55.8L281.7 60.5L286.7 65.3L291.1 70.4L294.8 75.6L297.7 80.9L299.9 86.4L301.2 92.0L301.7 97.6",
+                "M37.4 129.5L33.0 124.8L29.3 119.8L26.3 114.8L24.0 109.6L22.5 104.4L21.8 99.1L21.9 93.8L22.7 88.6L24.3 83.4L26.6 78.3L29.5 73.3L33.2 68.4L37.5 63.7L42.4 59.2L47.8 54.9L53.8 50.9L60.3 47.0L67.3 43.5L74.7 40.1L82.5 37.1L90.6 34.3L99.1 31.9L107.8 29.7L116.8 27.8L126.0 26.3L135.4 25.1L145.0 24.2L154.7 23.6L164.4 23.4L174.2 23.6L183.9 24.1L193.6 25.0L203.2 26.2L212.6 27.8L221.8 29.8L230.8 32.1L239.4 34.8L247.6 37.8L255.4 41.2L262.7 44.9L269.5 48.8L275.7 53.1L281.2 57.5L286.1 62.2L290.3 67.1L293.7 72.2L296.4 77.4L298.3 82.6L299.5 87.9L299.8 93.3L299.4 98.6L298.3 103.9L296.3 109.1L293.7 114.2L290.4 119.2L286.4 124.1L281.8 128.7L276.6 133.2L270.8 137.4L264.5 141.4L257.7 145.2L250.5 148.7L242.8 151.9L234.8 154.9L226.4 157.5L217.7 159.9L208.7 162.0L199.5 163.7L190.1 165.1L180.5 166.2L170.8 166.9L161.0 167.3L151.1 167.4L141.2 167.0L131.4 166.4L121.6 165.3L112.0 163.9L102.5 162.1L93.3 159.9L84.4 157.4L75.9 154.5L67.7 151.3L60.1 147.8L52.9 143.9L46.3 139.8L40.4 135.4L35.1 130.8L30.4 125.9L26.6 120.9L23.4 115.7",
+                "M57.4 49.4L64.2 45.3L71.5 41.4L79.3 37.8L87.6 34.4L96.3 31.3L105.5 28.5L115.1 26.2L125.2 24.3L135.5 22.9L146.0 22.0L156.7 21.6L167.4 21.8L178.0 22.5L188.4 23.7L198.5 25.4L208.4 27.5L217.8 29.9L226.9 32.6L235.6 35.7L244.0 39.0L251.9 42.6L259.5 46.4L266.6 50.4L273.2 54.8L279.3 59.3L284.8 64.2L289.5 69.2L293.5 74.5L296.5 80.0L298.5 85.6L299.6 91.2L299.6 96.9L298.6 102.6L296.6 108.2L293.8 113.7L290.1 119.0L285.7 124.1L280.7 129.0L275.0 133.7L268.9 138.3L262.3 142.6L255.2 146.7L247.6 150.6L239.6 154.2L231.0 157.6L222.0 160.6L212.5 163.3L202.6 165.5L192.3 167.3L181.7 168.6L171.0 169.3L160.1 169.5L149.3 169.2L138.6 168.3L128.1 167.0L117.8 165.2L108.0 162.9L98.5 160.4L89.3 157.5L80.6 154.3L72.2 150.9L64.3 147.2L56.7 143.2L49.6 139.0L43.0 134.5L37.0 129.8L31.7 124.8L27.1 119.6L23.4 114.2L20.6 108.6L18.8 102.9L18.1 97.1L18.4 91.3L19.7 85.6L22.0 79.9L25.1 74.4L29.1 69.1L33.7 63.9L39.0 59.0L44.9 54.2L51.3 49.7L58.2 45.4L65.5 41.3L73.4 37.4L81.7 33.8L90.5 30.5L99.8 27.5L109.6 24.9L119.8 22.7L130.3 21.1",
+                "M271.8 138.0L265.7 142.3L259.0 146.4L251.6 150.1L243.7 153.6L235.3 156.6L226.4 159.3L217.2 161.7L207.7 163.6L197.9 165.1L188.0 166.1L178.0 166.8L167.9 167.1L157.9 167.0L147.9 166.5L138.1 165.6L128.4 164.4L118.9 162.9L109.7 161.0L100.7 158.8L92.0 156.3L83.6 153.5L75.6 150.4L68.0 147.1L60.7 143.4L54.0 139.6L47.7 135.4L42.0 131.1L36.8 126.5L32.3 121.7L28.4 116.7L25.3 111.6L22.9 106.4L21.3 101.0L20.4 95.6L20.5 90.1L21.3 84.7L23.0 79.3L25.5 74.0L28.9 68.8L33.0 63.8L37.9 59.0L43.5 54.4L49.7 50.1L56.5 46.1L63.9 42.3L71.8 38.9L80.1 35.8L88.7 33.0L97.7 30.6L107.0 28.5L116.5 26.8L126.1 25.4L135.9 24.3L145.8 23.6L155.8 23.2L165.8 23.1L175.8 23.4L185.8 24.1L195.6 25.1L205.4 26.5L215.0 28.2L224.4 30.3L233.5 32.7L242.3 35.5L250.6 38.7L258.6 42.2L266.0 46.0L272.8 50.2L278.9 54.6L284.4 59.3L289.2 64.2L293.1 69.3L296.3 74.6L298.6 80.0L300.1 85.5L300.8 90.9L300.6 96.4L299.6 101.9L297.9 107.3L295.4 112.6L292.1 117.7L288.2 122.7L283.7 127.6L278.5 132.2L272.8 136.6L266.5 140.8L259.7 144.8L252.5 148.6L244.8 152.0L236.7 155.2",
+            };
+            // path length plus padding, so the round caps clear the dash boundary
+            var sdgLens = new[] { 758.7, 739.9, 802.9, 762.6 };
+        }
+        <div class="sdg-loops">
+            @for (var i = 0; i < Model.SdgGoals.Count; i++)
+            {
+                var sdg = Model.SdgGoals[i];
+                <div class="sdg-loop">
+                    <svg class="sdg-loop__ring" viewBox="0 0 320 190" aria-hidden="true">
+                        <mask id="sdg-ring-@sdg.Number" maskUnits="userSpaceOnUse">
+                            <path d="@(sdgLines[i % sdgLines.Length])" fill="none" stroke="#fff" stroke-width="15" stroke-linecap="round"
+                                  stroke-dasharray="@(sdgLens[i % sdgLens.Length])" stroke-dashoffset="@(sdgLens[i % sdgLens.Length])" />
+                        </mask>
+                        <path d="@(sdgLoops[i % sdgLoops.Length])" />
+                        <path class="sdg-loop__ring-draw" d="@(sdgLoops[i % sdgLoops.Length])" mask="url(#sdg-ring-@sdg.Number)" />
+                    </svg>
+                    <div class="sdg-loop__content">
+                        <div class="sdg-loop__icon-wrap">
+                            @if (sdg.Number == "06")
+                            {
+                                <svg class="sdg-loop__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3C12 3 5 11.2 5 15.5 5 19.09 8.13 21 12 21S19 19.09 19 15.5C19 11.2 12 3 12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" /></svg>
+                            }
+                            else if (sdg.Number == "07")
+                            {
+                                <svg class="sdg-loop__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" /></svg>
+                            }
+                            else if (sdg.Number == "13")
+                            {
+                                <svg class="sdg-loop__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 18h9.5a3.5 3.5 0 0 0 .5-6.96A5 5 0 0 0 7.28 9.1 4 4 0 0 0 7 18Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" /></svg>
+                            }
+                            else
+                            {
+                                <svg class="sdg-loop__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="8" width="11" height="8" rx="4" stroke="currentColor" stroke-width="1.6" /><rect x="10" y="8" width="11" height="8" rx="4" stroke="currentColor" stroke-width="1.6" /></svg>
+                            }
+                            <span class="sdg-loop__num">@sdg.Number</span>
+                        </div>
+                        <span class="sdg-loop__divider" aria-hidden="true"></span>
+                        <span class="sdg-loop__title">@sdg.Label</span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
 </section>
 
 <section class="dest-section dest-section--tint" id="pillars" aria-labelledby="pillars-heading">
@@ -66,25 +128,18 @@
         @foreach (var pillar in Model.Pillars)
         {
             <article class="pillar-card">
-                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
-                    <span class="pillar-card__index">@pillar.Title.ToUpperInvariant()</span>
-                    <span class="sdg-badge sdg-badge--sm">@pillar.SdgLabel</span>
-                </div>
                 <h3 class="pillar-card__title">@pillar.Title</h3>
                 <p class="pillar-card__desc">@pillar.Description</p>
                 <ul class="pillar-card__tags">
                     @foreach (var item in pillar.Items)
                     {
-                        <li>@item</li>
+                        <li class="pillar-tag" tabindex="0">
+                            <span class="pillar-tag__initial">@item.Substring(0, 1)</span><span class="pillar-tag__rest">@item.Substring(1)</span>
+                        </li>
                     }
                 </ul>
+                <span class="sdg-badge sdg-badge--sm pillar-card__sdg">@pillar.SdgLabel</span>
             </article>
-        }
-    </div>
-    <div class="tag-strip">
-        @foreach (var area in Model.FocusAreas)
-        {
-            <span class="filter-chip">@area</span>
         }
     </div>
 </section>
@@ -93,79 +148,57 @@
     <div class="dest-section__head">
         <h2 id="how-we-work-heading">How We Work</h2>
     </div>
-    <div class="plain-card-grid">
-        @foreach (var principle in Model.WorkPrinciples)
+    @{
+        // Hover mark: the bullet arrow fades out while a hand-drawn ellipse draws
+        // itself around the principle. The ellipse is a filled tapered band, so it
+        // cannot be drawn with stroke-dashoffset directly — instead its centre line
+        // is stroked inside a mask and that is what animates, revealing the fill.
+        // Four variants, cycled, so no two rings are the same stroke.
+        var ringFill = new[]
         {
-            <article class="service-card service-card__ct @principle.Slug">
-                <h3 class="service-card__title">@principle.Title</h3>
-                <p class="service-card__desc">@principle.Description</p>
+                "M368.9 62.5L375.8 68.9L381.5 75.8L386.3 82.8L390.0 90.1L392.5 97.6L393.9 105.2L394.0 112.9L392.8 120.6L390.4 128.2L386.6 135.7L381.6 143.0L375.4 150.0L368.0 156.8L359.6 163.2L350.3 169.1L340.0 174.7L329.0 179.8L317.4 184.5L305.1 188.7L292.4 192.4L279.3 195.6L265.8 198.4L252.0 200.7L237.9 202.6L223.6 204.0L209.2 204.9L194.6 205.3L180.0 205.1L165.4 204.5L150.8 203.3L136.4 201.5L122.2 199.1L108.4 196.1L95.1 192.5L82.3 188.3L70.3 183.6L59.1 178.3L48.8 172.5L39.6 166.3L31.4 159.6L24.3 152.7L18.4 145.4L13.7 138.0L10.2 130.4L7.7 122.7L6.4 115.0L6.1 107.3L6.9 99.6L8.6 92.0L11.3 84.4L14.9 77.0L19.4 69.7L24.7 62.5L31.0 55.6L38.2 48.9L46.2 42.4L55.2 36.2L65.0 30.3L75.8 24.9L87.3 19.9L99.7 15.3L112.7 11.4L126.4 8.0L140.7 5.2L155.3 3.1L170.3 1.7L185.4 1.0L200.6 1.0L215.7 1.6L230.6 2.9L245.2 4.8L259.5 7.3L273.2 10.3L286.5 13.9L299.2 17.9L311.3 22.3L322.8 27.1L333.6 32.3L343.8 37.9L353.3 43.7L362.1 49.9L370.0 56.4L377.2 63.1L383.4 70.1L388.7 77.3L392.9 84.8L396.0 92.4L397.9 100.2L398.5 107.9L397.6 115.7L397.6 115.7L397.6 107.9L396.5 100.2L394.3 92.6L390.9 85.2L386.5 78.0L381.1 71.0L374.7 64.2L367.5 57.8L359.4 51.6L350.7 45.7L341.2 40.2L331.1 35.0L320.4 30.1L309.0 25.5L297.1 21.4L284.6 17.7L271.6 14.4L258.1 11.6L244.2 9.3L229.9 7.5L215.3 6.4L200.6 5.9L185.8 6.0L171.1 6.7L156.5 8.2L142.2 10.2L128.4 12.9L115.1 16.2L102.4 20.1L90.5 24.4L79.3 29.2L68.9 34.4L59.4 40.0L50.8 45.9L43.0 52.1L36.1 58.4L30.1 65.0L24.9 71.8L20.6 78.6L17.1 85.6L14.5 92.7L12.9 99.9L12.1 107.1L12.4 114.4L13.6 121.7L16.0 128.9L19.4 136.1L23.9 143.1L29.6 149.9L36.4 156.5L44.3 162.8L53.3 168.7L63.3 174.1L74.1 179.2L85.8 183.7L98.1 187.6L111.1 191.0L124.5 193.9L138.2 196.2L152.2 197.9L166.4 199.1L180.6 199.8L194.8 199.9L208.9 199.6L223.0 198.8L236.9 197.6L250.6 195.9L264.1 193.8L277.3 191.2L290.1 188.2L302.6 184.8L314.6 180.9L326.1 176.6L337.0 171.8L347.1 166.5L356.4 160.9L364.8 154.8L372.1 148.4L378.4 141.7L383.4 134.7L387.3 127.5L389.9 120.1L391.2 112.7L391.3 105.2L390.2 97.8L388.0 90.4L384.6 83.2L380.2 76.2L374.9 69.3L368.9 62.5Z",
+                "M32.1 155.0L24.9 148.8L19.0 142.3L14.1 135.4L10.3 128.4L7.6 121.2L6.0 113.9L5.5 106.6L6.1 99.3L7.7 92.0L10.4 84.8L14.1 77.8L18.8 70.9L24.5 64.3L31.0 57.8L38.4 51.7L46.5 45.8L55.4 40.3L65.0 35.1L75.3 30.3L86.1 25.8L97.4 21.7L109.3 18.1L121.6 14.8L134.3 12.0L147.3 9.7L160.6 7.7L174.1 6.3L187.9 5.3L201.7 4.9L215.6 4.9L229.6 5.5L243.4 6.5L257.1 8.1L270.7 10.2L283.9 12.8L296.8 15.9L309.2 19.5L321.1 23.7L332.4 28.3L343.0 33.3L352.9 38.8L361.9 44.7L370.1 50.9L377.3 57.4L383.5 64.3L388.6 71.3L392.7 78.6L395.7 86.0L397.6 93.4L398.3 101.0L398.0 108.5L396.5 116.0L394.0 123.3L390.4 130.6L385.9 137.6L380.3 144.5L373.9 151.1L366.6 157.4L358.5 163.4L349.6 169.1L340.0 174.4L329.8 179.4L318.9 184.0L307.5 188.1L295.6 191.9L283.3 195.2L270.6 198.1L257.5 200.6L244.1 202.6L230.5 204.1L216.6 205.1L202.7 205.7L188.7 205.7L174.6 205.2L160.7 204.2L146.8 202.7L133.2 200.7L119.8 198.2L106.8 195.1L94.2 191.5L82.1 187.5L70.6 183.0L59.8 178.0L49.7 172.6L40.5 166.8L32.2 160.7L24.8 154.2L18.4 147.4L13.2 140.5L9.2 133.2L9.2 133.2L14.0 140.1L19.7 146.9L26.3 153.4L33.9 159.6L42.3 165.5L51.7 171.0L61.7 176.1L72.5 180.7L84.0 185.0L96.0 188.7L108.4 192.0L121.3 194.8L134.5 197.1L147.9 198.9L161.5 200.2L175.2 201.0L188.9 201.3L202.6 201.2L216.2 200.5L229.7 199.4L243.0 197.9L256.0 195.9L268.7 193.5L281.1 190.7L293.1 187.4L304.6 183.8L315.6 179.8L326.1 175.4L336.0 170.6L345.3 165.6L353.9 160.2L361.8 154.5L368.8 148.5L375.0 142.2L380.4 135.8L384.8 129.1L388.2 122.3L390.6 115.3L392.0 108.3L392.4 101.2L391.6 94.1L389.8 87.1L386.9 80.1L382.9 73.3L377.9 66.6L371.9 60.2L365.0 54.0L357.1 48.1L348.3 42.6L338.7 37.4L328.4 32.7L317.5 28.3L305.9 24.4L293.9 21.0L281.4 18.0L268.6 15.5L255.5 13.5L242.1 12.0L228.7 11.0L215.2 10.4L201.7 10.4L188.2 10.7L174.9 11.6L161.7 12.9L148.7 14.6L136.0 16.8L123.7 19.4L111.6 22.4L100.1 25.8L88.9 29.6L78.3 33.7L68.2 38.3L58.7 43.1L49.9 48.4L41.8 53.9L34.5 59.7L27.9 65.8L22.3 72.2L17.5 78.8L13.7 85.5L10.8 92.4L9.0 99.5L8.3 106.6L8.5 113.7L9.9 120.8L12.3 127.9L15.8 134.9L20.3 141.7L25.8 148.4L32.1 155.0Z",
+                "M52.5 45.6L61.4 39.5L71.2 33.9L81.7 28.6L92.9 23.7L104.8 19.1L117.4 15.0L130.7 11.4L144.5 8.4L158.8 6.1L173.6 4.4L188.6 3.5L203.6 3.4L218.7 3.9L233.5 5.2L248.0 7.2L262.1 9.7L275.7 12.8L288.9 16.4L301.5 20.4L313.5 24.8L325.1 29.6L336.0 34.7L346.4 40.2L356.2 46.0L365.2 52.2L373.4 58.8L380.6 65.7L386.7 73.0L391.6 80.5L395.2 88.2L397.3 96.1L398.0 104.1L397.3 112.1L395.1 120.0L391.7 127.7L387.0 135.3L381.3 142.6L374.5 149.6L366.9 156.4L358.6 162.9L349.5 169.1L339.7 175.0L329.3 180.5L318.2 185.8L306.4 190.7L293.9 195.2L280.7 199.1L266.9 202.5L252.5 205.3L237.7 207.4L222.5 208.8L207.1 209.4L191.7 209.2L176.4 208.3L161.4 206.7L146.7 204.5L132.5 201.6L118.8 198.2L105.6 194.3L93.0 190.0L80.9 185.4L69.4 180.3L58.5 174.9L48.1 169.2L38.5 163.1L29.6 156.6L21.7 149.8L14.8 142.7L9.0 135.2L4.5 127.5L1.4 119.6L-0.2 111.6L-0.4 103.5L0.8 95.5L3.5 87.6L7.5 79.8L12.6 72.3L18.8 65.1L26.0 58.2L34.0 51.5L42.7 45.2L52.2 39.1L62.3 33.4L73.1 28.0L84.6 22.9L96.7 18.3L109.5 14.1L123.0 10.4L137.1 7.4L151.8 5.3L151.8 5.3L137.4 8.3L123.6 11.7L110.3 15.6L97.8 20.0L85.9 24.8L74.7 29.9L64.2 35.3L54.4 41.1L45.3 47.0L36.8 53.3L29.1 59.8L22.2 66.5L16.2 73.6L11.3 80.8L7.5 88.3L5.1 95.9L3.9 103.6L4.2 111.3L6.0 118.9L9.1 126.5L13.6 133.8L19.3 140.9L26.2 147.6L34.1 154.1L42.8 160.1L52.2 165.9L62.3 171.3L73.0 176.3L84.3 181.0L96.0 185.4L108.3 189.4L121.1 193.1L134.5 196.2L148.3 198.9L162.5 201.0L177.1 202.5L192.0 203.4L206.9 203.5L221.8 202.9L236.5 201.6L250.9 199.6L264.9 196.9L278.2 193.7L291.0 189.9L303.1 185.7L314.5 181.0L325.3 176.1L335.4 170.8L344.9 165.3L353.7 159.5L361.8 153.4L369.2 147.0L375.8 140.4L381.4 133.6L386.0 126.4L389.4 119.1L391.6 111.7L392.4 104.2L391.7 96.6L389.7 89.1L386.3 81.8L381.6 74.7L375.7 67.8L368.7 61.2L360.8 54.9L352.1 49.0L342.6 43.4L332.5 38.2L321.9 33.2L310.7 28.6L299.0 24.3L286.8 20.3L274.0 16.8L260.7 13.7L247.0 11.1L232.8 9.1L218.3 7.7L203.6 7.0L188.8 7.0L174.0 7.7L159.5 9.2L145.3 11.3L131.6 14.0L118.5 17.3L106.0 21.1L94.1 25.3L82.8 30.0L72.2 34.9L62.1 40.2L52.5 45.6Z",
+                "M359.8 160.6L352.2 167.0L343.3 172.8L333.6 178.3L322.9 183.4L311.5 187.9L299.4 192.0L286.7 195.5L273.6 198.5L260.0 201.0L246.1 202.8L232.1 204.1L217.9 204.8L203.7 205.0L189.6 204.7L175.6 203.8L161.8 202.4L148.2 200.5L135.0 198.2L122.1 195.4L109.5 192.1L97.4 188.5L85.8 184.4L74.7 180.0L64.2 175.1L54.3 169.9L45.0 164.3L36.5 158.4L28.8 152.1L21.9 145.6L16.0 138.7L11.0 131.7L7.1 124.4L4.2 117.0L2.5 109.4L2.0 101.8L2.6 94.2L4.4 86.6L7.4 79.1L11.6 71.7L16.9 64.6L23.3 57.7L30.8 51.1L39.2 44.9L48.5 39.0L58.6 33.6L69.4 28.5L80.9 24.0L93.0 19.9L105.5 16.2L118.5 13.1L131.8 10.4L145.4 8.2L159.2 6.5L173.2 5.3L187.3 4.5L201.5 4.3L215.7 4.5L229.8 5.2L243.9 6.4L257.8 8.1L271.6 10.3L285.0 13.1L298.1 16.3L310.7 20.0L322.8 24.2L334.3 28.9L345.1 34.1L355.1 39.7L364.2 45.8L372.4 52.2L379.5 58.9L385.6 65.9L390.6 73.2L394.4 80.6L397.0 88.1L398.4 95.8L398.6 103.4L397.7 111.0L395.7 118.5L392.6 125.9L388.4 133.1L383.3 140.1L377.2 146.8L370.2 153.3L362.4 159.5L353.9 165.3L344.6 170.9L334.6 176.0L324.0 180.8L312.7 185.0L312.7 185.0L323.4 180.1L333.6 175.0L343.3 169.7L352.2 164.1L360.5 158.2L368.0 152.1L374.7 145.7L380.5 139.0L385.4 132.2L389.3 125.2L392.2 118.0L394.1 110.8L394.8 103.5L394.4 96.1L392.9 88.8L390.2 81.6L386.4 74.5L381.5 67.6L375.4 60.9L368.3 54.6L360.2 48.5L351.3 42.8L341.4 37.5L330.8 32.7L319.6 28.3L307.7 24.4L295.4 20.9L282.6 17.9L269.5 15.4L256.2 13.4L242.6 11.9L229.0 10.8L215.2 10.2L201.4 10.0L187.7 10.3L174.0 11.1L160.5 12.2L147.1 13.9L133.9 16.0L121.0 18.5L108.4 21.5L96.3 24.9L84.6 28.7L73.4 33.0L62.9 37.7L53.1 42.8L44.1 48.4L35.9 54.2L28.7 60.4L22.4 66.9L17.2 73.6L13.2 80.5L10.2 87.6L8.4 94.8L7.8 102.0L8.3 109.2L9.9 116.3L12.6 123.3L16.4 130.2L21.2 136.9L27.0 143.4L33.6 149.6L41.1 155.5L49.3 161.2L58.2 166.5L67.8 171.5L78.0 176.2L88.8 180.5L100.0 184.4L111.8 188.0L123.9 191.2L136.5 194.0L149.4 196.3L162.6 198.3L176.1 199.7L189.8 200.7L203.7 201.2L217.6 201.2L231.5 200.7L245.3 199.6L259.0 198.0L272.4 195.8L285.5 193.1L298.1 189.8L310.2 186.1L321.6 181.8L332.4 177.1L342.3 171.9L351.4 166.4L359.8 160.6Z",
+        };
+        var ringLine = new[]
+        {
+                "M368.9 62.5L375.3 69.1L380.9 76.0L385.4 83.0L389.0 90.3L391.4 97.7L392.6 105.2L392.6 112.8L391.4 120.4L388.8 127.8L385.0 135.2L380.0 142.3L373.8 149.2L366.4 155.8L358.0 162.0L348.7 167.8L338.5 173.2L327.6 178.2L316.0 182.7L303.9 186.7L291.3 190.3L278.3 193.4L264.9 196.1L251.3 198.3L237.4 200.1L223.3 201.4L209.1 202.2L194.7 202.6L180.3 202.4L165.9 201.8L151.5 200.6L137.3 198.8L123.3 196.5L109.7 193.6L96.6 190.1L84.0 186.0L72.2 181.4L61.2 176.2L51.1 170.6L42.0 164.5L33.9 158.1L27.0 151.3L21.2 144.3L16.6 137.0L13.1 129.7L10.7 122.2L9.4 114.7L9.1 107.2L9.9 99.7L11.6 92.3L14.2 85.0L17.7 77.8L22.1 70.7L27.4 63.8L33.6 57.0L40.6 50.5L48.5 44.1L57.3 38.1L67.0 32.4L77.5 27.1L88.9 22.1L101.0 17.7L113.9 13.8L127.4 10.4L141.5 7.7L155.9 5.6L170.7 4.2L185.6 3.5L200.6 3.4L215.5 4.0L230.3 5.2L244.7 7.0L258.8 9.4L272.4 12.4L285.5 15.8L298.1 19.6L310.2 23.9L321.6 28.6L332.4 33.6L342.5 39.0L352.0 44.7L360.7 50.7L368.7 57.1L375.9 63.7L382.2 70.5L387.6 77.7L391.9 85.0L395.2 92.5L397.2 100.2L398.0 107.9L397.6 115.7",
+                "M32.1 155.0L25.4 148.6L19.7 142.0L15.0 135.2L11.3 128.1L8.8 121.0L7.3 113.8L6.9 106.6L7.6 99.4L9.3 92.2L12.1 85.2L15.8 78.3L20.6 71.6L26.2 65.0L32.7 58.8L40.1 52.8L48.2 47.1L57.1 41.7L66.6 36.7L76.8 32.0L87.5 27.7L98.7 23.8L110.5 20.2L122.6 17.1L135.1 14.4L148.0 12.1L161.1 10.3L174.5 9.0L188.0 8.0L201.7 7.6L215.4 7.7L229.1 8.2L242.8 9.3L256.3 10.8L269.6 12.9L282.6 15.4L295.3 18.5L307.6 22.0L319.3 26.0L330.4 30.5L340.9 35.4L350.6 40.7L359.5 46.4L367.5 52.4L374.6 58.8L380.7 65.4L385.8 72.3L389.8 79.3L392.7 86.5L394.6 93.8L395.3 101.1L395.0 108.4L393.6 115.7L391.1 122.8L387.6 129.8L383.1 136.7L377.7 143.4L371.4 149.8L364.2 155.9L356.2 161.8L347.5 167.3L338.0 172.5L327.9 177.4L317.3 181.9L306.1 186.0L294.3 189.7L282.2 193.0L269.6 195.8L256.7 198.2L243.5 200.2L230.1 201.8L216.4 202.8L202.7 203.4L188.8 203.5L174.9 203.1L161.1 202.2L147.4 200.8L133.8 198.9L120.5 196.5L107.6 193.6L95.1 190.1L83.0 186.2L71.6 181.9L60.8 177.0L50.7 171.8L41.4 166.1L33.0 160.1L25.6 153.8L19.1 147.2L13.6 140.3L9.2 133.2",
+                "M52.5 45.6L61.8 39.8L71.7 34.4L82.3 29.3L93.5 24.5L105.4 20.1L118.0 16.1L131.2 12.7L144.9 9.8L159.2 7.6L173.8 6.1L188.7 5.3L203.6 5.2L218.5 5.8L233.1 7.2L247.5 9.1L261.4 11.7L274.9 14.8L287.8 18.4L300.2 22.3L312.1 26.7L323.5 31.4L334.3 36.4L344.5 41.8L354.1 47.5L363.0 53.6L371.1 60.0L378.1 66.8L384.2 73.8L389.0 81.1L392.4 88.7L394.5 96.4L395.2 104.1L394.4 111.9L392.3 119.6L388.9 127.1L384.2 134.4L378.5 141.5L371.9 148.3L364.4 154.9L356.1 161.2L347.2 167.2L337.6 172.9L327.3 178.3L316.3 183.4L304.7 188.2L292.4 192.5L279.5 196.4L265.9 199.7L251.7 202.4L237.1 204.5L222.2 205.8L207.0 206.4L191.8 206.3L176.8 205.4L162.0 203.9L147.5 201.7L133.5 198.9L120.0 195.6L107.0 191.9L94.5 187.7L82.6 183.2L71.2 178.3L60.4 173.1L50.2 167.5L40.6 161.6L31.9 155.3L23.9 148.7L17.1 141.8L11.3 134.5L6.8 127.0L3.7 119.3L2.0 111.4L1.8 103.5L3.0 95.7L5.5 87.9L9.4 80.3L14.4 73.0L20.5 65.8L27.5 59.0L35.4 52.4L44.0 46.1L53.3 40.1L63.3 34.4L73.9 28.9L85.2 23.9L97.2 19.1L109.9 14.9L123.3 11.1L137.3 7.9L151.8 5.3",
+                "M359.8 160.6L351.8 166.7L342.8 172.4L333.0 177.7L322.3 182.6L310.9 187.0L298.8 190.9L286.1 194.3L273.0 197.2L259.5 199.5L245.7 201.2L231.8 202.4L217.7 203.0L203.7 203.1L189.7 202.7L175.9 201.8L162.2 200.3L148.8 198.4L135.7 196.1L123.0 193.3L110.7 190.1L98.7 186.5L87.3 182.5L76.4 178.1L66.0 173.3L56.3 168.2L47.2 162.7L38.8 157.0L31.2 150.9L24.5 144.5L18.6 137.8L13.7 130.9L9.9 123.9L7.1 116.6L5.4 109.3L4.9 101.9L5.5 94.5L7.3 87.1L10.3 79.8L14.4 72.7L19.7 65.7L26.0 59.1L33.3 52.7L41.6 46.6L50.8 40.9L60.8 35.6L71.4 30.8L82.8 26.3L94.6 22.4L107.0 18.8L119.8 15.8L132.9 13.2L146.2 11.1L159.8 9.4L173.6 8.2L187.5 7.4L201.5 7.2L215.5 7.3L229.4 8.0L243.3 9.1L257.0 10.8L270.5 12.9L283.8 15.5L296.7 18.6L309.2 22.2L321.2 26.3L332.6 30.8L343.2 35.8L353.2 41.3L362.2 47.1L370.3 53.4L377.5 59.9L383.5 66.8L388.5 73.8L392.3 81.1L394.9 88.5L396.4 95.9L396.7 103.4L395.9 110.9L394.0 118.3L390.9 125.5L386.9 132.6L381.9 139.6L375.9 146.2L369.1 152.7L361.5 158.9L353.1 164.7L343.9 170.3L334.1 175.5L323.7 180.4L312.7 185.0",
+        };
+        // each ring's path length plus padding, so the round stroke caps stay clear
+        // of the dash boundary when the ring is hidden
+        var ringLen = new[] { 1043.5, 1015.4, 1097.2, 1041.6 };
+    }
+    <div class="principles">
+        @for (var i = 0; i < Model.WorkPrinciples.Count; i++)
+        {
+            var principle = Model.WorkPrinciples[i];
+            var ring = i % ringFill.Length;
+            var maskId = $"principle-ring-{principle.Slug}";
+            <article class="principle">
+                <svg class="principle__mark" viewBox="0 0 230 150" aria-hidden="true">
+                    <path d="M22 130 C40 64 92 22 182 16 C96 40 56 78 34 132 Z" />
+                    <path d="M188 14 C166 20 146 30 130 44 C140 32 150 22 162 14 C150 12 138 12 126 14 C142 6 164 4 188 14 Z" />
+                    <path d="M188 14 C182 34 180 54 184 76 C176 60 172 40 174 20 C168 26 162 34 158 42 C162 28 172 18 188 14 Z" />
+                </svg>
+                <div class="principle__body">
+                    <h3 class="principle__title">@principle.Title</h3>
+                    <p class="principle__desc">@principle.Description</p>
+                    <svg class="principle__ring" viewBox="0 0 400 210" preserveAspectRatio="none" aria-hidden="true">
+                        <mask id="@maskId" maskUnits="userSpaceOnUse">
+                            <path d="@(ringLine[ring])" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round"
+                                  stroke-dasharray="@(ringLen[ring])" stroke-dashoffset="@(ringLen[ring])" />
+                        </mask>
+                        <path d="@(ringFill[ring])" mask="url(#@maskId)" />
+                    </svg>
+                </div>
             </article>
         }
     </div>
 
-    <div style="display:flex; flex-direction:column; gap:10px; max-width:760px;">
-        <span class="dest-overview__eyebrow">GOVERNANCE &amp; STRUCTURE</span>
-        <p class="dest-overview__body">OEF is governed by an Advisory Board providing strategic oversight and accountability, with a small, lean team driving day-to-day delivery.</p>
-    </div>
-
-    <div class="gov-flow" aria-label="Governance structure. The Advisory Board leads the Team Lead, who oversees four tracks — Access, Resilience, Impact, and Partnerships and Strategy — each headed by one role: Innovation and Knowledge Lead, Programs and Community Lead, Environment and Sustainability, and Admin and Operations, respectively.">
-        <div class="gov-flow__row">
-            <div class="gov-flow__node">
-                <span class="gov-flow__node-title">Advisory Board</span>
-                <span class="gov-flow__node-desc">Strategic oversight &amp; accountability</span>
-            </div>
-        </div>
-
-        <div class="gov-flow__stem" aria-hidden="true"></div>
-
-        <div class="gov-flow__row">
-            <div class="gov-flow__node">
-                <span class="gov-flow__node-title">Team Lead</span>
-                <span class="gov-flow__node-desc">Day-to-day delivery</span>
-            </div>
-        </div>
-
-        <div class="gov-flow__branch" aria-hidden="true">
-            <svg viewBox="0 0 100 44" preserveAspectRatio="none">
-                <path d="M50 0 V18 M12.5 18 H87.5 M12.5 18 V44 M37.5 18 V44 M62.5 18 V44 M87.5 18 V44" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke" />
-            </svg>
-        </div>
-        <div class="gov-flow__stem gov-flow__stem--mobile" aria-hidden="true"></div>
-
-        <div class="gov-flow__branches">
-            <div class="gov-flow__node gov-flow__node--sm">
-                <span class="gov-flow__node-title">Access</span>
-            </div>
-            <span class="gov-flow__connector" aria-hidden="true"></span>
-            <div class="gov-flow__node gov-flow__node--sm gov-flow__node--leaf">
-                <span class="gov-flow__node-title">Innovation &amp; Knowledge Lead</span>
-            </div>
-
-            <div class="gov-flow__node gov-flow__node--sm">
-                <span class="gov-flow__node-title">Resilience</span>
-            </div>
-            <span class="gov-flow__connector" aria-hidden="true"></span>
-            <div class="gov-flow__node gov-flow__node--sm gov-flow__node--leaf">
-                <span class="gov-flow__node-title">Programs &amp; Community Lead</span>
-            </div>
-
-            <div class="gov-flow__node gov-flow__node--sm">
-                <span class="gov-flow__node-title">Impact</span>
-            </div>
-            <span class="gov-flow__connector" aria-hidden="true"></span>
-            <div class="gov-flow__node gov-flow__node--sm gov-flow__node--leaf">
-                <span class="gov-flow__node-title">Environment &amp; Sustainability</span>
-            </div>
-
-            <div class="gov-flow__node gov-flow__node--sm">
-                <span class="gov-flow__node-title">Partnerships &amp; Strategy</span>
-            </div>
-            <span class="gov-flow__connector" aria-hidden="true"></span>
-            <div class="gov-flow__node gov-flow__node--sm gov-flow__node--leaf">
-                <span class="gov-flow__node-title">Admin &amp; Operations</span>
-            </div>
-        </div>
-    </div>
 </section>
 
 <section class="dest-section dest-section--tint" id="stories" aria-labelledby="stories-heading">
@@ -175,30 +208,95 @@
     </div>
     <p class="dest-overview__body" style="max-width:760px;">OEF's story is best told through the people and partners who shape it. We capture our stories and impact through three lenses Communities, Partnerships and Learning each one gathering real voices, projects and evidence as our work takes root and grows.</p>
 
-    <div class="card-grid">
-        @for (var i = 1; i < Model.StoryTiles.Count; i++)
+    @{
+        // Communities is held back for now, so the list starts at index 1. The
+        // tiles and their galleries both come off this one list so the two
+        // cannot drift — previously the tile loop skipped it while the dialog
+        // loop did not, leaving a modal nothing could open.
+        var visibleStories = Model.StoryTiles.Skip(1).ToList();
+    }
+
+    <div class="card-grid card-grid--stories">
+        @foreach (var tile in visibleStories)
         {
-            var tile = Model.StoryTiles[i];
             <button type="button" class="story-tile" data-story-trigger="@tile.Key" aria-haspopup="dialog">
-                <div class="project-card__media img-slot" role="img" aria-label="@tile.ImageLabel" style="background-image: url('/img/optimum-earth-images/foundation@(i + 1).jpg')"></div>
-                <div class="project-card__body">
-                    <h3 class="project-card__title">@tile.Title</h3>
-                    <p class="project-card__meta">@tile.Summary</p>
+                <div class="story-tile__media img-slot" role="img" aria-label="@tile.ImageLabel" style="background-image: url('@tile.Cover')"></div>
+                <div class="story-tile__body">
+                    <h3 class="story-tile__title">@tile.Title</h3>
+                    <p class="story-tile__meta">@tile.Summary</p>
+                    @* the fuller text, revealed under the hover veil. The dialog this
+                       button opens carries the same string, so it is aria-hidden here
+                       rather than announced twice. *@
+                    <p class="story-tile__full" aria-hidden="true">@tile.ModalBody</p>
+                    <span class="story-tile__cue">
+                        View gallery
+                        <svg viewBox="0 0 20 9" fill="none" aria-hidden="true"><path d="M0 4.5h18M14 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    </span>
                 </div>
             </button>
         }
     </div>
 
-    @foreach (var tile in Model.StoryTiles)
+    @foreach (var tile in visibleStories)
     {
-        <dialog class="story-modal" id="story-@tile.Key" aria-labelledby="story-@(tile.Key)-title">
-            <div class="story-modal__panel">
-                <button type="button" class="story-modal__close" data-story-close aria-label="Close">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
-                </button>
-                <span class="dest-overview__eyebrow">@tile.Title.ToUpperInvariant()</span>
-                <h3 id="story-@(tile.Key)-title" class="story-modal__title">@tile.Title</h3>
-                <p class="story-modal__body">@tile.ModalBody</p>
+        var gallery = Model.Galleries.FirstOrDefault(g => g.Key == tile.Key);
+        @* No gallery for this key means nothing to show, so no dialog is emitted
+           and site.js leaves the tile inert rather than opening an empty frame. *@
+        if (gallery is null || gallery.StoryGalleryItems.Count == 0)
+        {
+            continue;
+        }
+
+        var items = gallery.StoryGalleryItems;
+
+        <dialog class="lightbox" id="story-@tile.Key" aria-labelledby="story-@(tile.Key)-title" data-lightbox>
+            <div class="lightbox__panel">
+                <header class="lightbox__head">
+                    <div>
+                        @* <span class="dest-overview__eyebrow">@tile.Title.ToUpperInvariant()</span> *@
+                        <h3 id="story-@(tile.Key)-title" class="lightbox__title">@tile.Title</h3>
+                    </div>
+                    <p class="lightbox__count"><span data-lightbox-position>1</span> / @items.Count</p>
+                    <button type="button" class="lightbox__close" data-story-close aria-label="Close gallery">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+                    </button>
+                </header>
+
+                <div class="lightbox__stage">
+                    <button type="button" class="lightbox__nav lightbox__nav--prev" data-lightbox-prev aria-label="Previous image">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 4L7 12l8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    </button>
+
+                    <div class="lightbox__frame">
+                        @for (var j = 0; j < items.Count; j++)
+                        {
+                            var item = items[j];
+                            <figure class="lightbox__slide @(j == 0 ? "is-current" : "")" data-lightbox-slide>
+                                @* lazy so a closed dialog costs nothing; these are still
+                                   the full-size originals, several megabytes each *@
+                                <img src="@item.ImageUrl" alt="@item.Title" loading="lazy" decoding="async" />
+                            </figure>
+                        }
+                    </div>
+
+                    <button type="button" class="lightbox__nav lightbox__nav--next" data-lightbox-next aria-label="Next image">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 4l8 8-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    </button>
+                </div>
+
+                <p class="lightbox__caption" data-lightbox-caption>@items[0].Title</p>
+
+                <ul class="lightbox__thumbs">
+                    @for (var j = 0; j < items.Count; j++)
+                    {
+                        var item = items[j];
+                        <li>
+                            <button type="button" class="lightbox__thumb @(j == 0 ? "is-current" : "")"
+                                    data-lightbox-thumb style="background-image: url('@item.ImageUrl')"
+                                    aria-label="Show @item.Title"></button>
+                        </li>
+                    }
+                </ul>
             </div>
         </dialog>
     }

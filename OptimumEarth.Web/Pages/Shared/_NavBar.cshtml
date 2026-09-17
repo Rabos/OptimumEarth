@@ -13,10 +13,21 @@
             <a class="brand" href="/">
                 <img class="brand__logo" src="~/img/logo.svg" alt="Optimum Earth" />
             </a>
+            @* The Foundation co-brand is set here rather than shown as its supplied
+               lockup: that artwork stacks three lines of type plus a tagline, so at
+               header height its wordmark renders about 8px tall and the tagline
+               illegibly smaller. Only the mark is used, and the words are set in the
+               site's own type at a size that reads. *@
             @if (theme == "foundation")
             {
-                <a class="brand" href="/">
-                    <img class="brand__logo" src="~/img/oem_foundation.svg" alt="Optimum Earth Foundation" />
+                <span class="brand-rule" aria-hidden="true"></span>
+                <a class="brand brand--foundation" href="/foundation">
+                    <img class="brand__mark" src="~/img/oem_foundation-icon.svg" alt="" />
+                    <span class="brand__words">
+                        <span class="brand__name">Foundation</span>
+                        <span class="brand__tagline">Access &middot; Resilience &middot; Impact</span>
+                    </span>
+                    <span class="visually-hidden">Optimum Earth Foundation</span>
                 </a>
             }
         </div>
