@@ -2435,12 +2435,38 @@ img {
     transition: font-size .45s ease;
 }
 
-.story-tile__meta {
+/* the summary and the fuller body occupy the same slot: one collapses as the
+   other opens. max-height is the lever rather than height, since neither
+   paragraph has a height the stylesheet can know — the values below are
+   generous caps, not measurements, so they must stay above the tallest real
+   string or the text will clip. */
+.story-tile__meta,
+.story-tile__full {
     font-size: 14.5px;
     line-height: 1.6;
     color: rgba(255, 255, 255, .82);
-    margin: 10px 0 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+.story-tile__meta {
+    margin-top: 10px;
     max-width: 30ch;
+    max-height: 6em;
+    opacity: 1;
+    transition: max-height .4s ease, margin-top .4s ease, opacity .25s ease;
+}
+
+/* held shut at rest. Both strings open on the same sentence, so the fade-in is
+   delayed past the summary's fade-out — cross-fading them would have read as a
+   flicker on that shared first line rather than as a swap. */
+.story-tile__full {
+    font-size: 14px;
+    line-height: 1.55;
+    margin-top: 0;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height .5s ease, margin-top .5s ease, opacity .3s ease .18s;
 }
 
 /* only shown once the veil is up, where the cover no longer hints that the
@@ -2498,6 +2524,20 @@ img {
     font-size: 27px;
 }
 
+.story-tile:hover .story-tile__meta,
+.story-tile:focus-visible .story-tile__meta {
+    max-height: 0;
+    margin-top: 0;
+    opacity: 0;
+}
+
+.story-tile:hover .story-tile__full,
+.story-tile:focus-visible .story-tile__full {
+    max-height: 16em;
+    margin-top: 12px;
+    opacity: 1;
+}
+
 .story-tile:hover .story-tile__cue,
 .story-tile:focus-visible .story-tile__cue {
     opacity: 1;
@@ -2507,6 +2547,17 @@ img {
 .story-tile:focus-visible {
     outline: 2px solid var(--green);
     outline-offset: 2px;
+}
+
+/* Two columns need roughly 420px each before the fuller hover text stops
+   fitting the fixed tile height. .card-grid's own 300px floor allows columns
+   well below that, and at ~312-332px the body was squeezed by the flex column
+   and clipped, so this grid drops to one column while the tiles are still
+   wide enough. */
+@media (max-width: 960px) {
+    .card-grid--stories {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 720px) {
@@ -2522,6 +2573,8 @@ img {
     .story-tile__media::after,
     .story-tile__body::after,
     .story-tile__title,
+    .story-tile__meta,
+    .story-tile__full,
     .story-tile__cue {
         transition: none;
     }
