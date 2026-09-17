@@ -1665,6 +1665,7 @@ img {
 }
 
 .dest-section {
+    overflow-x: clip;
     padding: 64px var(--gutter);
     display: flex;
     flex-direction: column;
@@ -1726,8 +1727,22 @@ img {
 /* ---- How We Work: editorial principles with a hand-drawn hover ---- */
 .principles {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    /* capped at 3 rather than auto-fit: a 4th column narrows each one until the
+       decorative ring, which is a fixed 400px, overhangs past the page edge */
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px 40px;
+}
+
+@media (max-width: 1100px) {
+    .principles {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 720px) {
+    .principles {
+        grid-template-columns: 1fr;
+    }
 }
 
 .principle {
@@ -1753,7 +1768,9 @@ img {
 
 .principle__body {
     position: relative;
-    max-width: 280px;
+    /* 240 is the widest the text can be while the ring still both contains it
+       (needs >=1.45x the width) and overhangs by no more than the page gutter */
+    max-width: 240px;
 }
 
 .principle__title {
@@ -1779,8 +1796,11 @@ img {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 400px;
-    height: 210px;
+    /* sized from the text rather than fixed: a fixed width overhangs further as
+       the column narrows, and once the overhang passes the gutter it puts a
+       horizontal scrollbar on the page. +110 keeps the overhang at 55px. */
+    width: calc(100% + 110px);
+    height: calc(100% + 78px);
     overflow: visible;
     pointer-events: none;
 }
