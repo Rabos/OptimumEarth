@@ -209,14 +209,16 @@
     <p class="dest-overview__body" style="max-width:760px;">OEF's story is best told through the people and partners who shape it. We capture our stories and impact through three lenses Communities, Partnerships and Learning each one gathering real voices, projects and evidence as our work takes root and grows.</p>
 
     <div class="card-grid">
+        @* NOTE: starts at 1, so StoryTiles[0] ("Communities") renders no tile even
+           though it still gets a dialog below. Preserved as-is for now. *@
         @for (var i = 1; i < Model.StoryTiles.Count; i++)
         {
             var tile = Model.StoryTiles[i];
             <button type="button" class="story-tile" data-story-trigger="@tile.Key" aria-haspopup="dialog">
-                <div class="project-card__media img-slot" role="img" aria-label="@tile.ImageLabel" style="background-image: url('/img/optimum-earth-images/foundation@(i + 1).jpg')"></div>
-                <div class="project-card__body">
-                    <h3 class="project-card__title">@tile.Title</h3>
-                    <p class="project-card__meta">@tile.Summary</p>
+                <div class="story-tile__media img-slot" role="img" aria-label="@tile.ImageLabel" style="background-image: url('@tile.Cover')"></div>
+                <div class="story-tile__body">
+                    <h3 class="story-tile__title">@tile.Title</h3>
+                    <p class="story-tile__meta">@tile.Summary</p>
                 </div>
             </button>
         }

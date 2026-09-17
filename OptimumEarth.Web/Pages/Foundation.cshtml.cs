@@ -64,13 +64,13 @@ public class FoundationModel : PageModel
     {
         new("communities", "Communities", "Stories from the field, in the words of the people we work with.",
             "Stories from the field, in the words of the people we work with. This space holds community voices, before/after and challenge/response stories, and photography from the field — the human face of OEF's work.",
-            "Community story photo"),
+            "Community story photo", "/img/optimum-earth-images/foundation2.jpg"),
         new("partnerships", "Partnerships", "A look at what we're building together.",
             "A look at what we're building together. This space features project and partnership case studies, impact indicators and simple dashboards as data becomes available, and news or updates on active collaborations.",
-            "Partnership story photo"),
+            "Partnership story photo", "/img/optimum-earth-images/foundation3.jpg"),
         new("learning", "Learning", "Where OEF shares what it's discovering and who it's growing with.",
             "Where OEF shares what it's discovering and who it's growing with. This space holds practical learning notes and insights, alongside our Academic & Learning Partnerships — joint research, student placements and fellowships, mentorship, and career-pathway stories connecting young African talent to climate, water and energy work.",
-            "Learning story photo"),
+            "Learning story photo", "/img/optimum-earth-images/foundation4.jpg"),
     };
 
     public void OnGet()
