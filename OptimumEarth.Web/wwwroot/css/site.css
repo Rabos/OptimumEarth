@@ -1537,43 +1537,43 @@ img {
     gap: 20px;
 }
 
-.sdg-leaves {
+.sdg-loops {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 28px;
+    gap: 10px;
 }
 
-.sdg-leaf {
+.sdg-loop {
     position: relative;
-    width: 300px;
-    height: 168px;
+    width: 320px;
+    height: 190px;
 }
 
-.sdg-leaf__shape {
+.sdg-loop__ring {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
+    pointer-events: none;
 }
 
-.sdg-leaf__shape path {
-    fill: var(--green-wash);
-    stroke: var(--green-wash-border);
-    stroke-width: 1px;
+.sdg-loop__ring path {
+    fill: var(--green-light);
 }
 
-.sdg-leaf__content {
+.sdg-loop__content {
     position: relative;
     z-index: 1;
     display: flex;
     align-items: center;
-    gap: 16px;
+    justify-content: center;
+    gap: 14px;
     height: 100%;
-    padding: 0 120px 0 30px;
+    padding: 0 56px;
 }
 
-.sdg-leaf__icon-wrap {
+.sdg-loop__icon-wrap {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1581,13 +1581,13 @@ img {
     flex-shrink: 0;
 }
 
-.sdg-leaf__icon {
-    width: 32px;
-    height: 32px;
+.sdg-loop__icon {
+    width: 28px;
+    height: 28px;
     color: var(--green);
 }
 
-.sdg-leaf__num {
+.sdg-loop__num {
     font-size: 11px;
     font-weight: 700;
     letter-spacing: .06em;
@@ -1595,16 +1595,16 @@ img {
     opacity: .7;
 }
 
-.sdg-leaf__divider {
+.sdg-loop__divider {
     flex-shrink: 0;
-    height: 60%;
+    height: 46%;
     width: 1px;
     background: var(--green-wash-border);
 }
 
-.sdg-leaf__title {
+.sdg-loop__title {
     font-family: 'Newsreader', serif;
-    font-size: 19px;
+    font-size: 18px;
     font-weight: 600;
     line-height: 1.3;
     color: var(--navy-ink);
