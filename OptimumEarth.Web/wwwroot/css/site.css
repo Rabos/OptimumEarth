@@ -1763,6 +1763,7 @@ img {
     line-height: 1.25;
     color: var(--green-ink);
     margin: 0 0 7px;
+    transition: color .3s ease, font-weight .3s ease;
 }
 
 .principle__desc {
@@ -1770,6 +1771,7 @@ img {
     line-height: 1.65;
     color: var(--grey);
     margin: 0;
+    transition: color .3s ease;
 }
 
 .principle__ring {
@@ -1803,13 +1805,28 @@ img {
     opacity: 0;
 }
 
+/* Newsreader is a variable font, so 650 is a real weight rather than a
+   synthesised one. It renders ~1.3% wider than 600 — measured as too small
+   to re-wrap the current copy, but re-check if these strings get longer,
+   since the ring around them is a fixed size. */
+.principle:hover .principle__title {
+    color: var(--green-deep);
+    font-weight: 650;
+}
+
+.principle:hover .principle__desc {
+    color: var(--navy-ink);
+}
+
 .principle:hover .principle__ring mask path {
     stroke-dashoffset: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
     .principle__mark,
-    .principle__ring mask path {
+    .principle__ring mask path,
+    .principle__title,
+    .principle__desc {
         transition: none;
     }
 }
