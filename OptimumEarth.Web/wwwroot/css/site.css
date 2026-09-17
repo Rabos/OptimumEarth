@@ -2346,13 +2346,18 @@ img {
         }
 }
 
+/* ---- Stories & Impact tiles -------------------------------------------------
+   At rest the cover fills the whole tile and the title + summary sit on it,
+   kept legible by a bottom-to-top gradient. On hover an opaque veil takes the
+   tile edge to edge and the same text rises into the middle of it. */
 .story-tile {
     all: unset;
     box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
+    position: relative;
+    display: block;
     width: 100%;
-    background: #fff;
+    height: 320px;
+    background: var(--green-ink);
     border: 1px solid var(--grey-200);
     border-radius: var(--radius);
     overflow: hidden;
@@ -2360,55 +2365,111 @@ img {
     transition: border-color .35s ease, box-shadow .35s ease;
 }
 
-/* cover sits in the resting layer alongside the title and summary; the hover
-   only signals that the tile opens something */
+/* the hover veil. Kept on the tile's own ::after rather than a div so the
+   three layers stack cover -> veil -> text with nothing extra in the markup */
+.story-tile::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: rgba(31, 51, 17, .965);
+    opacity: 0;
+    transition: opacity .45s ease;
+}
+
 .story-tile__media {
-    /* .img-slot carries min-height:100%, which height alone does not override —
-       inside this column flex tile that lets the cover grow and swallow the body */
-    flex: none;
-    height: 200px;
-    min-height: 200px;
-    position: relative;
+    /* .img-slot is position:relative; this rule is later in the file so it
+       wins, but the override has to stay explicit for the inset to apply */
+    position: absolute;
+    inset: 0;
+    z-index: 0;
     transition: transform .7s ease-out;
 }
 
+/* resting scrim: dark at the foot, clear by the upper quarter, so the cover
+   still reads as a photograph rather than a tinted block */
 .story-tile__media::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(10, 26, 4, .38), rgba(10, 26, 4, 0) 62%);
-    opacity: 0;
-    transition: opacity .35s ease;
+    background: linear-gradient(to top,
+        rgba(15, 30, 8, .88) 0%,
+        rgba(15, 30, 8, .64) 26%,
+        rgba(15, 30, 8, .20) 55%,
+        rgba(15, 30, 8, 0) 78%);
+    transition: opacity .45s ease;
 }
 
 .story-tile__body {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 20px 22px 24px;
+    padding: 26px 28px;
+    text-align: left;
+}
+
+/* the two spacers carry the state change: at rest only the top one grows, so
+   the text sits at the foot; on hover the bottom one grows to match and the
+   same text lands in the middle. flex-grow interpolates, so this animates —
+   switching justify-content would have snapped. */
+.story-tile__body::before,
+.story-tile__body::after {
+    content: "";
+    flex: 1 0 0;
+}
+
+.story-tile__body::after {
+    flex-grow: 0;
+    transition: flex-grow .5s ease;
 }
 
 .story-tile__title {
     font-family: 'Newsreader', serif;
-    font-size: 21px;
+    font-size: 24px;
     font-weight: 600;
-    line-height: 1.25;
-    color: var(--green-ink);
+    line-height: 1.2;
+    color: #fff;
     margin: 0;
-    transition: color .3s ease, font-weight .3s ease;
+    transition: font-size .45s ease;
 }
 
 .story-tile__meta {
     font-size: 14.5px;
     line-height: 1.6;
-    color: var(--grey);
-    margin: 0;
+    color: rgba(255, 255, 255, .82);
+    margin: 10px 0 0;
+    max-width: 30ch;
+}
+
+/* only shown once the veil is up, where the cover no longer hints that the
+   tile opens something */
+.story-tile__cue {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 18px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--green-light);
+    opacity: 0;
+    transform: translateY(7px);
+    transition: opacity .4s ease .08s, transform .4s ease .08s;
+}
+
+.story-tile__cue svg {
+    width: 20px;
+    height: 9px;
+    overflow: visible;
 }
 
 .story-tile:hover,
 .story-tile:focus-visible {
     border-color: var(--green);
-    box-shadow: 0 10px 26px rgba(20, 40, 10, .13);
+    box-shadow: var(--shadow-card-hover-foundation);
 }
 
 .story-tile:hover .story-tile__media,
@@ -2416,34 +2477,62 @@ img {
     transform: scale(1.06);
 }
 
+/* the gradient gives way to the flat veil so the two never stack */
 .story-tile:hover .story-tile__media::after,
 .story-tile:focus-visible .story-tile__media::after {
+    opacity: 0;
+}
+
+.story-tile:hover::after,
+.story-tile:focus-visible::after {
     opacity: 1;
+}
+
+.story-tile:hover .story-tile__body::after,
+.story-tile:focus-visible .story-tile__body::after {
+    flex-grow: 1;
 }
 
 .story-tile:hover .story-tile__title,
 .story-tile:focus-visible .story-tile__title {
-    color: var(--green-deep);
-    font-weight: 650;
+    font-size: 27px;
+}
+
+.story-tile:hover .story-tile__cue,
+.story-tile:focus-visible .story-tile__cue {
+    opacity: 1;
+    transform: none;
+}
+
+.story-tile:focus-visible {
+    outline: 2px solid var(--green);
+    outline-offset: 2px;
+}
+
+@media (max-width: 720px) {
+    .story-tile {
+        height: 280px;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .story-tile,
+    .story-tile::after,
     .story-tile__media,
     .story-tile__media::after,
-    .story-tile__title {
+    .story-tile__body::after,
+    .story-tile__title,
+    .story-tile__cue {
         transition: none;
     }
+
+    .story-tile:hover .story-tile__media,
+    .story-tile:focus-visible .story-tile__media,
+    .story-tile:hover .story-tile__cue,
+    .story-tile:focus-visible .story-tile__cue {
+        transform: none;
+    }
 }
-
-    .story-tile:hover, .story-tile:focus-visible {
-        box-shadow: var(--shadow-card-hover-foundation);
-    }
-
-    .story-tile:focus-visible {
-        outline: 2px solid var(--green);
-        outline-offset: 2px;
-    }
 
 .story-modal {
     border: 0;
