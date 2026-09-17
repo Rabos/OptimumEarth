@@ -1881,7 +1881,16 @@ img {
 
 .pillar-card {
     position: relative;
-    background: #fff;
+    background-color: #fff;
+    /* wash blooms from the bottom-left corner on hover — the corner the SDG
+       badge is anchored to. Painted as a background-image rather than a
+       pseudo-element because the badge hangs outside the card, so the card
+       cannot clip its own overflow. */
+    background-image: radial-gradient(circle at 0% 100%,
+        var(--green-wash) 0%, var(--green-wash) 72%, transparent 73%);
+    background-repeat: no-repeat;
+    background-position: 0% 100%;
+    background-size: 0% 0%;
     border: 1.5px solid var(--green);
     border-radius: 50px 0px;
     padding: 38px 36px 46px;
@@ -1889,6 +1898,36 @@ img {
     flex-direction: column;
     justify-content: center;
     gap: 10px;
+    transition: background-size .7s ease-out, border-color .35s ease;
+}
+
+.pillar-card:hover {
+    background-size: 260% 260%;
+    border-color: var(--green-deep);
+}
+
+/* the badge is the origin of the bloom, so it fills in rather than being
+   left behind by it */
+.pillar-card__sdg {
+    transition: background-color .35s ease, color .35s ease, border-color .35s ease;
+}
+
+.pillar-card:hover .pillar-card__sdg {
+    background: var(--green);
+    border-color: var(--green);
+    color: var(--white);
+}
+
+.pillar-card:hover .pillar-card__title {
+    color: var(--green-deep);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pillar-card,
+    .pillar-card__sdg,
+    .pillar-card__title {
+        transition: none;
+    }
 }
 
 .pillar-card__sdg {
@@ -1898,6 +1937,7 @@ img {
 }
 
 .pillar-card__title {
+    transition: color .35s ease;
     font-size: 20px;
     font-weight: 700;
     color: var(--green-ink);
