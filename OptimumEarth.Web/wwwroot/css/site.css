@@ -1558,7 +1558,9 @@ img {
     pointer-events: none;
 }
 
-.sdg-loop__ring path {
+/* direct child only — as a descendant selector this also matches the path
+   inside <mask>, overriding its fill="none" and revealing the ring at rest */
+.sdg-loop__ring > path {
     fill: var(--green-light);
 }
 
