@@ -213,7 +213,7 @@
         // tiles and their galleries both come off this one list so the two
         // cannot drift — previously the tile loop skipped it while the dialog
         // loop did not, leaving a modal nothing could open.
-        var visibleStories = Model.StoryTiles.Skip(1).ToList();
+        var visibleStories = Model.StoryTiles.ToList();
     }
 
     <div class="card-grid card-grid--stories">
