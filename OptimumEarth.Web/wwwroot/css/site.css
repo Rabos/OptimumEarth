@@ -370,6 +370,60 @@ img {
     display: block;
 }
 
+/* ---- Foundation co-brand (header, foundation theme only) ----
+   The supplied Foundation lockup stacks three lines of type plus a tagline, so
+   at header height its wordmark lands around 8px and the tagline smaller again.
+   Only its mark is used here; the words are set in the site's own type. */
+.brand-rule {
+    width: 1px;
+    height: 30px;
+    background: var(--grey-200);
+    flex: none;
+}
+
+.brand--foundation {
+    gap: 11px;
+    text-decoration: none;
+}
+
+.brand__mark {
+    /* the mark is very nearly square once cropped out of the lockup, so height
+       and width track each other; alt="" because the link carries its own
+       visually-hidden name */
+    height: 38px;
+    width: auto;
+    display: block;
+    flex: none;
+}
+
+.brand__words {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+}
+
+.brand__name {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--green-deep);
+}
+
+.brand__tagline {
+    margin-top: 3px;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--grey);
+    white-space: nowrap;
+}
+
+    .brand--foundation:hover .brand__name,
+    .brand--foundation:focus-visible .brand__name {
+        color: var(--green);
+    }
+
 .nav-toggle {
     display: none;
     flex-direction: column;
@@ -3649,6 +3703,23 @@ img {
 
     .site-header__row {
         padding: 14px 24px;
+    }
+
+    /* the hamburger appears at this width and the row gets tight; the tagline is
+       the first thing that can go without losing what the co-brand says */
+    .brand__tagline {
+        display: none;
+    }
+}
+
+/* Below this the parent logo and the hamburger need the whole row. The mark on
+   its own would only put a second globe beside the first, which is the crowding
+   this lockup was rebuilt to avoid, so the co-brand drops out entirely — the
+   visitor is already on the Foundation page. */
+@media (max-width: 560px) {
+    .brand-rule,
+    .brand--foundation {
+        display: none;
     }
 }
 
