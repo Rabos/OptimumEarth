@@ -1822,7 +1822,7 @@ img {
     position: relative;
     background: #fff;
     border: 1.5px solid var(--green);
-    border-radius: 90px 90px 90px 20px;
+    border-radius: 50px 0px;
     padding: 38px 36px 46px;
     display: flex;
     flex-direction: column;
@@ -1832,8 +1832,8 @@ img {
 
 .pillar-card__sdg {
     position: absolute;
-    left: 20px;
-    bottom: -14px;
+    left: 5px;
+    bottom: -11px;
 }
 
 .pillar-card__title {

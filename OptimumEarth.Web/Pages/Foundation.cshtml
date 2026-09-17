@@ -113,12 +113,6 @@
             </article>
         }
     </div>
-    <div class="tag-strip">
-        @foreach (var area in Model.FocusAreas)
-        {
-            <span class="filter-chip">@area</span>
-        }
-    </div>
 </section>
 
 <section class="dest-section" id="how-we-work" aria-labelledby="how-we-work-heading">
@@ -135,69 +129,6 @@
         }
     </div>
 
-    <div style="display:flex; flex-direction:column; gap:10px; max-width:760px;">
-        <span class="dest-overview__eyebrow">GOVERNANCE &amp; STRUCTURE</span>
-        <p class="dest-overview__body">OEF is governed by an Advisory Board providing strategic oversight and accountability, with a small, lean team driving day-to-day delivery.</p>
-    </div>
-
-    <div class="gov-flow" aria-label="Governance structure. The Advisory Board leads the Team Lead, who oversees four tracks — Access, Resilience, Impact, and Partnerships and Strategy — each headed by one role: Innovation and Knowledge Lead, Programs and Community Lead, Environment and Sustainability, and Admin and Operations, respectively.">
-        <div class="gov-flow__row">
-            <div class="gov-flow__node">
-                <span class="gov-flow__node-title">Advisory Board</span>
-                <span class="gov-flow__node-desc">Strategic oversight &amp; accountability</span>
-            </div>
-        </div>
-
-        <div class="gov-flow__stem" aria-hidden="true"></div>
-
-        <div class="gov-flow__row">
-            <div class="gov-flow__node">
-                <span class="gov-flow__node-title">Team Lead</span>
-                <span class="gov-flow__node-desc">Day-to-day delivery</span>
-            </div>
-        </div>
-
-        <div class="gov-flow__branch" aria-hidden="true">
-            <svg viewBox="0 0 100 44" preserveAspectRatio="none">
-                <path d="M50 0 V18 M12.5 18 H87.5 M12.5 18 V44 M37.5 18 V44 M62.5 18 V44 M87.5 18 V44" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke" />
-            </svg>
-        </div>
-        <div class="gov-flow__stem gov-flow__stem--mobile" aria-hidden="true"></div>
-
-        <div class="gov-flow__branches">
-            <div class="gov-flow__node gov-flow__node--sm">
-                <span class="gov-flow__node-title">Access</span>
-            </div>
-            <span class="gov-flow__connector" aria-hidden="true"></span>
-            <div class="gov-flow__node gov-flow__node--sm gov-flow__node--leaf">
-                <span class="gov-flow__node-title">Innovation &amp; Knowledge Lead</span>
-            </div>
-
-            <div class="gov-flow__node gov-flow__node--sm">
-                <span class="gov-flow__node-title">Resilience</span>
-            </div>
-            <span class="gov-flow__connector" aria-hidden="true"></span>
-            <div class="gov-flow__node gov-flow__node--sm gov-flow__node--leaf">
-                <span class="gov-flow__node-title">Programs &amp; Community Lead</span>
-            </div>
-
-            <div class="gov-flow__node gov-flow__node--sm">
-                <span class="gov-flow__node-title">Impact</span>
-            </div>
-            <span class="gov-flow__connector" aria-hidden="true"></span>
-            <div class="gov-flow__node gov-flow__node--sm gov-flow__node--leaf">
-                <span class="gov-flow__node-title">Environment &amp; Sustainability</span>
-            </div>
-
-            <div class="gov-flow__node gov-flow__node--sm">
-                <span class="gov-flow__node-title">Partnerships &amp; Strategy</span>
-            </div>
-            <span class="gov-flow__connector" aria-hidden="true"></span>
-            <div class="gov-flow__node gov-flow__node--sm gov-flow__node--leaf">
-                <span class="gov-flow__node-title">Admin &amp; Operations</span>
-            </div>
-        </div>
-    </div>
 </section>
 
 <section class="dest-section dest-section--tint" id="stories" aria-labelledby="stories-heading">
