@@ -1564,6 +1564,31 @@ img {
     fill: var(--green-light);
 }
 
+/* deeper ring that draws itself over the pale one on hover */
+.sdg-loop__ring > path.sdg-loop__ring-draw {
+    fill: var(--green);
+}
+
+.sdg-loop__ring mask path {
+    transition: stroke-dashoffset .7s ease-out;
+}
+
+.sdg-loop:hover .sdg-loop__ring mask path {
+    stroke-dashoffset: 0;
+}
+
+.sdg-loop:hover .sdg-loop__title {
+    color: var(--green-deep);
+    font-weight: 650;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sdg-loop__ring mask path,
+    .sdg-loop__title {
+        transition: none;
+    }
+}
+
 .sdg-loop__content {
     position: relative;
     z-index: 1;
@@ -1610,6 +1635,7 @@ img {
     font-weight: 600;
     line-height: 1.3;
     color: var(--navy-ink);
+    transition: color .3s ease, font-weight .3s ease;
 }
 
 .glance-panel {
