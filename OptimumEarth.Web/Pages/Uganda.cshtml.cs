@@ -35,7 +35,7 @@ public class UgandaModel : PageModel
             ("Established", "2017"),
             ("Office", "Kampala"),
             ("Service lines", "5"),
-            ("Sectors", "Water · Energy · Mining"),
+            ("Sectors", "Water · Energy · Mining · Infrastructure"),
         },
         SectionOneTitle = "Services in Uganda",
         SectionOneLinkText = "All services",
