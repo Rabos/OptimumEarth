@@ -2945,7 +2945,7 @@ img {
 .service-row__body {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 14px;
 }
 
 .service-row__title {
@@ -2961,6 +2961,14 @@ img {
     line-height: 1.65;
     color: var(--grey);
     max-width: 620px;
+    margin-bottom: 6px;
+}
+
+.service-row__deliver {
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: var(--grey);
+    max-width: 620px;
 }
 
 .service-row__where {
@@ -2968,6 +2976,33 @@ img {
     font-weight: 600;
     color: var(--blue);
     padding-top: 4px;
+}
+
+.service-row__deliverables {
+    list-style: none;
+    margin: 5px 0 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 620px;
+}
+
+.service-row__deliverables li {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--grey);
+    padding-left: 20px;
+    position: relative;
+}
+
+.service-row__deliverables li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--blue);
+    font-weight: 700;
+    font-size: 16px;
 }
 
 .service-row__media {

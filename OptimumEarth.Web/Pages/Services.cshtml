@@ -8,8 +8,8 @@
 
 <section class="services-hero">
     <span class="eyebrow" style="letter-spacing:.16em;">What we do</span>
-    <h1 class="services-hero__title">Five service lines across water, energy, environment and the ground beneath them.</h1>
-    <p class="services-hero__lede">Delivered by the same technical team in Uganda and Zambia, scoped to the regulator, the lender and the reality of the site.</p>
+    <h1 class="services-hero__title">Water, energy, mining and infrastructure, and the ground beneath them all.</h1>
+    <p class="services-hero__lede">Since 2017, we have delivered studies, designs and construction for utilities, energy developers, mines, oil companies and development partners, from Kampala and Lusaka across East, Central and Southern Africa. </p>
 </section>
 
 @for (var i = 0; i < Model.Rows.Count; i++)
@@ -20,6 +20,16 @@
         <div class="service-row__body">
             <h2 class="service-row__title">@row.Title</h2>
             <p class="service-row__desc">@row.Description</p>
+            <p class="service-row__deliver">What we deliver:</p>
+            @if (row.Deliverables.Count > 0)
+            {
+                <ul class="service-row__deliverables">
+                    @foreach (var deliverable in row.Deliverables)
+                    {
+                        <li>@deliverable</li>
+                    }
+                </ul>
+            }
             <span class="service-row__where">@row.Coverage</span>
         </div>
         <div class="service-row__media img-slot" role="img" aria-label="@row.ImageLabel" style="background-image: url('/img/optimum-earth-images/servicepanel@(i + 1).jpg')"></div>
