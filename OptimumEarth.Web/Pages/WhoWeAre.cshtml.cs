@@ -7,11 +7,11 @@ public class WhoWeAreModel : PageModel
 {
     public List<CapabilityItem> Capabilities { get; } = new()
     {
-        new("01", "Water resources", "Supply, diagnostics, monitoring"),
-        new("02", "Energy", "Geothermal and infrastructure"),
-        new("03", "Environment", "Assessment, audit, compliance"),
-        new("04", "GIS & mapping", "Spatial analysis and mapping"),
-        new("05", "Engineering", "Full project lifecycle"),
+        new("01", "Technical Studies", "Know the ground before you commit capital."),
+        new("02", "Engineering Design", "Designs built on real site data."),
+        new("03", "Construction Services", "Built by the team that designed it."),
+        new("04", "Environmental & Social Impact Assessments", "Approvals that satisfy both the regulator and the lender"),
+        new("05", "Climate Resilience & Natural Resources", "Planning water and land for the climate ahead."),
     };
 
     public string Mission { get; } = "We are committed to value-driven partnerships with our clients by providing services of the highest quality, safety, and integrity while focusing on customer satisfaction and innovative solutions. We strive to be the company that clients want to work with and employees want to work for, by providing excellent results and rewarding careers.";
@@ -20,11 +20,12 @@ public class WhoWeAreModel : PageModel
 
     public List<ValueItem> Values { get; } = new()
     {
-        new("Culture", "We will cultivate a culture that values the contributions of our diverse and talented team members. We will seek out and encourage colleagues who are passionate, curious and client-focused. We will maintain an environment of mutual respect and commitment to professional development."),
-        new("Integrity", "We will act with the highest ethics, honesty, and respect in all business dealings. Integrity is at the heart of who we are and what we do. We will treat customers and company resources with the respect they deserve. We will do the right thing."),
-        new("Innovation", "We will apply technology and evolve our solutions to fit the needs of our clients. We will attack complacency and continually improve to foster the development of new and creative solutions."),
-        new("Safety and Health", "Safety and Health are our top priority. We expect everyone to actively participate in and take responsibility for their own safety, the safety of the public, and the safety of those around them. Clients entrust us to keep safety first in every service we provide."),
-        new("Quality", "We will be passionate about excellence and doing our work right the first time. Quality is a shared responsibility. We will hold each other accountable and maintain a reputation for delivering."),
+        new("Safety", "Safety comes first, always. Everyone is responsible for their own health and safety and that of their colleagues, the public and the communities where we work. No deadline, task or budget justifies compromising it, and anyone may stop work they believe is unsafe. We protect the dignity and wellbeing of everyone our work touches, especially children and vulnerable people."),
+        new("Collaboration", "Better solutions are built together. We work with colleagues, clients, donors, communities, partners and government with respect, inclusion and openness. We value the contributions of a diverse and talented team and seek out people who are passionate, curious and committed to those we serve. We invest in one another's professional development."),
+        new("Accountability & Integrity", "We act with honesty and the highest ethics in every dealing, commercial or charitable, and we do the right thing even when no one is watching. We do not tolerate bribery, fraud or undeclared conflicts of interest. We own our commitments, decisions and results, raise problems early, and answer to our clients, donors, regulators and the communities we serve."),
+        new("Learning & Innovation", "We stay curious and challenge complacency. We learn from experience and from those we serve, apply appropriate technology, and continually adapt our solutions to meet changing needs."),
+        new("Excellence", "We aim to do our work right the first time. From technical services and engineering delivery to community programmes and partnerships, we hold high standards of quality. We treat quality as a shared responsibility and deliver work that is reliable, measurable and fit for purpose."),
+        new("Stewardship", "We take responsibility for everything entrusted to us: client assets, company resources, donor and grant funds, and the communities and environments where we work. We use resources responsibly, account for them transparently, create lasting value, and leave people, communities and the planet better than we found them."),
     };
 
     public void OnGet()
