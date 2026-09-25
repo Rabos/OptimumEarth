@@ -57,6 +57,12 @@ public class ZambiaModel : PageModel
             new("Project photo", "ZAMBIA", "Pensulo - Mansa 330kV Powerline Corridor", "Authorisation to do feasibility studies granted by MoE Zambia", "", "", "/img/optimum-earth-images/project5.jpg"),
             new("Project photo", "ZAMBIA", "Partnerships with Ntux Investments Ltd - Zambia", "Earthmoving equipment and transport.", "", "", "/img/optimum-earth-images/project6.jpg"),
         },
+        SectionTwoCardDescriptions = new()
+        {
+            new("50mw-kasempa-solar-plant", "Prefeasibility complete, detailed feasibility study under way. Visit www.kasempasolar.com", "/img/optimum-earth-images/project4.jpg", "Client : Kasempa Solar", "50MW Kasempa Solar Plant", "Project photo"),
+            new("pensulo-mansa-330kv-powerline-corridor", "Authorisation to do feasibility studies granted by MoE Zambia", "/img/optimum-earth-images/project5.jpg", "Client : MoE Zambia", "Pensulo - Mansa 330kV Powerline Corridor", "Project photo"),
+            new("partnerships-with-ntux-investments-ltd-zambia", "Earthmoving equipment and transport.", "/img/optimum-earth-images/project6.jpg", "Client : Ntux Investments Ltd", "Partnerships with Ntux Investments Ltd - Zambia", "Project photo"),
+        },
         SectionTwoNote = "Zambia case studies will be published as projects are delivered and client permissions are confirmed.",
         CtaTitle = "Work with our Zambia team",
         CtaBody = "Office address to be confirmed · zambia@optimum-earth.com",

@@ -57,6 +57,12 @@ public class UgandaModel : PageModel
             new("Project photo", "GROUNDWATER · 2022", "Kingfisher Monitoring Wells", "Client : CNOOC", "", "", "/img/optimum-earth-images/recentwork2.jpg"),
             new("Project photo", "ENVIRONMENT · 2023", "Pivot Irrigation ESIA Initiative", "Client : NASECO", "", "", "/img/optimum-earth-images/recentwork3.jpg"),
         },
+        SectionTwoCardDescriptions = new()
+        {
+            new("uganda-production-wells-survey", "We conducted a survey of production wells for the National Water and Sewerage Corporation, assessing performance and recommending improvements to enhance water supply reliability.", "/img/optimum-earth-images/recentwork1.jpg", "Client : National Water and Sewerage Corporation", "Uganda Production Wells Survey", "Project photo"),
+            new("kingfisher-monitoring-wells", "We designed and implemented a groundwater monitoring program for CNOOC's Kingfisher project, providing critical data for sustainable water resource management.", "/img/optimum-earth-images/recentwork2.jpg", "Client : CNOOC", "Kingfisher Monitoring Wells", "Project photo"),
+            new("pivot-irrigation-esia-initiative", "We led the Environmental and Social Impact Assessment (ESIA) for NASECO's Pivot Irrigation Initiative, ensuring compliance with environmental regulations and promoting sustainable agricultural practices.", "/img/optimum-earth-images/recentwork3.jpg", "Client : NASECO", "Pivot Irrigation ESIA Initiative", "Project photo"),
+        },
         CtaTitle = "Work with our Uganda team",
         CtaBody = "Roston House, Plot 56/57, P.O Box 200032, Kampala · +256 784 080551 · uganda@optimum-earth.com",
         CtaServiceLabel = "Service of interest",

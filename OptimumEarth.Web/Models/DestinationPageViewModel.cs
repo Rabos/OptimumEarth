@@ -29,6 +29,7 @@ public class DestinationPageViewModel
     public string? SectionTwoLinkText { get; init; }
     public string? SectionTwoLinkHref { get; init; }
     public required List<ProjectCard> SectionTwoCards { get; init; }
+    public required List<ProjectCardDescription> SectionTwoCardDescriptions { get; init; }
     public string? SectionTwoNote { get; init; }
 
     public required string CtaTitle { get; init; }
