@@ -20,7 +20,8 @@ public class ServicesModel : PageModel
                 "GIS, remote sensing, spatial analytics and mobile field data systems",
                 "Groundwater and water quality monitoring networks, including real-time satellite telemetry",
                 "Feasibility studies for water, energy and mining projects"
-            }),
+            },
+            "/img/optimum-earth-images/services/technical-studies.jpg"),
         new("02", "Engineering Design", "Uganda · Zambia",
             "Designs built on real site data. We turn study findings into designs that can be priced, permitted and built. Because investigation and design sit in the same team, every design assumption is tested against measured site conditions rather than taken from a desk study. Our designs carry through to tender documents and construction supervision, so one team is accountable from first calculation to handover.",
             "Engineering Design",
@@ -35,7 +36,8 @@ public class ServicesModel : PageModel
                 "Roads, haul roads, foundations, retaining structures and site civil works",
                 "Mine water management and dewatering systems",
                 "Bills of quantities, specifications, tender documents and owner's engineer services"
-            }),
+            },
+            "/img/optimum-earth-images/services/engineering-design.jpeg"),
         new("03", "Construction Services", "Uganda · Zambia",
             "Built by the team that designed it. We build, install and commission with our own crews and equipment, and we supervise works for clients who build with other contractors. Every contract includes HSE management, quality control and as-built records as standard. We are accountable for the result, not just the activity.",
             "Construction Services",
@@ -49,7 +51,8 @@ public class ServicesModel : PageModel
                 "Downhole camera inspection and borehole diagnostics",
                 "Construction supervision, quality assurance and contract administration",
                 "Plant and equipment hire, with or without operators"
-            }),
+            },
+            "/img/optimum-earth-images/services/construction-services.jpg"),
         new("04", "Environmental & Social Impact Assessments", "Uganda · Zambia",
             "Approvals that satisfy both the regulator and the lender. We take projects through the full environmental and social compliance cycle, from screening to closure. Our work meets national requirements (NEMA, ZEMA) and the international lender safeguards that financiers apply. Hydrogeology, hydrology and GIS are in-house, so the specialist baseline studies that most ESIAs subcontract are done by the same team that writes the assessment.",
             "Environmental & Social Impact Assessments",
@@ -62,7 +65,8 @@ public class ServicesModel : PageModel
                 "Compliance audits and environmental monitoring programmes",
                 "Stakeholder engagement, public consultation and grievance mechanisms",
                 "Resettlement planning support, mine closure and rehabilitation planning"
-            }),
+            },
+            "/img/optimum-earth-images/services/environmental-and-social-impact-assessments.jpg"),
         new("05", "Climate Resilience & Natural Resources", "Uganda · Zambia",
             "Planning water and land for the climate ahead. Climate change is changing how much water is available, when rain falls and how land can be used. We help governments, development partners, conservation organisations and agribusiness plan at the scale these changes happen: the catchment, the district, the landscape. We combine satellite data, hydrological modelling and field verification to show what resources exist, how they are changing and how to manage them. Our work turns that evidence into plans, maps and investments that communities and institutions can act on.",
             "Climate Resilience & Natural Resources",
@@ -77,7 +81,8 @@ public class ServicesModel : PageModel
                 "Catchment management plans, and ecosystem-based adaptation and nature-based solutions such as wetland restoration, riparian buffers and reforestation",
                 "Drought and flood monitoring systems and decision-support dashboards",
                 "Technical inputs to climate finance proposals"
-            }),
+            },
+            "/img/optimum-earth-images/services/climate-resilience-&-natural-resources.jpg"),
     };
 
     public void OnGet()
