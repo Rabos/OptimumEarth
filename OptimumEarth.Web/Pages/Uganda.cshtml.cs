@@ -42,11 +42,11 @@ public class UgandaModel : PageModel
         SectionOneLinkHref = "/services",
         SectionOneCards = new()
         {
-            new("Water supply solutions", "Surface and groundwater diagnostics, borehole siting, drilling supervision and test pumping."),
-            new("Groundwater monitoring", "Monitoring well networks, water-level and quality regimes, long-term reporting."),
-            new("Environmental services", "ESIA, environmental audits and compliance support for regulated projects."),
-            new("GIS & mapping", "Geo-intelligence products, remote sensing and spatial analysis for decision-making."),
-            new("Mines, oil & gas", "Integrated water management for quarry, mining and petroleum operations."),
+            new("Technical studies", "Hydrogeological, geophysical, geotechnical and topographic surveys, groundwater modelling and feasibility studies that de-risk projects early."),
+            new("Engineering design", "Water supply, solar pumping, drainage, civil and energy infrastructure designs, from concept to tender documents."),
+            new("Construction services", "Borehole drilling, pipelines, pump stations and civil works, built by our own crews with full supervision and HSE management."),
+            new("ESIA and compliance", "Screening, impact assessments, management plans, audits and stakeholder engagement to NEMA and lender standards."),
+            new("Climate and natural resources", "Water resources master plans, climate-smart agriculture, and forest, wetland and catchment, mapping for resilient landscapes."),
             new("Not sure which service you need?", "Describe your site and we'll scope it with you.", Navigate: true, Url: "/contact"),
         },
         SectionTwoTitle = "Featured projects",
