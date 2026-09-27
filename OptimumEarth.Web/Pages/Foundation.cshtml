@@ -82,7 +82,7 @@
             @for (var i = 0; i < Model.SdgGoals.Count; i++)
             {
                 var sdg = Model.SdgGoals[i];
-                <div class="sdg-loop">
+                <div class="sdg-loop" role="button" tabindex="0" data-sdg-trigger="@sdg.Number" aria-haspopup="dialog">
                     <svg class="sdg-loop__ring" viewBox="0 0 320 190" aria-hidden="true">
                         <mask id="sdg-ring-@sdg.Number" maskUnits="userSpaceOnUse">
                             <path d="@(sdgLines[i % sdgLines.Length])" fill="none" stroke="#fff" stroke-width="15" stroke-linecap="round"
@@ -119,6 +119,32 @@
         </div>
     </div>
 </section>
+
+@for (var i = 0; i < Model.SdgGoals.Count; i++)
+{
+    var sdg = Model.SdgGoals[i];
+    <dialog class="lightbox lightbox--doc" id="sdg-@sdg.Number" aria-labelledby="sdg-@(sdg.Number)-title" data-lightbox>
+        <div class="lightbox__panel">
+            <header class="lightbox__head">
+                <div>
+                    <h3 id="sdg-@(sdg.Number)-title" class="lightbox__title">SDG @sdg.Number &middot; @sdg.Label</h3>
+                </div>
+                <button type="button" class="lightbox__close" data-story-close aria-label="Close document">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+                </button>
+            </header>
+            @* toolbar=0/navpanes=0 hide the PDF viewer's own toolbar, which is where
+               its download button lives; right-click is blocked as a second deterrent.
+               A sandboxed iframe would block downloads more strictly, but Chrome's
+               built-in PDF viewer refuses to render at all inside one - so this is a
+               best-effort measure, not a hard guarantee, same as any inline PDF. *@
+            <div class="lightbox__doc-stage" oncontextmenu="return false;">
+                <iframe class="lightbox__doc-frame" title="@sdg.Label approach document"
+                        src="@(sdg.PdfUrl)#toolbar=0&amp;navpanes=0"></iframe>
+            </div>
+        </div>
+    </dialog>
+}
 
 <section class="dest-section dest-section--tint" id="pillars" aria-labelledby="pillars-heading">
     <div class="dest-section__head">

@@ -36,7 +36,15 @@
             <a class="text-link" href="@Model.SectionOneLinkHref">@Model.SectionOneLinkText &rarr;</a>
         }
     </div>
-    <div class="plain-card-grid">
+    @{
+        // A card with no real slot left in the last row (count already a
+        // multiple of 3) would otherwise land alone on a new row by itself,
+        // so it spans the full row instead. Otherwise it just takes the
+        // open slot the remainder already leaves, sized like its neighbours.
+        var realCardCount = Model.SectionOneCards.Count(c => c.Navigate != true);
+        var ctaNeedsOwnRow = realCardCount % 3 == 0;
+    }
+    <div class="plain-card-grid destination-service-grid">
         @foreach (var card in Model.SectionOneCards)
         {
             @if (Model.UsePillarCards)
@@ -46,6 +54,16 @@
                     <h3 class="pillar-card__title">@card.Title</h3>
                     <p class="pillar-card__desc">@card.Description</p>
                 </article>
+            }
+            else if (card.Navigate == true)
+            {
+                <a class="service-card service-card--cta @(ctaNeedsOwnRow ? "service-card--cta--wide" : "")" href="@card.Url">
+                    <div>
+                        <h3 class="service-card__title">@card.Title</h3>
+                        <p class="service-card__desc">@card.Description</p>
+                    </div>
+                    <span class="service-card--cta__arrow" aria-hidden="true">&rarr;</span>
+                </a>
             }
             else
             {

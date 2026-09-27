@@ -47,6 +47,7 @@ public class UgandaModel : PageModel
             new("Environmental services", "ESIA, environmental audits and compliance support for regulated projects."),
             new("GIS & mapping", "Geo-intelligence products, remote sensing and spatial analysis for decision-making."),
             new("Mines, oil & gas", "Integrated water management for quarry, mining and petroleum operations."),
+            new("Not sure which service you need?", "Describe your site and we'll scope it with you.", Navigate: true, Url: "/contact"),
         },
         SectionTwoTitle = "Featured projects",
         SectionTwoLinkText = "All projects",

@@ -19,12 +19,12 @@ public class FoundationModel : PageModel
         "Learn more",
     };
 
-    public List<(string Number, string Label)> SdgGoals { get; } = new()
+    public List<(string Number, string Label, string PdfUrl)> SdgGoals { get; } = new()
     {
-        ("06", "Clean Water & Sanitation"),
-        ("07", "Affordable & Clean Energy"),
-        ("13", "Climate Action"),
-        ("17", "Partnerships for the Goals"),
+        ("06", "Clean Water & Sanitation", "/docs/sdg/OEF_SDG6_APPROACH.docx.pdf"),
+        ("07", "Affordable & Clean Energy", "/docs/sdg/OEF_SDG7_APPROACH.docx.pdf"),
+        ("13", "Climate Action", "/docs/sdg/OEF_SDG13_APPROACH.docx.pdf"),
+        ("17", "Partnerships for the Goals", "/docs/sdg/OEF_SDG17_APPROACH.docx.pdf"),
     };
 
     public List<PillarDetail> Pillars { get; } = new()

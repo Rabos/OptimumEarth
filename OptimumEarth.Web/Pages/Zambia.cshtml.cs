@@ -47,6 +47,7 @@ public class ZambiaModel : PageModel
             new("Construction services", "Borehole drilling, pipelines, pump stations, earthworks and civil works, with full supervision and HSE management."),
             new("ESIA and compliance", "Screening, impact assessments, management plans, audits and stakeholder engagement to ZEMA and lender standards."),
             new("Climate and natural resources", "Water resources master plans, climate-smart agriculture, and forest, wetland and catchment mapping for resilient landscapes."),
+            new("Not sure which service you need?", "Describe your site and we'll scope it with you.", Navigate: true, Url: "/contact"),
         },
         SectionTwoTitle = "Projects",
         SectionTwoLinkText = "All projects",
