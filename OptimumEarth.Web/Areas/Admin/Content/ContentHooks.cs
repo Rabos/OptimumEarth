@@ -14,6 +14,14 @@ public abstract class ContentHooks<T> where T : class
     public virtual Task<List<PlacementOption>> PlacementOptionsAsync(AppDbContext db, AccessSnapshot access, T? entity) =>
         Task.FromResult(new List<PlacementOption>());
 
+    /// <summary>The pickers for the form (keyed by field key), loaded from the entity.</summary>
+    public virtual Task<Dictionary<string, PickerData>> PickersAsync(AppDbContext db, AccessSnapshot access, T? entity) =>
+        Task.FromResult(new Dictionary<string, PickerData>());
+
+    /// <summary>The pickers as posted, so a failed save shows what the person arranged.</summary>
+    public virtual Task<Dictionary<string, PickerData>> PickersFromFormAsync(AppDbContext db, AccessSnapshot access, T? entity, FormView form) =>
+        PickersAsync(db, access, entity);
+
     /// <summary>Starting values for a new item, keyed by field key.</summary>
     public virtual Dictionary<string, string> Defaults(AccessSnapshot access) => new();
 

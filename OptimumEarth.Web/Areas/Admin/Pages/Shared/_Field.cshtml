@@ -31,6 +31,10 @@
         </div>
         break;
 
+    case FieldKind.Picker:
+        <div class="full"><partial name="_Picker" model="@(new PickerVm(f, Model.Picker!, error, Model.ReadOnly))" /></div>
+        break;
+
     case FieldKind.Markdown:
         <div class="fld full">
             <span class="fl"><span>@f.Label @if (f.Required) { <i class="req">*</i> }</span><span class="cnt" data-reading-for="@id"></span></span>

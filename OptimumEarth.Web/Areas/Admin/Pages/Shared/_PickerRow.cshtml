@@ -1,0 +1,23 @@
+@model (bool IsService, PickerEntry Entry)
+@{
+    var (isService, e) = Model;
+    var prefix = isService ? "svc" : "prj";
+}
+<div class="pk" data-picker-row>
+    <div class="pkh">
+        <b data-label>@e.Label</b>
+        <span data-badges>@if (e.Custom) { <span class="tag t-blue">Custom</span> } @if (e.Status == "draft") { <span class="tag t-amber">Draft: hidden on the site</span> }</span>
+        <span class="btnrow">
+            <button type="button" class="btn btn--sm btn--ghost" data-pick="up" aria-label="Move up">↑</button>
+            <button type="button" class="btn btn--sm btn--ghost" data-pick="down" aria-label="Move down">↓</button>
+            <button type="button" class="btn btn--sm btn--ghost btn--danger-text" data-pick="remove">Remove</button>
+        </span>
+    </div>
+    <input type="hidden" name="@(prefix)_id" value="@e.ItemId" data-field="id" />
+    <div class="two">
+        <label class="fld"><span class="fl" data-title-label>@(isService ? (e.Custom ? "Card title" : "Card title (optional)") : "Tag line (optional)")</span>
+            <input name="@(prefix)_title" value="@e.Title" placeholder="@e.PlaceholderTitle" maxlength="@(isService ? 70 : 40)" data-field="title" /></label>
+        <label class="fld"><span class="fl" data-text-label>@(isService ? (e.Custom ? "Card text" : "Card text (optional)") : "Client / meta line (optional)")</span>
+            <input name="@(prefix)_text" value="@e.Text" placeholder="@(e.PlaceholderText.Length > 70 ? e.PlaceholderText[..70] + "…" : e.PlaceholderText)" maxlength="@(isService ? 400 : 160)" data-field="text" /></label>
+    </div>
+</div>

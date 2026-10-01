@@ -353,6 +353,44 @@ public static class ContentRegistry
             Hooks = new PostHooks(),
         },
 
+        new ContentDescriptor<CountryPage>
+        {
+            Slug = "country-pages", Label = "Country pages", Singular = "Country page", Area = AdminAreas.Pages, CanAdd = false, CanDelete = false, Orderable = false,
+            Description = "The Uganda and Zambia pages. Choose which services and projects each shows, and in what order.",
+            Set = db => db.CountryPages, TitleOf = x => x.Name,
+            DefaultOrder = q => q.OrderBy(x => x.Name),
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(CountryPage.HeroEyebrow), Label = "Eyebrow", Required = true, Max = 40, Group = "Hero" },
+                new() { Key = nameof(CountryPage.HeroHeadline), Label = "Headline", Kind = FieldKind.Area, Required = true, Max = 160, Rows = 2 },
+                new() { Key = nameof(CountryPage.HeroSub), Label = "Sub-heading", Kind = FieldKind.Area, Max = 240, Rows = 3 },
+                new() { Key = nameof(CountryPage.OverviewQuote), Label = "Lead quote", Kind = FieldKind.Area, Required = true, Max = 500, Rows = 5, Group = "Overview" },
+                new() { Key = nameof(CountryPage.OverviewBody), Label = "Body", Kind = FieldKind.Area, Max = 400, Rows = 3 },
+                new() { Key = nameof(CountryPage.Facts), Label = "At a glance", Kind = FieldKind.Lines, Rows = 5, Hint = "One per line: Key | Value, e.g. Established | 2017." },
+                new() { Key = nameof(CountryPage.SectionOneTitle), Label = "Services heading", Required = true, Max = 50, Group = "Services shown" },
+                new() { Key = "svc", Label = "Service cards", Kind = FieldKind.Picker },
+                new() { Key = nameof(CountryPage.SectionTwoTitle), Label = "Projects heading", Required = true, Max = 50, Half = true, Group = "Projects shown" },
+                new() { Key = nameof(CountryPage.SectionTwoNote), Label = "Note under the projects", Max = 160, Half = true, Hint = "Optional." },
+                new() { Key = "prj", Label = "Project cards", Kind = FieldKind.Picker },
+                new() { Key = nameof(CountryPage.CtaTitle), Label = "Title", Required = true, Max = 60, Half = true, Group = "Call to action" },
+                new() { Key = nameof(CountryPage.CtaBody), Label = "Contact line", Max = 220, Half = true },
+                new() { Key = nameof(CountryPage.CtaServices), Label = "Services in the quick enquiry form", Kind = FieldKind.Lines, Rows = 5, Hint = "One per line. These are the choices on the short form." },
+            },
+            Columns = new ColumnDef<CountryPage>[]
+            {
+                new() { Header = "Page", Html = (x, _) => Cell.Title(x.Name, "/" + x.Slug) },
+                new() { Header = "Service cards", Html = (x, ctx) => ((ctx as (Dictionary<int, int> s, Dictionary<int, int> p)?)?.s.GetValueOrDefault(x.Id) ?? 0).ToString() },
+                new() { Header = "Projects", Html = (x, ctx) => ((ctx as (Dictionary<int, int> s, Dictionary<int, int> p)?)?.p.GetValueOrDefault(x.Id) ?? 0).ToString() },
+            },
+            PrepareColumns = async (db, _) =>
+            {
+                var s = await db.CountryPageServices.AsNoTracking().GroupBy(x => x.CountryPageId).Select(g => new { g.Key, N = g.Count() }).ToDictionaryAsync(g => g.Key, g => g.N);
+                var p = await db.CountryPageProjects.AsNoTracking().GroupBy(x => x.CountryPageId).Select(g => new { g.Key, N = g.Count() }).ToDictionaryAsync(g => g.Key, g => g.N);
+                return (s, p);
+            },
+            Hooks = new CountryPageHooks(),
+        },
+
         new ContentDescriptor<SiteSettings>
         {
             Slug = "settings", Label = "Site settings", Singular = "Settings", Area = AdminAreas.Settings, Single = true, CanAdd = false, CanDelete = false, Orderable = false,
@@ -526,6 +564,147 @@ public static class ContentRegistry
             await db.SaveChangesAsync();
             var old = await db.BlogRevisions.Where(r => r.BlogPostId == entity.Id).OrderByDescending(r => r.SavedUtc).ThenByDescending(r => r.Id).Skip(10).ToListAsync();
             db.BlogRevisions.RemoveRange(old);
+        }
+    }
+
+    private sealed class CountryPageHooks : ContentHooks<CountryPage>
+    {
+        private static async Task<int> CapAsync(AppDbContext db) =>
+            (await db.Settings.AsNoTracking().Select(s => (int?)s.ProjectSlots).FirstOrDefaultAsync()) ?? 3;
+
+        private static async Task<(List<PickerChoice> Services, List<PickerChoice> Projects)> ChoicesAsync(AppDbContext db)
+        {
+            var services = await db.Services.AsNoTracking().OrderBy(s => s.SortOrder).ThenBy(s => s.Id).ToListAsync();
+            var projects = await db.Projects.AsNoTracking().OrderBy(p => p.SortOrder).ThenBy(p => p.Id).ToListAsync();
+            return (
+                services.Select(s => new PickerChoice(s.Id, s.Title, s.Status == ContentStatus.Draft ? "draft" : "published", s.Title, s.Description)).ToList(),
+                projects.Select(p => new PickerChoice(p.Id, p.Title, p.Status == ContentStatus.Draft ? "draft" : "published", p.Tag, p.Meta)).ToList());
+        }
+
+        private static PickerEntry Entry(PickerChoice? choice, int? id, string title, string text, bool custom) =>
+            custom
+                ? new PickerEntry(null, string.IsNullOrWhiteSpace(title) ? "Custom card" : title, "published", true, title, text, string.Empty, string.Empty)
+                : new PickerEntry(id, choice?.Label ?? "Removed item", choice?.Status ?? "draft", false, title, text, choice?.Title ?? string.Empty, choice?.Text ?? string.Empty);
+
+        public override async Task<Dictionary<string, PickerData>> PickersAsync(AppDbContext db, AccessSnapshot access, CountryPage? entity)
+        {
+            var (serviceChoices, projectChoices) = await ChoicesAsync(db);
+            var svc = new PickerData { Prefix = "svc", AllowCustom = true, Choices = serviceChoices };
+            var prj = new PickerData { Prefix = "prj", Max = await CapAsync(db), Choices = projectChoices };
+
+            if (entity is not null)
+            {
+                var services = await db.CountryPageServices.AsNoTracking().Where(x => x.CountryPageId == entity.Id).OrderBy(x => x.SortOrder).ToListAsync();
+                svc.Entries = services.Select(x => Entry(serviceChoices.FirstOrDefault(c => c.Id == x.ServiceId), x.ServiceId, x.Title, x.Text, x.ServiceId is null)).ToList();
+                var projects = await db.CountryPageProjects.AsNoTracking().Where(x => x.CountryPageId == entity.Id).OrderBy(x => x.SortOrder).ToListAsync();
+                prj.Entries = projects.Select(x => Entry(projectChoices.FirstOrDefault(c => c.Id == x.ProjectId), x.ProjectId, x.Tag, x.Meta, false)).ToList();
+            }
+
+            return new() { ["svc"] = svc, ["prj"] = prj };
+        }
+
+        public override async Task<Dictionary<string, PickerData>> PickersFromFormAsync(AppDbContext db, AccessSnapshot access, CountryPage? entity, FormView form)
+        {
+            var pickers = await PickersAsync(db, access, entity);
+            foreach (var (key, picker) in pickers)
+            {
+                var ids = form.Raw(key + "_id");
+                var titles = form.Raw(key + "_title");
+                var texts = form.Raw(key + "_text");
+                picker.Entries = new();
+                for (var i = 0; i < ids.Count; i++)
+                {
+                    var title = i < titles.Count ? titles[i] : string.Empty;
+                    var text = i < texts.Count ? texts[i] : string.Empty;
+                    var linked = int.TryParse(ids[i], out var id);
+                    picker.Entries.Add(Entry(linked ? picker.Choices.FirstOrDefault(c => c.Id == id) : null, linked ? id : null, title, text, !linked));
+                }
+            }
+
+            return pickers;
+        }
+
+        private static List<(int? Id, string Title, string Text)> Rows(FormView form, string prefix)
+        {
+            var ids = form.Raw(prefix + "_id");
+            var titles = form.Raw(prefix + "_title");
+            var texts = form.Raw(prefix + "_text");
+            var rows = new List<(int?, string, string)>();
+            for (var i = 0; i < ids.Count; i++)
+            {
+                rows.Add((int.TryParse(ids[i], out var id) ? id : null, (i < titles.Count ? titles[i] : string.Empty).Trim(), (i < texts.Count ? texts[i] : string.Empty).Trim()));
+            }
+
+            return rows;
+        }
+
+        public override async Task ValidateAsync(AppDbContext db, AccessSnapshot access, CountryPage? existing, FormView form, Dictionary<string, string> errors)
+        {
+            var services = Rows(form, "svc");
+            var serviceIds = (await db.Services.AsNoTracking().Select(s => s.Id).ToListAsync()).ToHashSet();
+            var seen = new HashSet<int>();
+            foreach (var (id, title, text) in services)
+            {
+                if (id is null && title.Length == 0)
+                {
+                    errors["svc"] = "Every custom card needs a title.";
+                }
+                else if (id is not null && !serviceIds.Contains(id.Value))
+                {
+                    errors["svc"] = "One of the chosen services no longer exists. Remove it.";
+                }
+                else if (id is not null && !seen.Add(id.Value))
+                {
+                    errors["svc"] = "The same service is chosen twice.";
+                }
+                else if (title.Length > 70 || text.Length > 400)
+                {
+                    errors["svc"] = "Keep card titles under 70 characters and card text under 400.";
+                }
+            }
+
+            var projects = Rows(form, "prj");
+            var cap = await CapAsync(db);
+            var projectIds = (await db.Projects.AsNoTracking().Select(p => p.Id).ToListAsync()).ToHashSet();
+            if (projects.Count > cap)
+            {
+                errors["prj"] = $"This page can show at most {cap} projects (set in Site settings). Remove {projects.Count - cap}.";
+            }
+
+            var seenProjects = new HashSet<int>();
+            foreach (var (id, tag, meta) in projects)
+            {
+                if (id is null || !projectIds.Contains(id.Value))
+                {
+                    errors["prj"] = "One of the chosen projects no longer exists. Remove it.";
+                }
+                else if (!seenProjects.Add(id.Value))
+                {
+                    errors["prj"] = "The same project is chosen twice.";
+                }
+                else if (tag.Length > 40 || meta.Length > 160)
+                {
+                    errors["prj"] = "Keep tag lines under 40 characters and the client line under 160.";
+                }
+            }
+        }
+
+        public override async Task AfterSaveAsync(AppDbContext db, AccessSnapshot access, CountryPage entity, FormView form)
+        {
+            db.CountryPageServices.RemoveRange(await db.CountryPageServices.Where(x => x.CountryPageId == entity.Id).ToListAsync());
+            db.CountryPageProjects.RemoveRange(await db.CountryPageProjects.Where(x => x.CountryPageId == entity.Id).ToListAsync());
+
+            var order = 0;
+            foreach (var (id, title, text) in Rows(form, "svc"))
+            {
+                db.CountryPageServices.Add(new CountryPageService { CountryPageId = entity.Id, ServiceId = id, Title = title, Text = text, SortOrder = ++order });
+            }
+
+            order = 0;
+            foreach (var (id, tag, meta) in Rows(form, "prj"))
+            {
+                db.CountryPageProjects.Add(new CountryPageProject { CountryPageId = entity.Id, ProjectId = id!.Value, Tag = tag, Meta = meta, SortOrder = ++order });
+            }
         }
     }
 }

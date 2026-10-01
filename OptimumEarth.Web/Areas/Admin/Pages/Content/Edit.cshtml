@@ -38,7 +38,7 @@
         {
             var value = data.Values.GetValueOrDefault(f.Key) ?? string.Empty;
             var options = Model.Options.TryGetValue(f.Key, out var o) ? (IReadOnlyList<(string, string)>)o : Array.Empty<(string, string)>();
-            <partial name="_Field" model="@(new FieldVm(f, value, Model.Errors.GetValueOrDefault(f.Key), options, data.Placements, !canEdit))" />
+            <partial name="_Field" model="@(new FieldVm(f, value, Model.Errors.GetValueOrDefault(f.Key), options, data.Placements, !canEdit, data.Pickers.GetValueOrDefault(f.Key)))" />
         }
     </div>
     @if (canEdit)

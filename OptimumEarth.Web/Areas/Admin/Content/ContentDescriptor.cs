@@ -105,6 +105,8 @@ public sealed class ContentDescriptor<T> : IContentDescriptor where T : class, n
 
     public IReadOnlyList<FilterInfo> Filters => FilterDefs.Select(f => new FilterInfo(f.Key, f.Label, f.Options, f.OptionsSource)).ToList();
 
+    private static bool IsProperty(FieldDef f) => f.Kind is not (FieldKind.Placements or FieldKind.Picker);
+
     private int IdOf(T entity) => (int)_props["Id"].GetValue(entity)!;
 
     private ContentStatus StatusOf(T entity) => HasStatus ? (ContentStatus)_props["Status"].GetValue(entity)! : ContentStatus.Published;
@@ -172,7 +174,7 @@ public sealed class ContentDescriptor<T> : IContentDescriptor where T : class, n
 
         var source = entity ?? new T();
         var values = new Dictionary<string, string>();
-        foreach (var f in Fields.Where(f => f.Kind != FieldKind.Placements))
+        foreach (var f in Fields.Where(f => IsProperty(f)))
         {
             values[f.Key] = ToText(_props[f.Key].GetValue(source));
         }
@@ -194,6 +196,7 @@ public sealed class ContentDescriptor<T> : IContentDescriptor where T : class, n
             Title = entity is null ? $"New {Singular.ToLowerInvariant()}" : TitleOf(entity),
             Values = values,
             Placements = Hooks is null ? new() : await Hooks.PlacementOptionsAsync(db, access, entity),
+            Pickers = Hooks is null ? new() : await Hooks.PickersAsync(db, access, entity),
         };
     }
 
@@ -202,7 +205,7 @@ public sealed class ContentDescriptor<T> : IContentDescriptor where T : class, n
     {
         var existing = id is null ? null : await Set(db).AsNoTracking().FirstOrDefaultAsync(x => EF.Property<int>(x, "Id") == id);
         var values = new Dictionary<string, string>();
-        foreach (var f in Fields.Where(f => f.Kind != FieldKind.Placements))
+        foreach (var f in Fields.Where(f => IsProperty(f)))
         {
             values[f.Key] = f.Kind == FieldKind.Bool ? (form.IsChecked(f.Key) ? "true" : "false") : form.Get(f.Key);
         }
@@ -223,6 +226,7 @@ public sealed class ContentDescriptor<T> : IContentDescriptor where T : class, n
             Title = existing is null ? $"New {Singular.ToLowerInvariant()}" : TitleOf(existing),
             Values = values,
             Placements = placements,
+            Pickers = Hooks is null ? new() : await Hooks.PickersFromFormAsync(db, access, existing, form),
         };
     }
 
@@ -249,7 +253,7 @@ public sealed class ContentDescriptor<T> : IContentDescriptor where T : class, n
         var isNew = entity is null;
         var converted = new Dictionary<string, object?>();
 
-        foreach (var f in Fields.Where(f => f.Kind != FieldKind.Placements))
+        foreach (var f in Fields.Where(f => IsProperty(f)))
         {
             var prop = _props[f.Key];
             var error = Convert(f, prop, form, out var value);

@@ -129,3 +129,94 @@
     refresh(ta);
   });
 })();
+
+// Pickers (country pages): choose items, reorder them, override wording. Rows post as parallel arrays in on-screen order.
+(function () {
+  'use strict';
+
+  function rows(p) { return Array.prototype.slice.call(p.querySelectorAll('[data-picker-row]')); }
+
+  function refresh(p) {
+    var all = rows(p);
+    var max = p.dataset.max ? Number(p.dataset.max) : Infinity;
+    var count = p.querySelector('[data-picker-count]');
+    if (count) { count.textContent = max === Infinity ? all.length + ' chosen, no limit' : all.length + ' of ' + max + ' allowed'; }
+    var empty = p.querySelector('[data-picker-empty]');
+    if (empty) { empty.hidden = all.length > 0; }
+    all.forEach(function (row, i) {
+      var up = row.querySelector('[data-pick="up"]'), down = row.querySelector('[data-pick="down"]');
+      if (up) { up.disabled = i === 0; }
+      if (down) { down.disabled = i === all.length - 1; }
+    });
+    var full = all.length >= max;
+    var select = p.querySelector('[data-picker-select]');
+    var add = p.querySelector('[data-pick="add"]');
+    var custom = p.querySelector('[data-pick="custom"]');
+    if (add) { add.disabled = full || !select || !select.querySelector('option:not(:disabled)'); }
+    if (custom) { custom.disabled = full; }
+    if (select && select.selectedOptions[0] && select.selectedOptions[0].disabled) {
+      var next = select.querySelector('option:not(:disabled)');
+      if (next) { select.value = next.value; }
+    }
+  }
+
+  function addRow(p, data) {
+    var tpl = p.querySelector('[data-picker-template]');
+    var row = tpl.content.firstElementChild.cloneNode(true);
+    row.querySelector('[data-label]').textContent = data.label;
+    row.querySelector('[data-field="id"]').value = data.id || '';
+    var title = row.querySelector('[data-field="title"]'), text = row.querySelector('[data-field="text"]');
+    title.placeholder = data.pt || ''; text.placeholder = (data.px || '').length > 70 ? data.px.slice(0, 70) + '…' : (data.px || '');
+    var badges = row.querySelector('[data-badges]');
+    badges.innerHTML = '';
+    if (data.custom) { badges.innerHTML = '<span class="tag t-blue">Custom</span>'; }
+    if (data.status === 'draft') { badges.innerHTML += ' <span class="tag t-amber">Draft: hidden on the site</span>'; }
+    if (data.custom) {
+      row.querySelector('[data-title-label]').textContent = 'Card title';
+      row.querySelector('[data-text-label]').textContent = 'Card text';
+    }
+    p.querySelector('[data-picker-list]').appendChild(row);
+    refresh(p);
+    if (data.custom) { title.focus(); }
+  }
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('[data-pick]');
+    if (!btn) { return; }
+    var p = btn.closest('.picker');
+    if (!p) { return; }
+    e.preventDefault();
+    var act = btn.dataset.pick, row = btn.closest('[data-picker-row]');
+    if (act === 'add') {
+      var sel = p.querySelector('[data-picker-select]'), opt = sel && sel.selectedOptions[0];
+      if (!opt || opt.disabled) { return; }
+      opt.disabled = true;
+      addRow(p, { id: opt.value, label: opt.textContent.replace(/ \(draft\)$/, ''), pt: opt.dataset.title, px: opt.dataset.text, status: opt.dataset.status });
+    } else if (act === 'custom') {
+      addRow(p, { custom: true, label: 'Custom card' });
+    } else if (act === 'remove' && row) {
+      var id = row.querySelector('[data-field="id"]').value;
+      var sel2 = p.querySelector('[data-picker-select]');
+      if (id && sel2) { var o = sel2.querySelector('option[value="' + id + '"]'); if (o) { o.disabled = false; } }
+      row.remove();
+      refresh(p);
+    } else if (act === 'up' && row && row.previousElementSibling) {
+      row.parentNode.insertBefore(row, row.previousElementSibling); refresh(p);
+    } else if (act === 'down' && row && row.nextElementSibling) {
+      row.parentNode.insertBefore(row.nextElementSibling, row); refresh(p);
+    }
+  });
+
+  document.addEventListener('input', function (e) {
+    // Keep a custom card's heading in step with its title.
+    var el = e.target;
+    if (el.dataset && el.dataset.field === 'title') {
+      var row = el.closest('[data-picker-row]');
+      if (row && !row.querySelector('[data-field="id"]').value) {
+        row.querySelector('[data-label]').textContent = el.value || 'Custom card';
+      }
+    }
+  });
+
+  document.querySelectorAll('.picker').forEach(refresh);
+})();

@@ -76,7 +76,7 @@ public class IndexModel : AdminPageModel
         if (a.CanView(AdminAreas.Projects))
         {
             var placed = await _db.CountryPageProjects.Select(p => p.ProjectId).Distinct().CountAsync();
-            Tiles.Add(new Tile(placed, "projects placed on country pages", "/admin/country-pages", false));
+            Tiles.Add(new Tile(placed, "projects placed on country pages", "/admin/content/country-pages", false));
         }
 
         // Everyone sees only the activity on pages they can reach. Account-level and user events (no area) are for the super admin.

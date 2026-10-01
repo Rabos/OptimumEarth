@@ -1,0 +1,45 @@
+@model PickerVm
+@{
+    var d = Model.Data;
+    var isService = d.Prefix == "svc";
+    var max = d.Max;
+    string TagFor(string status) => status == "draft" ? "Draft: hidden on the site" : "";
+}
+<div class="picker" data-prefix="@d.Prefix" data-max="@(max?.ToString() ?? "")">
+    <span class="fl" style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;color:var(--ink-2)">
+        <span>@Model.Def.Label</span>
+        <span class="cnt" data-picker-count></span>
+    </span>
+
+    <div class="picklist" data-picker-list>
+        @foreach (var e in d.Entries)
+        {
+            <partial name="_PickerRow" model="@((isService, e))" />
+        }
+    </div>
+    <div class="empty" data-picker-empty hidden><b>Nothing chosen</b><span>Pick from the list below.</span></div>
+
+    @if (!Model.ReadOnly)
+    {
+        <div class="pickadd">
+            <select aria-label="Choose @(isService ? "a service" : "a project") to add" data-picker-select>
+                @foreach (var c in d.Choices)
+                {
+                    <option value="@c.Id" data-title="@c.Title" data-text="@c.Text" data-status="@c.Status" disabled="@(d.Entries.Any(x => x.ItemId == c.Id))">@c.Label@(c.Status == "draft" ? " (draft)" : "")</option>
+                }
+            </select>
+            <button type="button" class="btn" data-pick="add">Add</button>
+            @if (d.AllowCustom) { <button type="button" class="btn btn--ghost" data-pick="custom">Add custom card</button> }
+        </div>
+    }
+
+    <template data-picker-template>
+        <partial name="_PickerRow" model="@((isService, new PickerEntry(null, "", "published", false, "", "", "", "")))" />
+    </template>
+
+    <span class="hint">@(isService
+        ? "Cards use the service's own title and text unless you override them for this page. There is no limit; extra cards wrap onto new rows."
+        : "These projects show on this page in this order, with the tag and client line below unless you change them for this page. Limit: " + max + " (set in Site settings).") You can choose any item, even without access to its own section.</span>
+    @if (Model.Error is not null) { <span class="err">@Model.Error</span> }
+    <noscript><span class="hint">Choosing items needs JavaScript.</span></noscript>
+</div>

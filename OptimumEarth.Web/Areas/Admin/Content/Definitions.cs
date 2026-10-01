@@ -18,6 +18,9 @@ public enum FieldKind
 
     /// <summary>The "Appears on" checkboxes. Not a property: handled by the descriptor's hooks.</summary>
     Placements,
+
+    /// <summary>A reorderable list of chosen services or projects (country pages). Not a property: handled by hooks.</summary>
+    Picker,
 }
 
 /// <summary>One editable field. Key is the entity property name (or a hook-handled key for Placements).</summary>
@@ -80,6 +83,23 @@ public static class Cell
 
 public sealed record StatusFilter(string Key, string Label);
 
+/// <summary>One chosen card in a picker. ItemId is the service or project; null means a custom card.</summary>
+public sealed record PickerEntry(int? ItemId, string Label, string Status, bool Custom, string Title, string Text, string PlaceholderTitle, string PlaceholderText);
+
+/// <summary>A choosable item in a picker's drop-down, with the wording to show as placeholders.</summary>
+public sealed record PickerChoice(int Id, string Label, string Status, string Title, string Text);
+
+public sealed class PickerData
+{
+    /// <summary>"svc" for service cards, "prj" for project cards. Also the prefix of the posted field names.</summary>
+    public required string Prefix { get; init; }
+    public int? Max { get; init; }
+    public bool AllowCustom { get; init; }
+    public List<PickerEntry> Entries { get; set; } = new();
+    public List<PickerChoice> Choices { get; set; } = new();
+    public string? Error { get; set; }
+}
+
 public sealed record PlacementOption(string Value, string Label, bool Checked, bool Disabled, string? Note = null);
 
 /// <summary>Reads posted fields, which are named f_{Key}.</summary>
@@ -99,6 +119,9 @@ public sealed class FormView
     public string Get(string key) => _form[NameOf(key)].ToString();
 
     public IReadOnlyList<string> Many(string key) => _form[NameOf(key)].ToList()!;
+
+    /// <summary>A posted array by its exact name (picker rows post parallel arrays in on-screen order).</summary>
+    public IReadOnlyList<string> Raw(string name) => _form[name].ToList()!;
 
     public bool IsChecked(string key) => _form[NameOf(key)].Any(v => v == "true" || v == "on");
 }
@@ -128,6 +151,7 @@ public sealed class EditData
     public string Title { get; init; } = string.Empty;
     public Dictionary<string, string> Values { get; init; } = new();
     public List<PlacementOption> Placements { get; set; } = new();
+    public Dictionary<string, PickerData> Pickers { get; set; } = new();
 }
 
 public sealed class SaveOutcome

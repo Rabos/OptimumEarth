@@ -8,4 +8,5 @@ public sealed record FieldVm(
     string? Error,
     IReadOnlyList<(string Value, string Label)> Options,
     IReadOnlyList<PlacementOption> Placements,
-    bool ReadOnly);
+    bool ReadOnly,
+    PickerData? Picker = null);

@@ -38,7 +38,7 @@ public static class AdminNav
             new("Posts", "/admin/content/posts", AdminAreas.Blog),
             new("Categories", "/admin/content/categories", AdminAreas.Blog),
         }),
-        new("Pages", new NavItem[] { new("Country pages", "/admin/country-pages", AdminAreas.Pages) }),
+        new("Pages", new NavItem[] { new("Country pages", "/admin/content/country-pages", AdminAreas.Pages) }),
         new("Inbox", new NavItem[] { new("Inquiries", "/admin/inquiries", AdminAreas.Inquiries) }),
         new("Library", new NavItem[] { new("Media", "/admin/media", AdminAreas.Media) }),
         new("Site", new NavItem[]
