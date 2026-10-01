@@ -1,3 +1,4 @@
+@inject OptimumEarth.Web.Services.ContentReader Content
 @{
     // Standalone partial so the header/nav markup can be reused (or, on the
     // home page, skipped entirely) without duplicating it in _Layout.
@@ -52,6 +53,7 @@
                 <a href="/zambia" class="@NavClass("zambia", "zambia")">Zambia</a>
                 <a href="/services" class="@NavClass("services")">Services</a>
                 <a href="/projects" class="@NavClass("projects")">Projects</a>
+                @if (await Content.HasBlogAsync()) { <a href="/blog" class="@NavClass("blog")">Blog</a> }
             </div>
             <span class="primary-nav__divider" aria-hidden="true"></span>
             <a href="/foundation" class="btn btn--nav btn--nav-foundation-cta primary-nav__cta @NavClass("foundation", "foundation" )">Our Foundation</a>

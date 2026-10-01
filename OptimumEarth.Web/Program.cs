@@ -73,6 +73,7 @@ builder.Services.AddDataProtection()
     .PersistKeysToDbContext<AppDbContext>();
 
 builder.Services.AddSingleton<ContentCache>();
+builder.Services.AddSingleton<MarkdownRenderer>();
 builder.Services.AddScoped<ContentReader>();
 builder.Services.AddScoped<AccessContext>();
 builder.Services.AddScoped<AuditService>();
@@ -121,6 +122,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+SeoEndpoints.Map(app);
 app.MapRazorPages();
 
 app.Run();

@@ -1,0 +1,15 @@
+@page "/blog/category/{slug}"
+@model OptimumEarth.Web.Pages.Blog.CategoryModel
+@{
+    ViewData["Theme"] = "blog";
+    ViewData["Title"] = Model.Category.Name + " - Blog";
+    ViewData["Description"] = string.IsNullOrWhiteSpace(Model.Category.Description) ? "Posts filed under " + Model.Category.Name + "." : Model.Category.Description;
+}
+
+<section class="projects-hero">
+    <span class="eyebrow" style="letter-spacing:.16em;">Blog</span>
+    <h1 class="projects-hero__title">@Model.Category.Name</h1>
+    @if (!string.IsNullOrWhiteSpace(Model.Category.Description)) { <p class="services-hero__lede">@Model.Category.Description</p> }
+</section>
+
+<partial name="_BlogList" model="@(new BlogListVm(Model.Posts, Model.Categories, Model.Category.Slug, "/blog/category/" + Model.Category.Slug))" />

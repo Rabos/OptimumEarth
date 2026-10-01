@@ -38,6 +38,16 @@ public sealed record CountryPageContent(
     string CtaServiceLabel,
     IReadOnlyList<string> CtaServices);
 
+public sealed record BlogCard(string Slug, string Title, string Excerpt, string CoverPath, string CategoryName, string CategorySlug, string Author, DateOnly Date, int ReadingMinutes, bool Pinned);
+
+public sealed record BlogListPage(IReadOnlyList<BlogCard> Posts, int Total, int Page, int Pages, int Size);
+
+public sealed record BlogCategoryInfo(string Name, string Slug, string Description, int Count);
+
+public sealed record BlogPostView(
+    string Slug, string Title, string Excerpt, string CoverPath, string CategoryName, string CategorySlug, string Author,
+    DateOnly Date, int ReadingMinutes, string Html, IReadOnlyList<string> Tags, string SeoTitle, string SeoDescription, DateTime UpdatedUtc);
+
 /// <summary>
 /// Reads the content the public pages show, as the same small records the
 /// views already use. Only Published rows are returned. Results are cached
@@ -48,10 +58,13 @@ public sealed class ContentReader
     private readonly AppDbContext _db;
     private readonly ContentCache _cache;
 
-    public ContentReader(AppDbContext db, ContentCache cache)
+    private readonly MarkdownRenderer _markdown;
+
+    public ContentReader(AppDbContext db, ContentCache cache, MarkdownRenderer markdown)
     {
         _db = db;
         _cache = cache;
+        _markdown = markdown;
     }
 
     private static string Two(int i) => (i + 1).ToString("00");
@@ -65,7 +78,11 @@ public sealed class ContentReader
     public Task<IReadOnlyList<ServiceLine>> ServiceLinesAsync() => _cache.GetOrCreateAsync("services", async () =>
     {
         var rows = await _db.Services.AsNoTracking().Where(s => s.Status == ContentStatus.Published && s.OnListPage).OrderBy(s => s.SortOrder).ThenBy(s => s.Id).ToListAsync();
-        return (IReadOnlyList<ServiceLine>)rows.Select((s, i) => new ServiceLine(Two(i), s.Title, s.Coverage, s.Description, s.Title.Replace("&", "and"), s.ImagePath)).ToList();
+        // The image's alt text (edited under Media) labels it for screen readers; fall back to the title.
+        var paths = rows.Select(r => r.ImagePath).ToList();
+        var alts = await _db.Media.AsNoTracking().Where(m => paths.Contains(m.Path)).ToDictionaryAsync(m => m.Path, m => m.Alt);
+        return (IReadOnlyList<ServiceLine>)rows.Select((s, i) => new ServiceLine(Two(i), s.Title, s.Coverage, s.Description,
+            alts.GetValueOrDefault(s.ImagePath) is { Length: > 0 } alt ? alt : s.Title.Replace("&", "and"), s.ImagePath)).ToList();
     });
 
     public Task<IReadOnlyList<ProjectCard>> ProjectCardsAsync() => _cache.GetOrCreateAsync("projects", async () =>
@@ -161,6 +178,92 @@ public sealed class ContentReader
 
     public Task<SiteSettings> SettingsAsync() => _cache.GetOrCreateAsync("settings", async () =>
         await _db.Settings.AsNoTracking().FirstOrDefaultAsync() ?? new SiteSettings());
+
+    // ---------- Blog ----------
+    // A post is live when it is Published and its publish date has arrived. The date is part of every
+    // cache key, so a scheduled post appears on its day without anyone saving anything.
+
+    private static DateOnly Today() => DateOnly.FromDateTime(DateTime.UtcNow);
+
+    public async Task<bool> HasBlogAsync()
+    {
+        var today = Today();
+        var flag = await _cache.GetOrCreateAsync("blog.has." + today, async () => new Flag(await _db.BlogPosts.AnyAsync(p => p.Status == ContentStatus.Published && p.PublishDate <= today)));
+        return flag.Value;
+    }
+
+    public Task<BlogListPage> BlogPageAsync(string? categorySlug, int page)
+    {
+        var today = Today();
+        return _cache.GetOrCreateAsync($"blog.list.{today}.{categorySlug}.{page}", async () =>
+        {
+            var size = Math.Clamp((await SettingsAsync()).BlogPageSize, 3, 50);
+            var query = _db.BlogPosts.AsNoTracking().Where(p => p.Status == ContentStatus.Published && p.PublishDate <= today);
+            if (!string.IsNullOrEmpty(categorySlug))
+            {
+                query = query.Where(p => p.Category!.Slug == categorySlug);
+            }
+
+            var total = await query.CountAsync();
+            var pages = Math.Max(1, (int)Math.Ceiling(total / (double)size));
+            var current = Math.Min(Math.Max(1, page), pages);
+            var rows = await query
+                .OrderByDescending(p => p.Pinned).ThenByDescending(p => p.PublishDate).ThenByDescending(p => p.Id)
+                .Skip((current - 1) * size).Take(size)
+                .Select(p => new { p.Slug, p.Title, p.Excerpt, p.CoverPath, CategoryName = p.Category!.Name, CategorySlug = p.Category.Slug, p.AuthorName, p.PublishDate, Length = p.Body.Length, p.Pinned })
+                .ToListAsync();
+
+            return new BlogListPage(
+                rows.Select(r => new BlogCard(r.Slug, r.Title, r.Excerpt, r.CoverPath, r.CategoryName, r.CategorySlug, r.AuthorName, r.PublishDate, MarkdownRenderer.ReadingMinutes(r.Length), r.Pinned)).ToList(),
+                total, current, pages, size);
+        });
+    }
+
+    public Task<IReadOnlyList<BlogCategoryInfo>> BlogCategoriesAsync()
+    {
+        var today = Today();
+        return _cache.GetOrCreateAsync("blog.categories." + today, async () =>
+        {
+            var rows = await _db.BlogCategories.AsNoTracking()
+                .Select(c => new BlogCategoryInfo(c.Name, c.Slug, c.Description, c.Posts.Count(p => p.Status == ContentStatus.Published && p.PublishDate <= today)))
+                .ToListAsync();
+            return (IReadOnlyList<BlogCategoryInfo>)rows.Where(c => c.Count > 0).OrderBy(c => c.Name).ToList();
+        });
+    }
+
+    public Task<BlogCategoryInfo?> BlogCategoryAsync(string slug) => BlogCategoriesAsync().ContinueWith(t => t.Result.FirstOrDefault(c => c.Slug == slug));
+
+    public async Task<BlogPostView?> BlogPostAsync(string slug)
+    {
+        var today = Today();
+        var box = await _cache.GetOrCreateAsync($"blog.post.{today}.{slug}", async () =>
+        {
+            var post = await _db.BlogPosts.AsNoTracking().Include(p => p.Category)
+                .FirstOrDefaultAsync(p => p.Slug == slug && p.Status == ContentStatus.Published && p.PublishDate <= today);
+            return new Optional<BlogPostView>(post is null ? null : new BlogPostView(
+                post.Slug, post.Title, post.Excerpt, post.CoverPath, post.Category!.Name, post.Category.Slug, post.AuthorName, post.PublishDate,
+                MarkdownRenderer.ReadingMinutes(post.Body.Length), _markdown.ToHtml(post.Body), post.Tags.ToList(),
+                string.IsNullOrWhiteSpace(post.SeoTitle) ? post.Title : post.SeoTitle,
+                string.IsNullOrWhiteSpace(post.SeoDescription) ? post.Excerpt : post.SeoDescription,
+                post.UpdatedUtc));
+        });
+        return box.Value;
+    }
+
+    public Task<IReadOnlyList<(string Slug, DateTime UpdatedUtc, DateOnly Date)>> BlogSitemapAsync()
+    {
+        var today = Today();
+        return _cache.GetOrCreateAsync("blog.sitemap." + today, async () =>
+        {
+            var rows = await _db.BlogPosts.AsNoTracking().Where(p => p.Status == ContentStatus.Published && p.PublishDate <= today)
+                .OrderByDescending(p => p.PublishDate).Select(p => new { p.Slug, p.UpdatedUtc, p.PublishDate }).ToListAsync();
+            return (IReadOnlyList<(string, DateTime, DateOnly)>)rows.Select(r => (r.Slug, r.UpdatedUtc, r.PublishDate)).ToList();
+        });
+    }
+
+    public Task<IReadOnlyList<BlogCard>> BlogLatestAsync(int count) => BlogPageAsync(null, 1).ContinueWith(t => (IReadOnlyList<BlogCard>)t.Result.Posts.Take(count).ToList());
+
+    private sealed record Flag(bool Value);
 
     private static string? NullIfEmpty(string value) => string.IsNullOrWhiteSpace(value) ? null : value;
 

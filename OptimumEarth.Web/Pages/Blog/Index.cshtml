@@ -1,0 +1,17 @@
+@page "/blog"
+@model OptimumEarth.Web.Pages.Blog.IndexModel
+@{
+    ViewData["Theme"] = "blog";
+    ViewData["Title"] = "Blog - Field notes, insights and news";
+    ViewData["Description"] = string.IsNullOrWhiteSpace(Model.Intro)
+        ? "Field notes, insights and news from the Optimum Earth teams and the Optimum Earth Foundation."
+        : Model.Intro;
+}
+
+<section class="projects-hero">
+    <span class="eyebrow" style="letter-spacing:.16em;">Blog</span>
+    <h1 class="projects-hero__title">Field notes, insights and news.</h1>
+    @if (!string.IsNullOrWhiteSpace(Model.Intro)) { <p class="services-hero__lede">@Model.Intro</p> }
+</section>
+
+<partial name="_BlogList" model="@(new BlogListVm(Model.Posts, Model.Categories, null, "/blog"))" />

@@ -1,5 +1,6 @@
 @using System.Text.Json
 @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@inject OptimumEarth.Web.Services.ContentReader Content
 @{
     var theme = ViewData["Theme"] as string ?? "home";
     var title = ViewData["Title"] as string ?? "Optimum Earth";
@@ -13,7 +14,7 @@
     var siteUrl = (Configuration["SiteUrl"] ?? "https://optimum-earth.com").TrimEnd('/');
     var path = Context.Request.Path.Value?.ToLowerInvariant().TrimEnd('/') ?? "";
     var canonicalUrl = siteUrl + (path.Length == 0 ? "/" : path);
-    var ogImageUrl = siteUrl + "/img/og-image.png";
+    var ogImageUrl = ViewData["OgImage"] as string ?? (siteUrl + "/img/og-image.png");
     var logoUrl = siteUrl + "/img/logo-icon.png";
 
     // Most page titles are already brand-qualified ("Optimum Earth Foundation
@@ -32,6 +33,7 @@
         ["services"] = "Services",
         ["projects"] = "Projects",
         ["contact"] = "Contact",
+        ["blog"] = "Blog",
     };
 
     var organizationJsonLd = JsonSerializer.Serialize(new Dictionary<string, object>
@@ -163,6 +165,7 @@
                     <h3>Company</h3>
                     <a href="/">Home</a>
                     <a href="/projects">Projects</a>
+                    @if (await Content.HasBlogAsync()) { <a href="/blog">Blog</a> }
                     <a href="/contact">Work With Us</a>
                 </nav>
             </div>

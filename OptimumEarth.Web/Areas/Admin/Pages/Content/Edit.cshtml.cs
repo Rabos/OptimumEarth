@@ -37,6 +37,11 @@ public class EditModel : AdminPageModel
         }
 
         Descriptor = descriptor;
+        if (id is null && !descriptor.Single && !descriptor.CanAdd)
+        {
+            return NotFound();
+        }
+
         if (id is null && !descriptor.Single && !CanEdit)
         {
             // Adding something is an edit: a view-only person has no use for the empty form.
@@ -63,6 +68,11 @@ public class EditModel : AdminPageModel
         }
 
         Descriptor = descriptor;
+        if (id is null && !descriptor.Single && !descriptor.CanAdd)
+        {
+            return NotFound();
+        }
+
         var form = new FormView(Request.Form);
         var mode = !descriptor.HasStatus || descriptor.Single ? SaveMode.Keep : submit == "draft" ? SaveMode.Draft : SaveMode.Publish;
         var outcome = await descriptor.SaveAsync(_db, Access, id, form, mode);

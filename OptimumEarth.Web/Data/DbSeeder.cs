@@ -150,6 +150,11 @@ public sealed class DatabaseInitializer : IHostedService
         ["recentwork1.jpg"] = "Production well survey in progress",
         ["recentwork2.jpg"] = "Monitoring well installation",
         ["recentwork3.jpg"] = "Pivot irrigation site assessment",
+        ["servicepanel1.jpg"] = "Water supply solutions",
+        ["servicepanel2.jpg"] = "Groundwater monitoring",
+        ["servicepanel3.jpg"] = "Environmental services",
+        ["servicepanel4.jpg"] = "GIS, mapping and remote sensing",
+        ["servicepanel5.jpg"] = "Mines, oil and gas",
     };
 
     private async Task SeedMediaAsync(AppDbContext db, IWebHostEnvironment env, CancellationToken ct)
