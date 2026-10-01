@@ -1,0 +1,87 @@
+@page "/admin/users/edit/{id:int?}"
+@model UserEditModel
+@{
+    ViewData["Title"] = Model.UserId is null ? "Invite user" : "Edit user";
+    var presets = new (string Label, string Json)[]
+    {
+        ("Edit all pages", "{\"*\":\"edit\"}"),
+        ("View all pages", "{\"*\":\"view\"}"),
+        ("Blog only", "{\"blog\":\"edit\",\"media\":\"view\"}"),
+        ("Website content, no inquiries or settings", "{\"*\":\"edit\",\"inquiries\":\"none\",\"settings\":\"none\"}"),
+        ("Clear all", "{}"),
+    };
+}
+
+<div class="page-head">
+    <div>
+        <h1>@(Model.UserId is null ? "Invite a user" : Model.Input.DisplayName)</h1>
+        <p class="sub">@(Model.UserId is null ? "New people start with no pages. Choose what they can reach, then send them the link." : "Role sets the most they can do; page access sets where.")</p>
+    </div>
+    <div class="actions"><a class="btn" href="/admin/users">Back to users</a></div>
+</div>
+
+@if (Model.SetPasswordLink is not null)
+{
+    <div class="card" style="max-width:920px">
+        <h3>Send this link to @Model.Input.DisplayName</h3>
+        <p class="hint">It lets them choose a password and works once, for 3 days. Nothing is emailed from here, so copy it and send it yourself.</p>
+        <div class="copybox"><input id="invite-link" readonly value="@Model.SetPasswordLink" /><button type="button" class="btn" data-copy="#invite-link">Copy link</button></div>
+    </div>
+}
+
+<form method="post" class="card formcard" novalidate>
+    <div asp-validation-summary="ModelOnly" class="err"></div>
+    <div class="fgrid">
+        <label class="fld"><span class="fl">Name <i class="req">*</i></span>
+            <input asp-for="Input.DisplayName" maxlength="80" />
+            <span asp-validation-for="Input.DisplayName" class="err"></span></label>
+        <label class="fld"><span class="fl">Email <i class="req">*</i></span>
+            <input asp-for="Input.Email" type="email" maxlength="180" />
+            <span asp-validation-for="Input.Email" class="err"></span></label>
+        <label class="fld"><span class="fl">Role</span>
+            <select asp-for="Input.Role"><option>Editor</option><option>Viewer</option></select>
+            <span class="hint">Editors can change the pages you give them Edit on. Viewers can only look.</span></label>
+
+        <div class="fg">Page access</div>
+        <div class="full chips" aria-label="Presets">
+            @foreach (var p in presets)
+            {
+                <button type="button" class="chip" data-preset='@Html.Raw(p.Json)'>@p.Label</button>
+            }
+        </div>
+        <div class="full tbl"><table>
+            <thead><tr><th>Page area</th><th>Access</th></tr></thead>
+            <tbody>
+            @foreach (var area in AdminAreas.All)
+            {
+                var current = Model.Input.Access.GetValueOrDefault(area.Key) ?? "none";
+                <tr>
+                    <td><b>@area.Label</b></td>
+                    <td>
+                        <div class="segs" role="radiogroup" aria-label="@area.Label access">
+                            @foreach (var level in new[] { ("none", "None"), ("view", "View"), ("edit", "Edit") })
+                            {
+                                <label class="seg"><input type="radio" name="Input.Access[@area.Key]" value="@level.Item1" data-area="@area.Key" checked="@(current == level.Item1)" /><span>@level.Item2</span></label>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table></div>
+        <p class="full hint">Access controls what a person can do in this dashboard. The public website is not affected. Anyone who can edit content can pick images from the library; uploading or deleting images needs Edit on Media library.</p>
+    </div>
+    <div class="savebar"><span></span><button type="submit" class="btn btn--pri">@(Model.UserId is null ? "Create and get link" : "Save")</button></div>
+</form>
+
+@if (Model.UserId is not null)
+{
+    <div class="card formcard">
+        <h3>Account</h3>
+        <p class="hint">Status: <span class="tag @(Model.Status == "Active" ? "t-green" : Model.Status == "Invited" ? "t-amber" : "t-red")">@Model.Status</span></p>
+        <div class="btnrow">
+            <form method="post" asp-page-handler="Reset" asp-route-id="@Model.UserId" class="inline"><button class="btn" type="submit">Create password link</button></form>
+            <form method="post" asp-page-handler="ToggleActive" asp-route-id="@Model.UserId" class="inline"><button class="btn @(Model.IsActive ? "btn--danger-text" : "")" type="submit">@(Model.IsActive ? "Deactivate" : "Reactivate")</button></form>
+        </div>
+    </div>
+}
