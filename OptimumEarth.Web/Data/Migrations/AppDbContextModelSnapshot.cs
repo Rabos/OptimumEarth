@@ -39,7 +39,7 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DataProtectionKeys");
+                    b.ToTable("DataProtectionKeys", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
@@ -294,7 +294,7 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.HasIndex("WhenUtc");
 
-                    b.ToTable("AuditEntries");
+                    b.ToTable("AuditEntries", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.BlogCategory", b =>
@@ -325,7 +325,7 @@ namespace OptimumEarth.Web.Data.Migrations
                     b.HasIndex("Slug")
                         .IsUnique();
 
-                    b.ToTable("BlogCategories");
+                    b.ToTable("BlogCategories", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.BlogPost", b =>
@@ -402,7 +402,7 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.HasIndex("Status", "PublishDate");
 
-                    b.ToTable("BlogPosts");
+                    b.ToTable("BlogPosts", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.BlogRevision", b =>
@@ -435,7 +435,7 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.HasIndex("BlogPostId");
 
-                    b.ToTable("BlogRevisions");
+                    b.ToTable("BlogRevisions", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.Capability", b =>
@@ -465,7 +465,7 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Capabilities");
+                    b.ToTable("Capabilities", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.CoreValue", b =>
@@ -495,7 +495,7 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CoreValues");
+                    b.ToTable("CoreValues", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.CountryPage", b =>
@@ -602,7 +602,7 @@ namespace OptimumEarth.Web.Data.Migrations
                     b.HasIndex("Slug")
                         .IsUnique();
 
-                    b.ToTable("CountryPages");
+                    b.ToTable("CountryPages", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.CountryPageProject", b =>
@@ -637,7 +637,7 @@ namespace OptimumEarth.Web.Data.Migrations
                     b.HasIndex("CountryPageId", "ProjectId")
                         .IsUnique();
 
-                    b.ToTable("CountryPageProjects");
+                    b.ToTable("CountryPageProjects", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.CountryPageService", b =>
@@ -671,7 +671,7 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.HasIndex("ServiceId");
 
-                    b.ToTable("CountryPageServices");
+                    b.ToTable("CountryPageServices", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.FocusArea", b =>
@@ -697,7 +697,7 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FocusAreas");
+                    b.ToTable("FocusAreas", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.GalleryImage", b =>
@@ -731,7 +731,7 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("GalleryImages");
+                    b.ToTable("GalleryImages", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.Inquiry", b =>
@@ -796,7 +796,7 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.HasIndex("CreatedUtc");
 
-                    b.ToTable("Inquiries");
+                    b.ToTable("Inquiries", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.MediaAsset", b =>
@@ -837,7 +837,7 @@ namespace OptimumEarth.Web.Data.Migrations
                     b.HasIndex("Path")
                         .IsUnique();
 
-                    b.ToTable("Media");
+                    b.ToTable("Media", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.Pillar", b =>
@@ -879,7 +879,7 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Pillars");
+                    b.ToTable("Pillars", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.Principle", b =>
@@ -913,7 +913,7 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Principles");
+                    b.ToTable("Principles", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.Project", b =>
@@ -962,7 +962,7 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Projects", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.SdgGoal", b =>
@@ -992,7 +992,7 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SdgGoals");
+                    b.ToTable("SdgGoals", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.Service", b =>
@@ -1033,7 +1033,7 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Services");
+                    b.ToTable("Services", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.SiteSettings", b =>
@@ -1079,7 +1079,7 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Settings");
+                    b.ToTable("Settings", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.Slide", b =>
@@ -1117,7 +1117,7 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Slides");
+                    b.ToTable("Slides", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.Story", b =>
@@ -1159,7 +1159,7 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Stories");
+                    b.ToTable("Stories", (string)null);
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.UserAreaAccess", b =>
@@ -1176,7 +1176,7 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.HasKey("UserId", "Area");
 
-                    b.ToTable("AreaAccess");
+                    b.ToTable("AreaAccess", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

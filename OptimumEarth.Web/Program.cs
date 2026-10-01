@@ -40,7 +40,7 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connect
 builder.Services
     .AddIdentity<AppUser, IdentityRole<int>>(options =>
     {
-        options.Password.RequiredLength = 12;
+        options.Password.RequiredLength = 6;
         options.Password.RequireDigit = false;
         options.Password.RequireLowercase = false;
         options.Password.RequireUppercase = false;
