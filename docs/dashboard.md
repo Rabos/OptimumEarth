@@ -47,6 +47,15 @@ dotnet run --project OptimumEarth.Web
 - **Enquiries** from the Contact page and the short forms are stored and shown under Inquiries (note, status, CSV export, delete for privacy requests). They are deleted automatically after the retention period in Site settings (default 24 months; 0 keeps them).
 - **Data Protection keys** are stored in the database, so sessions and form tokens survive a redeploy.
 
+## Content refresh (version 2)
+
+Version 2 of the built-in content comes from the fork's content pull request: five new service lines with "What we deliver" lists, a much larger project list with descriptions and new filters (countries: Uganda, Zambia, Burundi, DRC; categories: Construction Services, Technical Studies, Engineering Design, Environmental & Social Impact, Climate Resilience), the revised Who We Are copy and six values, rewritten Uganda and Zambia pages, and a PDF approach document for each SDG goal.
+
+- A new database is seeded straight to version 2.
+- An existing database is upgraded the first time the new build starts. Each section (services, capabilities, values, projects, country pages) is replaced only if it still matches the original seeded content; a section that has been edited in the dashboard is left alone and named in a startup warning, so nothing anyone wrote is overwritten. The old projects are kept but hidden from the Projects page.
+- Country-page cards can now be links: add a custom service card and give it a link such as `/contact` (that is how "Not sure which service you need?" works).
+- Each SDG goal has an optional approach document. Its path is entered in the dashboard; the PDF files themselves live in `wwwroot/docs/sdg` and are added through the repository, not the Media library.
+
 ## Backups
 
 Back up the PostgreSQL database and the uploads folder together. The database holds the content, the users and the enquiries.

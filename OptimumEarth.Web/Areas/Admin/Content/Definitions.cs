@@ -84,7 +84,7 @@ public static class Cell
 public sealed record StatusFilter(string Key, string Label);
 
 /// <summary>One chosen card in a picker. ItemId is the service or project; null means a custom card.</summary>
-public sealed record PickerEntry(int? ItemId, string Label, string Status, bool Custom, string Title, string Text, string PlaceholderTitle, string PlaceholderText);
+public sealed record PickerEntry(int? ItemId, string Label, string Status, bool Custom, string Title, string Text, string PlaceholderTitle, string PlaceholderText, string Url = "");
 
 /// <summary>A choosable item in a picker's drop-down, with the wording to show as placeholders.</summary>
 public sealed record PickerChoice(int Id, string Label, string Status, string Title, string Text);

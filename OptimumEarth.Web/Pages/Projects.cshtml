@@ -35,8 +35,221 @@ else
                     <span class="project-card__tag">@project.Tag</span>
                     <h2 class="project-card__title" style="font-size:19px; font-weight:600;">@project.Title</h2>
                     <p class="project-card__meta">@project.Meta</p>
+                    @* @if (!string.IsNullOrEmpty(project.Description))
+                    {
+                        <a href="#project-dialog-@i" class="project-card__link" data-dialog="project-dialog-@i" aria-label="View project details for @project.Title">Learn more</a>
+                    } *@
                 </div>
             </article>
         }
     </div>
 }
+
+<!-- Project Description Dialogs -->
+@for (var i = 0; i < Model.VisibleProjects.Count; i++)
+{
+    var project = Model.VisibleProjects[i];
+    if (!string.IsNullOrEmpty(project.Description))
+    {
+        <dialog id="project-dialog-@i" class="project-dialog">
+            <div class="project-dialog__content">
+                <div class="project-dialog__header">
+                    <h2 class="project-dialog__title">@project.Title</h2>
+                    <button class="project-dialog__close" data-close-dialog="project-dialog-@i" aria-label="Close dialog">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div class="project-dialog__body">
+                    <p class="project-dialog__meta">@project.Tag</p>
+                    <p class="project-dialog__client">@project.Meta</p>
+                    <p class="project-dialog__description">@project.Description</p>
+                </div>
+            </div>
+        </dialog>
+    }
+}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Open dialog
+        document.querySelectorAll('a[data-dialog]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const dialogId = this.getAttribute('data-dialog');
+                const dialog = document.getElementById(dialogId);
+                if (dialog) {
+                    dialog.showModal();
+                }
+            });
+        });
+
+        // Close dialog
+        document.querySelectorAll('[data-close-dialog]').forEach(button => {
+            button.addEventListener('click', function() {
+                const dialogId = this.getAttribute('data-close-dialog');
+                const dialog = document.getElementById(dialogId);
+                if (dialog) {
+                    dialog.close();
+                }
+            });
+        });
+
+        // Close dialog when clicking outside
+        document.querySelectorAll('.project-dialog').forEach(dialog => {
+            dialog.addEventListener('click', function(event) {
+                if (event.target === this) {
+                    this.close();
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    .project-card__link {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 8px 16px;
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.25s ease;
+        text-decoration: none;
+        align-self: flex-start;
+    }
+
+    .project-card__link:hover,
+    .project-card__link:focus-visible {
+        background-color: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.6);
+    }
+
+    .project-card__footer {
+        margin-top: auto;
+        padding-top: 12px;
+    }
+
+    /* ---- Project Description Dialog (inspired by Stories & Impact lightbox) */
+    .project-dialog {
+        border: 0;
+        border-radius: 14px;
+        padding: 0;
+        width: min(1040px, calc(100vw - 48px));
+        max-width: none;
+        max-height: calc(100vh - 56px);
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 30px 80px rgba(15, 23, 42, 0.34);
+    }
+
+    .project-dialog::backdrop {
+        background: rgba(12, 22, 8, 0.7);
+        backdrop-filter: blur(3px);
+    }
+
+    .project-dialog__content {
+        display: flex;
+        flex-direction: column;
+        max-height: calc(100vh - 56px);
+        padding: 24px 26px 22px;
+        gap: 14px;
+    }
+
+    .project-dialog__header {
+        display: flex;
+        align-items: flex-start;
+        gap: 18px;
+    }
+
+    .project-dialog__title {
+        font-family: 'Newsreader', serif;
+        font-size: 26px;
+        font-weight: 600;
+        line-height: 1.2;
+        color: var(--green-ink, #1f6644);
+        margin: 4px 0 0;
+        flex: 1;
+    }
+
+    .project-dialog__close {
+        flex: none;
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: var(--grey-100, #f3f4f6);
+        color: var(--navy-ink, #0f1722);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    .project-dialog__close:hover,
+    .project-dialog__close:focus-visible {
+        background: var(--green-wash, #d0e8df);
+        color: var(--green-ink, #1f6644);
+    }
+
+    .project-dialog__close svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .project-dialog__body {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+    }
+
+    .project-dialog__meta {
+        margin: 0 0 8px 0;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--grey, #7d8997);
+    }
+
+    .project-dialog__client {
+        margin: 0 0 12px 0;
+        font-size: 15px;
+        color: var(--navy-ink, #0f1722);
+        font-weight: 500;
+        line-height: 1.5;
+    }
+
+    .project-dialog__description {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.7;
+        color: var(--navy-ink, #0f1722);
+    }
+</style>
+
+<style>
+    @@media (max-width: 768px) {
+        .project-dialog {
+            width: min(100vw - 32px, 100%);
+            max-height: 85vh;
+        }
+
+        .project-dialog__title {
+            font-size: 20px;
+        }
+
+        .project-dialog__content {
+            padding: 18px 20px 16px;
+            gap: 12px;
+        }
+    }
+</style>

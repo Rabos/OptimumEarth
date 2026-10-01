@@ -75,6 +75,8 @@ public class AppDbContext : IdentityDbContext<AppUser, Microsoft.AspNetCore.Iden
             e.HasMany(p => p.Revisions).WithOne(r => r.BlogPost).HasForeignKey(r => r.BlogPostId).OnDelete(DeleteBehavior.Cascade);
         });
 
+        b.Entity<SiteSettings>().Property(s => s.ContentVersion).HasDefaultValue(1);
+
         b.Entity<MediaAsset>().HasIndex(m => m.Path).IsUnique();
         b.Entity<Inquiry>().HasIndex(i => i.CreatedUtc);
         b.Entity<AuditEntry>().HasIndex(a => a.WhenUtc);

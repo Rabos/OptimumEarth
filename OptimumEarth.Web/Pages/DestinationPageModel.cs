@@ -77,6 +77,7 @@ public abstract class DestinationPageModel : PageModel
             SectionTwoLinkText = page.SectionTwoLinkText,
             SectionTwoLinkHref = page.SectionTwoLinkHref,
             SectionTwoCards = page.ProjectCards.ToList(),
+            SectionTwoCardDescriptions = page.ProjectDescriptions.ToList(),
             SectionTwoNote = page.SectionTwoNote,
             CtaTitle = page.CtaTitle,
             CtaBody = page.CtaBody,

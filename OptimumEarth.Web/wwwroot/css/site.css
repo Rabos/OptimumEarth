@@ -30,6 +30,12 @@
     --green-pale: #D3E7BE;
     --green-wash: #F2F6EE;
     --green-wash-border: #DCE7D2;
+    --blue-wash: #EAF0FB;
+    /* Deliberately darker than --grey-100 (the section's own tint
+       background, #F4F5F5) - matching it made the hovered card blend into
+       the page instead of standing out. --grey-150 gives visible contrast
+       while staying light enough to read as a subtle wash. */
+    --grey-wash: #E7E8E9;
     --radius: 5px;
     --gutter: 56px;
     --shadow-btn-blue: 0 4px 18px rgba(33, 66, 146, .45);
@@ -39,6 +45,7 @@
     --shadow-btn-hover: 0 4px 18px rgba(0, 0, 0, .28);
     --shadow-card-hover: 0 16px 34px rgba(27, 42, 68, .13);
     --shadow-card-hover-foundation: 0 16px 34px rgba(31, 51, 17, .14);
+    --shadow-card-hover-zambia: 0 16px 34px rgba(58, 63, 66, .14);
     --header-height: 76px;
 }
 
@@ -1415,6 +1422,10 @@ img {
     background: linear-gradient(90deg, rgba(31, 51, 17, .92), rgba(31, 51, 17, .28));
 }
 
+.theme-zambia .dest-hero__scrim {
+    background: linear-gradient(90deg, rgba(58, 63, 66, .92), rgba(58, 63, 66, .28));
+}
+
 .dest-hero__copy {
     position: absolute;
     inset: 0;
@@ -1435,6 +1446,10 @@ img {
 
 .theme-foundation .dest-hero__eyebrow {
     color: var(--green-light);
+}
+
+.theme-zambia .dest-hero__eyebrow {
+    color: var(--grey-300);
 }
 
 .dest-hero__headline {
@@ -1478,10 +1493,14 @@ img {
     color: var(--green);
 }
 
+.theme-zambia .dest-overview__eyebrow {
+    color: var(--grey);
+}
+
 .dest-overview__quote {
     font-family: 'Newsreader', serif;
-    font-size: 27px;
-    line-height: 1.45;
+    font-size: 16px;
+    line-height: 1.7;
     color: var(--navy-ink);
     text-wrap: pretty;
     font-weight: 400;
@@ -1489,6 +1508,10 @@ img {
 
 .theme-foundation .dest-overview__quote {
     color: var(--green-ink);
+}
+
+.theme-zambia .dest-overview__quote {
+    color: var(--grey-900);
 }
 
 .dest-overview__body {
@@ -1602,6 +1625,13 @@ img {
     position: relative;
     width: 320px;
     height: 190px;
+    display: block;
+    border: 0;
+    padding: 0;
+    background: none;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
 }
 
 .sdg-loop__ring {
@@ -1719,6 +1749,10 @@ img {
     color: var(--green);
 }
 
+.theme-zambia .glance-panel__title {
+    color: var(--grey);
+}
+
 .glance-row {
     display: flex;
     justify-content: space-between;
@@ -1744,6 +1778,10 @@ img {
 
 .theme-foundation .glance-row__value {
     color: var(--green-ink);
+}
+
+.theme-zambia .glance-row__value {
+    color: var(--grey-900);
 }
 
 .dest-section {
@@ -1778,10 +1816,26 @@ img {
     color: var(--green-ink);
 }
 
+.theme-zambia .dest-section__head h2 {
+    color: var(--grey-900);
+}
+
 .plain-card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 18px;
+}
+
+@media (max-width: 960px) {
+    .plain-card-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 620px) {
+    .plain-card-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .service-card {
@@ -1794,16 +1848,290 @@ img {
     gap: 10px;
 }
 
+/* Destination service silhouettes: rounded on tablet/mobile, mirrored
+   curved tips in the first and third columns on desktop. */
+.destination-service-grid > .service-card {
+    --service-curve: clamp(24px, 3vw, 44px);
+    position: relative;
+    min-width: 0;
+    border: 0;
+    border-radius: var(--service-curve);
+    padding: 30px;
+    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 8%));
+}
+
+/* Excludes .service-card--cta so this doesn't outrank its own navy/green/grey
+   background further down the sheet - this selector's two classes otherwise
+   beat that rule's one on specificity regardless of source order. */
+.destination-service-grid > .service-card:not(.service-card--cta) {
+    /* bottom-left origin sweeps toward the top-right corner as it grows */
+    --wash-pos: 0% 100%;
+    --wash-color: var(--blue-wash);
+    background-color: #fff;
+    background-image: radial-gradient(circle at var(--wash-pos),
+        var(--wash-color) 0%, var(--wash-color) 72%, transparent 73%);
+    background-repeat: no-repeat;
+    background-position: var(--wash-pos);
+    background-size: 0% 0%;
+    transition: background-size .7s ease-out;
+}
+
+.destination-service-grid > .service-card:not(.service-card--cta):hover {
+    background-size: 260% 260%;
+}
+
+/* middle column: no corner to sweep from, so the wash blooms from its own
+   centre outward like a ripple */
+.destination-service-grid > .service-card:nth-child(3n + 2):not(.service-card--cta) {
+    --wash-pos: 50% 50%;
+}
+
+/* right column mirrors the left: bottom-right origin sweeps toward top-left */
+.destination-service-grid > .service-card:nth-child(3n):not(.service-card--cta) {
+    --wash-pos: 100% 100%;
+}
+
+.theme-zambia .destination-service-grid > .service-card:not(.service-card--cta) {
+    --wash-color: var(--grey-wash);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .destination-service-grid > .service-card:not(.service-card--cta) {
+        transition: none;
+    }
+}
+
+@media (min-width: 961px) {
+    /* Middle column: all four corners get the flag treatment instead of two
+       plain + two flag. Top and bottom edges run full width, touching both
+       their true corners directly (dead straight, no inset); left/right
+       stay inset by C the way the outer columns' straight sides do. Each
+       corner is the same flag arc as the outer columns, just rotated. */
+    .destination-service-grid > .service-card:nth-child(3n + 2):not(.service-card--cta--wide) {
+        padding: 30px calc(var(--service-curve) + 30px);
+        clip-path: polygon(
+            0 0,
+            100% 0,
+            calc(100% - var(--service-curve) * .7071) calc(var(--service-curve) * .2929),
+            calc(100% - var(--service-curve)) var(--service-curve),
+            calc(100% - var(--service-curve)) calc(100% - var(--service-curve)),
+            calc(100% - var(--service-curve) * .7071) calc(100% - var(--service-curve) * .2929),
+            100% 100%,
+            0 100%,
+            calc(var(--service-curve) * .7071) calc(100% - var(--service-curve) * .2929),
+            var(--service-curve) calc(100% - var(--service-curve)),
+            var(--service-curve) var(--service-curve),
+            calc(var(--service-curve) * .7071) calc(var(--service-curve) * .2929)
+        );
+    }
+
+    /* The curved tips used to be separate ::before/::after boxes glued on
+       beside the card, each painting its own copy of the wash gradient - so
+       on hover the two pieces bloomed independently instead of as one sweep.
+       A single clip-path polygon on the card itself (padding widened to
+       compensate for the tip room it used to get via margin) folds the tips
+       into the card's own box, so there's exactly one background layer and
+       the animation reads as one continuous corner-to-corner sweep.
+       Corners as fractions of --service-curve (C): the two plain corners are
+       quarter-circles inset from their edge (points at .2929/.7071C, i.e.
+       1-cos45deg/sin45deg); the two flag corners are a mirror-image quarter
+       circle that instead touches the card's true corner point and curves
+       away from it - giving the silhouette its "twisted flag" read. */
+    .destination-service-grid > .service-card:nth-child(3n + 1):not(.service-card--cta--wide) {
+        padding: 30px calc(var(--service-curve) + 30px);
+        clip-path: polygon(
+            calc(var(--service-curve) * 1) calc(var(--service-curve) * 1),
+            calc(var(--service-curve) * 1.2929) calc(var(--service-curve) * .2929),
+            calc(var(--service-curve) * 2) 0,
+            100% 0,
+            calc(100% - var(--service-curve) * .7071) calc(var(--service-curve) * .2929),
+            calc(100% - var(--service-curve)) var(--service-curve),
+            calc(100% - var(--service-curve)) calc(100% - var(--service-curve)),
+            calc(100% - var(--service-curve) * 1.2929) calc(100% - var(--service-curve) * .2929),
+            calc(100% - var(--service-curve) * 2) 100%,
+            0 100%,
+            calc(var(--service-curve) * .7071) calc(100% - var(--service-curve) * .2929),
+            var(--service-curve) calc(100% - var(--service-curve))
+        );
+    }
+
+    /* mirror of the above (x -> 100% - x): plain corners swap to top-right
+       and bottom-left, flag corners swap to top-left and bottom-right */
+    .destination-service-grid > .service-card:nth-child(3n):not(.service-card--cta--wide) {
+        padding: 30px calc(var(--service-curve) + 30px);
+        clip-path: polygon(
+            calc(100% - var(--service-curve) * 1) calc(var(--service-curve) * 1),
+            calc(100% - var(--service-curve) * 1.2929) calc(var(--service-curve) * .2929),
+            calc(100% - var(--service-curve) * 2) 0,
+            0 0,
+            calc(var(--service-curve) * .7071) calc(var(--service-curve) * .2929),
+            var(--service-curve) var(--service-curve),
+            var(--service-curve) calc(100% - var(--service-curve)),
+            calc(var(--service-curve) * 1.2929) calc(100% - var(--service-curve) * .2929),
+            calc(var(--service-curve) * 2) 100%,
+            100% 100%,
+            calc(100% - var(--service-curve) * .7071) calc(100% - var(--service-curve) * .2929),
+            calc(100% - var(--service-curve)) calc(100% - var(--service-curve))
+        );
+    }
+
+    /* The lonely-row CTA banner: same true-corner-to-inset footprint as the
+       other flag corners, but using the OTHER tangent circle at each corner
+       - since no smooth circle bulges outward from these two points, this
+       one deliberately pinches into a sharp ragged notch instead of the
+       concave scoop used everywhere else. */
+    .destination-service-grid > .service-card--cta--wide {
+        padding: 30px calc(var(--service-curve) + 30px);
+        clip-path: polygon(
+            0 0,
+            100% 0,
+            calc(100% - var(--service-curve) * .2929) calc(var(--service-curve) * .7071),
+            calc(100% - var(--service-curve)) var(--service-curve),
+            calc(100% - var(--service-curve)) calc(100% - var(--service-curve)),
+            calc(100% - var(--service-curve) * .2929) calc(100% - var(--service-curve) * .7071),
+            100% 100%,
+            0 100%,
+            calc(var(--service-curve) * .2929) calc(100% - var(--service-curve) * .7071),
+            var(--service-curve) calc(100% - var(--service-curve)),
+            var(--service-curve) var(--service-curve),
+            calc(var(--service-curve) * .2929) calc(var(--service-curve) * .7071)
+        );
+    }
+}
+
 .service-card__title {
     font-size: 18px;
     font-weight: 700;
     color: var(--navy-ink);
+    position: relative;
+    width: fit-content;
 }
 
 .service-card__desc {
     font-size: 14.5px;
     line-height: 1.6;
     color: var(--grey);
+}
+
+.destination-service-grid > .service-card:not(.service-card--cta) {
+    cursor: pointer;
+}
+
+/* Underline as a progress bar: an empty track the width of the title,
+   filled left-to-right on hover rather than simply faded in. Colour follows
+   the same theme-token pattern as the hover wash. */
+.service-card__title {
+    --underline-color: var(--blue);
+}
+
+.theme-zambia .service-card__title {
+    --underline-color: var(--grey-900);
+}
+
+.service-card__title::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 100%;
+    height: 2px;
+    background: var(--underline-color);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform .4s ease-out;
+}
+
+.destination-service-grid > .service-card:not(.service-card--cta):hover .service-card__title::after {
+    transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .service-card__title::after {
+        transition: none;
+    }
+}
+
+/* Not a real service line. Ordinarily it just takes the slot the remainder
+   already leaves open in the last row, sized like its neighbours - the
+   .service-card--cta--wide modifier below is the exception, used only when
+   there is no such slot to take. */
+.service-card--cta {
+    justify-content: space-between;
+    background: var(--navy-deep);
+    border-color: var(--navy-deep);
+    text-decoration: none;
+    transition: background-color .2s ease;
+}
+
+.service-card--cta .service-card__title {
+    color: #fff;
+}
+
+.service-card--cta .service-card__desc {
+    color: #B9C4DC;
+}
+
+.service-card--cta__arrow {
+    flex: none;
+    align-self: flex-end;
+    font-size: 22px;
+    color: #fff;
+    transition: transform .2s ease;
+}
+
+.service-card--cta:hover, .service-card--cta:focus-visible {
+    background: var(--blue-hover);
+    border-color: var(--blue-hover);
+}
+
+    .service-card--cta:hover .service-card--cta__arrow, .service-card--cta:focus-visible .service-card--cta__arrow {
+        transform: translateX(4px);
+    }
+
+.theme-foundation .service-card--cta {
+    background: var(--green-deep);
+    border-color: var(--green-deep);
+}
+
+    .theme-foundation .service-card--cta:hover, .theme-foundation .service-card--cta:focus-visible {
+        background: var(--green);
+        border-color: var(--green);
+    }
+
+.theme-zambia .service-card--cta {
+    background: var(--grey-900);
+    border-color: var(--grey-900);
+}
+
+    .theme-zambia .service-card--cta:hover, .theme-zambia .service-card--cta:focus-visible {
+        background: var(--grey);
+        border-color: var(--grey);
+    }
+
+/* The real-card count is already a multiple of 3, so there is no open slot
+   left for this tile - it would land alone on a fresh row by itself.
+   Spanning every column and switching to a horizontal banner instead turns
+   that lonely row into a deliberate full-width one. */
+.service-card--cta--wide {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+}
+
+    .service-card--cta--wide .service-card--cta__arrow {
+        align-self: center;
+    }
+
+@media (max-width: 620px) {
+    .service-card--cta--wide {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+        .service-card--cta--wide .service-card--cta__arrow {
+            align-self: flex-end;
+        }
 }
 
 /* ---- How We Work: editorial principles with a hand-drawn hover ---- */
@@ -2023,6 +2351,10 @@ img {
     background: var(--green-deep);
 }
 
+.theme-zambia .dest-cta {
+    background: var(--grey-900);
+}
+
 .dest-cta__title {
     font-size: 34px;
     font-weight: 700;
@@ -2039,6 +2371,10 @@ img {
 
 .theme-foundation .dest-cta__body {
     color: var(--green-pale);
+}
+
+.theme-zambia .dest-cta__body {
+    color: var(--grey-300);
 }
 
 .mini-form {
@@ -2108,6 +2444,16 @@ img {
     .theme-foundation .mini-form__submit:hover, .theme-foundation .mini-form__submit:focus-visible {
         background: #fff;
         color: var(--green);
+    }
+
+.theme-zambia .mini-form__submit {
+    background: var(--grey);
+    border-color: var(--grey);
+}
+
+    .theme-zambia .mini-form__submit:hover, .theme-zambia .mini-form__submit:focus-visible {
+        background: #fff;
+        color: var(--grey);
     }
 
 .form-success {
@@ -2270,6 +2616,15 @@ img {
     text-transform: uppercase;
 }
 
+/* Centered suits the collapsed circle at rest, but once the tag expands and
+   __rest becomes visible, that same centering leaves a gap between the
+   letter and the rest of the word - so nudge it flush right on expansion. */
+.pillar-tag:hover .pillar-tag__initial,
+.pillar-tag:focus-visible .pillar-tag__initial {
+    justify-content: flex-end;
+    padding-right: 1px;
+}
+
 .pillar-tag__rest {
     padding-right: 10px;
     white-space: nowrap;
@@ -2411,12 +2766,20 @@ img {
     display: block;
     width: 100%;
     height: 320px;
-    background: var(--green-ink);
+    background: var(--navy-ink);
     border: 1px solid var(--grey-200);
     border-radius: var(--radius);
     overflow: hidden;
     cursor: pointer;
     transition: border-color .35s ease, box-shadow .35s ease;
+}
+
+.theme-foundation .story-tile {
+    background: var(--green-ink);
+}
+
+.theme-zambia .story-tile {
+    background: var(--grey-900);
 }
 
 /* the hover veil. Kept on the tile's own ::after rather than a div so the
@@ -2426,9 +2789,17 @@ img {
     position: absolute;
     inset: 0;
     z-index: 1;
-    background: rgba(31, 51, 17, .965);
+    background: rgba(27, 42, 68, .965);
     opacity: 0;
     transition: opacity .45s ease;
+}
+
+.theme-foundation .story-tile::after {
+    background: rgba(31, 51, 17, .965);
+}
+
+.theme-zambia .story-tile::after {
+    background: rgba(58, 63, 66, .965);
 }
 
 .story-tile__media {
@@ -2447,11 +2818,27 @@ img {
     position: absolute;
     inset: 0;
     background: linear-gradient(to top,
+        rgba(14, 21, 34, .88) 0%,
+        rgba(14, 21, 34, .64) 26%,
+        rgba(14, 21, 34, .20) 55%,
+        rgba(14, 21, 34, 0) 78%);
+    transition: opacity .45s ease;
+}
+
+.theme-foundation .story-tile__media::after {
+    background: linear-gradient(to top,
         rgba(15, 30, 8, .88) 0%,
         rgba(15, 30, 8, .64) 26%,
         rgba(15, 30, 8, .20) 55%,
         rgba(15, 30, 8, 0) 78%);
-    transition: opacity .45s ease;
+}
+
+.theme-zambia .story-tile__media::after {
+    background: linear-gradient(to top,
+        rgba(29, 31, 33, .88) 0%,
+        rgba(29, 31, 33, .64) 26%,
+        rgba(29, 31, 33, .20) 55%,
+        rgba(29, 31, 33, 0) 78%);
 }
 
 .story-tile__body {
@@ -2534,10 +2921,18 @@ img {
     font-weight: 700;
     letter-spacing: .14em;
     text-transform: uppercase;
-    color: var(--green-light);
+    color: var(--blue-tint);
     opacity: 0;
     transform: translateY(7px);
     transition: opacity .4s ease .08s, transform .4s ease .08s;
+}
+
+.theme-foundation .story-tile__cue {
+    color: var(--green-light);
+}
+
+.theme-zambia .story-tile__cue {
+    color: var(--grey-300);
 }
 
 .story-tile__cue svg {
@@ -2546,10 +2941,31 @@ img {
     overflow: visible;
 }
 
+.story-tile__cue p {
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 400;
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: #fff;
+}
+
 .story-tile:hover,
 .story-tile:focus-visible {
+    border-color: var(--blue);
+    box-shadow: var(--shadow-card-hover);
+}
+
+.theme-foundation .story-tile:hover,
+.theme-foundation .story-tile:focus-visible {
     border-color: var(--green);
     box-shadow: var(--shadow-card-hover-foundation);
+}
+
+.theme-zambia .story-tile:hover,
+.theme-zambia .story-tile:focus-visible {
+    border-color: var(--grey);
+    box-shadow: var(--shadow-card-hover-zambia);
 }
 
 .story-tile:hover .story-tile__media,
@@ -2698,6 +3114,11 @@ img {
 
 .lightbox__close {
     flex: none;
+    /* pushes itself to the head's far right - a no-op where .lightbox__count
+       already claims that space with its own auto margin (the gallery
+       lightbox), but needed for dialogs like the SDG one that have no count
+       between the title and the close button. */
+    margin-left: auto;
     width: 36px;
     height: 36px;
     padding: 0;
@@ -2853,9 +3274,34 @@ img {
         border-color: var(--green);
     }
 
+/* SDG approach documents: same dialog chrome as the story lightbox, just
+   wider/taller (no thumbnail strip to share the panel with) and holding a
+   single PDF iframe instead of a photo stage. */
+.lightbox--doc {
+    width: min(900px, calc(100vw - 48px));
+}
+
+.lightbox__doc-stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: min(78vh, 760px);
+}
+
+.lightbox__doc-frame {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: var(--grey-100);
+}
+
 @media (max-width: 780px) {
     .lightbox {
         width: calc(100vw - 24px);
+    }
+
+    .lightbox__doc-stage {
+        height: min(70vh, 600px);
     }
 
     .lightbox__panel {
@@ -2945,7 +3391,7 @@ img {
 .service-row__body {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 14px;
 }
 
 .service-row__title {
@@ -2961,6 +3407,14 @@ img {
     line-height: 1.65;
     color: var(--grey);
     max-width: 620px;
+    margin-bottom: 6px;
+}
+
+.service-row__deliver {
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: var(--grey);
+    max-width: 620px;
 }
 
 .service-row__where {
@@ -2968,6 +3422,33 @@ img {
     font-weight: 600;
     color: var(--blue);
     padding-top: 4px;
+}
+
+.service-row__deliverables {
+    list-style: none;
+    margin: 5px 0 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 620px;
+}
+
+.service-row__deliverables li {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--grey);
+    padding-left: 20px;
+    position: relative;
+}
+
+.service-row__deliverables li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--blue);
+    font-weight: 700;
+    font-size: 16px;
 }
 
 .service-row__media {

@@ -191,6 +191,37 @@
     }
   });
 
+  // Foundation SDG loops: each opens a <dialog> holding that goal's approach
+  // PDF in an iframe. Same open/close wiring as the story lightbox above,
+  // minus the gallery paging since there is only ever one document.
+  //
+  // The trigger is a role="button" div rather than a real <button> - the
+  // ring is an SVG with a <mask>, and wrapping that in an actual <button>
+  // trips the Razor HTML parser (RZ1025, "element was not closed") even
+  // though the tags themselves balance - so Enter/Space need wiring by hand.
+  var sdgTriggers = document.querySelectorAll("[data-sdg-trigger]");
+  sdgTriggers.forEach(function (trigger) {
+    var dialog = document.getElementById("sdg-" + trigger.getAttribute("data-sdg-trigger"));
+    if (!dialog) return;
+
+    trigger.addEventListener("click", function () { dialog.showModal(); });
+    trigger.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+        e.preventDefault();
+        dialog.showModal();
+      }
+    });
+
+    var closeBtn = dialog.querySelector("[data-story-close]");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", function () { dialog.close(); });
+    }
+
+    dialog.addEventListener("click", function (e) {
+      if (e.target === dialog) dialog.close();
+    });
+  });
+
   // Back to top: appears once the page has scrolled past one viewport.
   var backToTop = document.querySelector("[data-back-to-top]");
   if (backToTop) {

@@ -18,10 +18,13 @@ public class ProjectsModel : PageModel
         new("all", "All"),
         new("uganda", "Uganda"),
         new("zambia", "Zambia"),
-        new("water", "Water supply"),
-        new("groundwater", "Groundwater monitoring"),
-        new("environment", "Environment"),
-        new("gis", "GIS & mapping"),
+        new("burundi", "Burundi"),
+        new("drc", "DRC"),
+        new("construction", "Construction Services"),
+        new("technical", "Technical Studies"),
+        new("engineering", "Engineering Design"),
+        new("environmental", "Environmental & Social Impact"),
+        new("climate", "Climate Resilience"),
     };
 
     public string ActiveFilter { get; private set; } = "all";

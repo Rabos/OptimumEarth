@@ -41,6 +41,9 @@ public class Project : ContentEntity
 
     public string ImagePath { get; set; } = string.Empty;
 
+    /// <summary>The fuller write-up shown with the project: in the Projects page's detail dialog and on country page cards.</summary>
+    public string Description { get; set; } = string.Empty;
+
     /// <summary>Whether the card appears on the public Projects page itself.</summary>
     public bool OnListPage { get; set; } = true;
 }
@@ -50,6 +53,9 @@ public class Service : ContentEntity
     public string Title { get; set; } = string.Empty;
     public string Coverage { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
+
+    /// <summary>The bullet list under "What we deliver" on the Services page.</summary>
+    public List<string> Deliverables { get; set; } = new();
     public string ImagePath { get; set; } = string.Empty;
 
     /// <summary>Whether the row appears on the public Services page itself.</summary>
@@ -93,6 +99,9 @@ public class SdgGoal : ContentEntity
 {
     public string Number { get; set; } = string.Empty;
     public string Label { get; set; } = string.Empty;
+
+    /// <summary>The goal's approach document (a PDF), opened in a lightbox when the goal is clicked. Empty means no lightbox.</summary>
+    public string DocumentPath { get; set; } = string.Empty;
 }
 
 /// <summary>A Stories &amp; Impact tile. Key links it to its gallery images.</summary>

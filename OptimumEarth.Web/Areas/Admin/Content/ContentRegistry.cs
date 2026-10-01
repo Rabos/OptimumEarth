@@ -7,15 +7,20 @@ namespace OptimumEarth.Web.Areas.Admin.Content;
 /// <summary>Every content type the generic list and edit pages manage, declared in one place.</summary>
 public static class ContentRegistry
 {
+    // The project categories and countries are the filters on the public Projects page.
     private static readonly IReadOnlyList<(string, string)> Services = new[]
     {
-        ("water", "Water supply"),
-        ("groundwater", "Groundwater monitoring"),
-        ("environment", "Environment"),
-        ("gis", "GIS & mapping"),
+        ("construction", "Construction Services"),
+        ("technical", "Technical Studies"),
+        ("engineering", "Engineering Design"),
+        ("environmental", "Environmental & Social Impact"),
+        ("climate", "Climate Resilience"),
     };
 
-    private static readonly IReadOnlyList<(string, string)> Countries = new[] { ("uganda", "Uganda"), ("zambia", "Zambia") };
+    private static readonly IReadOnlyList<(string, string)> Countries = new[]
+    {
+        ("uganda", "Uganda"), ("zambia", "Zambia"), ("burundi", "Burundi"), ("drc", "DRC"),
+    };
 
     private const string KeyPattern = "^[a-z0-9-]+$";
     private const string KeyMessage = "Use lowercase letters, numbers and hyphens only.";
@@ -62,14 +67,15 @@ public static class ContentRegistry
                 new() { Key = nameof(Project.Tag), Label = "Tag line", Half = true, Max = 30, Hint = "e.g. UGANDA · 2022" },
                 new() { Key = nameof(Project.Country), Label = "Country", Kind = FieldKind.Select, Options = Countries, Half = true },
                 new() { Key = nameof(Project.Meta), Label = "Client / meta line", Max = 120 },
-                new() { Key = nameof(Project.Service), Label = "Service", Kind = FieldKind.Select, Options = Services, Half = true },
+                new() { Key = nameof(Project.Service), Label = "Category", Kind = FieldKind.Select, Options = Services, Half = true },
                 new() { Key = nameof(Project.ImagePath), Label = "Image", Kind = FieldKind.Image, Required = true, Half = true },
+                new() { Key = nameof(Project.Description), Label = "Description", Kind = FieldKind.Area, Max = 600, Rows = 4, Hint = "The fuller write-up: shown in the project's detail dialog and under its card on the country pages." },
                 new() { Key = "shownOn", Label = "Appears on", Kind = FieldKind.Placements },
             },
             Columns = new ColumnDef<Project>[]
             {
                 new() { Header = "Project", Html = (x, _) => Cell.Thumb(x.ImagePath, x.Title, x.Tag) },
-                new() { Header = "Service", Html = (x, _) => Cell.E(Label(Services, x.Service)) },
+                new() { Header = "Category", Html = (x, _) => Cell.E(Label(Services, x.Service)) },
                 new() { Header = "Country", Html = (x, _) => Cell.E(Label(Countries, x.Country)) },
                 new() { Header = "Shown on", Html = (x, ctx) => ShownOn(x.Id, x.OnListPage, "Projects", ctx) },
             },
@@ -99,7 +105,8 @@ public static class ContentRegistry
                 new() { Key = nameof(Service.Title), Label = "Title", Required = true, Max = 70 },
                 new() { Key = nameof(Service.Coverage), Label = "Coverage", Half = true, Max = 60, Hint = "e.g. Uganda · Zambia" },
                 new() { Key = nameof(Service.ImagePath), Label = "Image", Kind = FieldKind.Image, Required = true, Half = true },
-                new() { Key = nameof(Service.Description), Label = "Description", Kind = FieldKind.Area, Required = true, Max = 400, Rows = 5 },
+                new() { Key = nameof(Service.Description), Label = "Description", Kind = FieldKind.Area, Required = true, Max = 1000, Rows = 6 },
+                new() { Key = nameof(Service.Deliverables), Label = "What we deliver", Kind = FieldKind.Lines, Rows = 8, Hint = "One bullet per line, shown on the Services page." },
                 new() { Key = "shownOn", Label = "Appears on", Kind = FieldKind.Placements },
             },
             Columns = new ColumnDef<Service>[]
@@ -139,8 +146,8 @@ public static class ContentRegistry
             Set = db => db.Capabilities, TitleOf = x => x.Title,
             Fields = new FieldDef[]
             {
-                new() { Key = nameof(Capability.Title), Label = "Title", Required = true, Max = 40 },
-                new() { Key = nameof(Capability.Description), Label = "Description", Max = 80 },
+                new() { Key = nameof(Capability.Title), Label = "Title", Required = true, Max = 60 },
+                new() { Key = nameof(Capability.Description), Label = "Description", Max = 120 },
             },
             Columns = new ColumnDef<Capability>[]
             {
@@ -157,7 +164,7 @@ public static class ContentRegistry
             Fields = new FieldDef[]
             {
                 new() { Key = nameof(CoreValue.Title), Label = "Title", Required = true, Max = 40 },
-                new() { Key = nameof(CoreValue.Description), Label = "Description", Kind = FieldKind.Area, Required = true, Max = 500, Rows = 5 },
+                new() { Key = nameof(CoreValue.Description), Label = "Description", Kind = FieldKind.Area, Required = true, Max = 700, Rows = 6 },
             },
             Columns = new ColumnDef<CoreValue>[]
             {
@@ -225,10 +232,12 @@ public static class ContentRegistry
             {
                 new() { Key = nameof(SdgGoal.Number), Label = "Goal number", Required = true, Max = 2, Half = true, Pattern = @"^\d{1,2}$", PatternMessage = "Use one or two digits, e.g. 06." },
                 new() { Key = nameof(SdgGoal.Label), Label = "Label", Required = true, Max = 50, Half = true },
+                new() { Key = nameof(SdgGoal.DocumentPath), Label = "Approach document (PDF)", Max = 200, Pattern = @"^(/docs/[A-Za-z0-9._/-]+\.pdf|https://\S+\.pdf)$", PatternMessage = "Use a PDF path such as /docs/sdg/OEF_SDG6_APPROACH.docx.pdf, or an https:// link to a PDF.", Hint = "Opens in a lightbox when the goal is clicked. Leave empty for no lightbox. PDFs are added to the site's wwwroot/docs folder." },
             },
             Columns = new ColumnDef<SdgGoal>[]
             {
                 new() { Header = "Goal", Html = (x, _) => $"<span class=\"mono\">{Cell.E(x.Number)}</span> &nbsp;<b>{Cell.E(x.Label)}</b>" },
+                new() { Header = "Document", Html = (x, _) => string.IsNullOrEmpty(x.DocumentPath) ? Cell.Tag("None") : Cell.Tag("PDF", "t-green") },
             },
             Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Label, Like(s)) || x.Number == s),
         },
@@ -581,9 +590,9 @@ public static class ContentRegistry
                 projects.Select(p => new PickerChoice(p.Id, p.Title, p.Status == ContentStatus.Draft ? "draft" : "published", p.Tag, p.Meta)).ToList());
         }
 
-        private static PickerEntry Entry(PickerChoice? choice, int? id, string title, string text, bool custom) =>
+        private static PickerEntry Entry(PickerChoice? choice, int? id, string title, string text, bool custom, string url = "") =>
             custom
-                ? new PickerEntry(null, string.IsNullOrWhiteSpace(title) ? "Custom card" : title, "published", true, title, text, string.Empty, string.Empty)
+                ? new PickerEntry(null, string.IsNullOrWhiteSpace(title) ? "Custom card" : title, "published", true, title, text, string.Empty, string.Empty, url)
                 : new PickerEntry(id, choice?.Label ?? "Removed item", choice?.Status ?? "draft", false, title, text, choice?.Title ?? string.Empty, choice?.Text ?? string.Empty);
 
         public override async Task<Dictionary<string, PickerData>> PickersAsync(AppDbContext db, AccessSnapshot access, CountryPage? entity)
@@ -595,7 +604,7 @@ public static class ContentRegistry
             if (entity is not null)
             {
                 var services = await db.CountryPageServices.AsNoTracking().Where(x => x.CountryPageId == entity.Id).OrderBy(x => x.SortOrder).ToListAsync();
-                svc.Entries = services.Select(x => Entry(serviceChoices.FirstOrDefault(c => c.Id == x.ServiceId), x.ServiceId, x.Title, x.Text, x.ServiceId is null)).ToList();
+                svc.Entries = services.Select(x => Entry(serviceChoices.FirstOrDefault(c => c.Id == x.ServiceId), x.ServiceId, x.Title, x.Text, x.ServiceId is null, x.Url)).ToList();
                 var projects = await db.CountryPageProjects.AsNoTracking().Where(x => x.CountryPageId == entity.Id).OrderBy(x => x.SortOrder).ToListAsync();
                 prj.Entries = projects.Select(x => Entry(projectChoices.FirstOrDefault(c => c.Id == x.ProjectId), x.ProjectId, x.Tag, x.Meta, false)).ToList();
             }
@@ -611,28 +620,30 @@ public static class ContentRegistry
                 var ids = form.Raw(key + "_id");
                 var titles = form.Raw(key + "_title");
                 var texts = form.Raw(key + "_text");
+                var urls = form.Raw(key + "_url");
                 picker.Entries = new();
                 for (var i = 0; i < ids.Count; i++)
                 {
                     var title = i < titles.Count ? titles[i] : string.Empty;
                     var text = i < texts.Count ? texts[i] : string.Empty;
                     var linked = int.TryParse(ids[i], out var id);
-                    picker.Entries.Add(Entry(linked ? picker.Choices.FirstOrDefault(c => c.Id == id) : null, linked ? id : null, title, text, !linked));
+                    picker.Entries.Add(Entry(linked ? picker.Choices.FirstOrDefault(c => c.Id == id) : null, linked ? id : null, title, text, !linked, i < urls.Count ? urls[i] : string.Empty));
                 }
             }
 
             return pickers;
         }
 
-        private static List<(int? Id, string Title, string Text)> Rows(FormView form, string prefix)
+        private static List<(int? Id, string Title, string Text, string Url)> Rows(FormView form, string prefix)
         {
             var ids = form.Raw(prefix + "_id");
             var titles = form.Raw(prefix + "_title");
             var texts = form.Raw(prefix + "_text");
-            var rows = new List<(int?, string, string)>();
+            var urls = form.Raw(prefix + "_url");
+            var rows = new List<(int?, string, string, string)>();
             for (var i = 0; i < ids.Count; i++)
             {
-                rows.Add((int.TryParse(ids[i], out var id) ? id : null, (i < titles.Count ? titles[i] : string.Empty).Trim(), (i < texts.Count ? texts[i] : string.Empty).Trim()));
+                rows.Add((int.TryParse(ids[i], out var id) ? id : null, (i < titles.Count ? titles[i] : string.Empty).Trim(), (i < texts.Count ? texts[i] : string.Empty).Trim(), (i < urls.Count ? urls[i] : string.Empty).Trim()));
             }
 
             return rows;
@@ -643,7 +654,7 @@ public static class ContentRegistry
             var services = Rows(form, "svc");
             var serviceIds = (await db.Services.AsNoTracking().Select(s => s.Id).ToListAsync()).ToHashSet();
             var seen = new HashSet<int>();
-            foreach (var (id, title, text) in services)
+            foreach (var (id, title, text, url) in services)
             {
                 if (id is null && title.Length == 0)
                 {
@@ -661,6 +672,10 @@ public static class ContentRegistry
                 {
                     errors["svc"] = "Keep card titles under 70 characters and card text under 400.";
                 }
+                else if (url.Length > 0 && !(url.StartsWith('/') && !url.StartsWith("//") || url.StartsWith("https://")))
+                {
+                    errors["svc"] = "A card link must start with / (a page on this site) or https://.";
+                }
             }
 
             var projects = Rows(form, "prj");
@@ -672,7 +687,7 @@ public static class ContentRegistry
             }
 
             var seenProjects = new HashSet<int>();
-            foreach (var (id, tag, meta) in projects)
+            foreach (var (id, tag, meta, _) in projects)
             {
                 if (id is null || !projectIds.Contains(id.Value))
                 {
@@ -695,13 +710,13 @@ public static class ContentRegistry
             db.CountryPageProjects.RemoveRange(await db.CountryPageProjects.Where(x => x.CountryPageId == entity.Id).ToListAsync());
 
             var order = 0;
-            foreach (var (id, title, text) in Rows(form, "svc"))
+            foreach (var (id, title, text, url) in Rows(form, "svc"))
             {
-                db.CountryPageServices.Add(new CountryPageService { CountryPageId = entity.Id, ServiceId = id, Title = title, Text = text, SortOrder = ++order });
+                db.CountryPageServices.Add(new CountryPageService { CountryPageId = entity.Id, ServiceId = id, Title = title, Text = text, Url = url, SortOrder = ++order });
             }
 
             order = 0;
-            foreach (var (id, tag, meta) in Rows(form, "prj"))
+            foreach (var (id, tag, meta, _) in Rows(form, "prj"))
             {
                 db.CountryPageProjects.Add(new CountryPageProject { CountryPageId = entity.Id, ProjectId = id!.Value, Tag = tag, Meta = meta, SortOrder = ++order });
             }

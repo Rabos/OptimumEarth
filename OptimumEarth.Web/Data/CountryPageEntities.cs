@@ -55,6 +55,9 @@ public class CountryPageService
     public Service? Service { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Text { get; set; } = string.Empty;
+
+    /// <summary>When set the card is a call-to-action link (e.g. "Not sure which service you need?") rather than a plain service card.</summary>
+    public string Url { get; set; } = string.Empty;
     public int SortOrder { get; set; }
 }
 

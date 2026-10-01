@@ -29,6 +29,7 @@ public sealed class DatabaseInitializer : IHostedService
         await db.Database.MigrateAsync(cancellationToken);
         await EnsureRolesAsync(sp.GetRequiredService<RoleManager<IdentityRole<int>>>());
         await SeedContentAsync(db, cancellationToken);
+        await ContentUpgrades.ApplyAsync(db, _logger, cancellationToken);
         await SeedMediaAsync(db, sp.GetRequiredService<IWebHostEnvironment>(), cancellationToken);
         await SeedSuperAdminAsync(sp.GetRequiredService<UserManager<AppUser>>(), sp.GetRequiredService<IConfiguration>());
     }
@@ -58,6 +59,7 @@ public sealed class DatabaseInitializer : IHostedService
                 UgandaTo = "uganda@optimum-earth.com",
                 ZambiaTo = "zambia@optimum-earth.com",
                 FoundationTo = "foundation@optimum-earth.com",
+                ContentVersion = SeedData.CurrentContentVersion,
             });
         }
 
@@ -79,41 +81,23 @@ public sealed class DatabaseInitializer : IHostedService
         if (!await db.Services.AnyAsync(ct) && !await db.Projects.AnyAsync(ct) && !await db.CountryPages.AnyAsync(ct))
         {
             var services = SeedData.Services();
-            var ugandaProjects = SeedData.UgandaProjects();
-            var zambiaProjects = SeedData.ZambiaPlaceholders();
+            var listed = SeedData.ListProjects();
+            var featured = SeedData.CountryCardProjects();
             Number(services);
 
-            // One running order across both lists, so the Zambia stand-ins sit after the Uganda projects.
-            Number(ugandaProjects.Concat(zambiaProjects).ToList());
+            // One running order: the Projects page's list first, then the six country-page cards.
+            Number(listed.Concat(featured).ToList());
             db.Services.AddRange(services);
-            db.Projects.AddRange(ugandaProjects);
-            db.Projects.AddRange(zambiaProjects);
+            db.Projects.AddRange(listed);
+            db.Projects.AddRange(featured);
 
             var uganda = SeedData.Uganda();
-            uganda.Services = new()
-            {
-                Card(services[0], "", "Surface and groundwater diagnostics, borehole siting, drilling supervision and test pumping.", 0),
-                Card(services[1], "", "Monitoring well networks, water-level and quality regimes, long-term reporting.", 1),
-                Card(services[2], "", "ESIA, environmental audits and compliance support for regulated projects.", 2),
-                Card(services[3], "GIS & mapping", "Geo-intelligence products, remote sensing and spatial analysis for decision-making.", 3),
-                Card(services[4], "Mines, oil & gas", "Integrated water management for quarry, mining and petroleum operations.", 4),
-            };
-            uganda.Projects = new()
-            {
-                new() { Project = ugandaProjects[0], Tag = "WATER SUPPLY · 2020", Meta = "Client : National Water and Sewerage Corporation", SortOrder = 0 },
-                new() { Project = ugandaProjects[1], Tag = "GROUNDWATER · 2022", SortOrder = 1 },
-                new() { Project = ugandaProjects[2], Tag = "ENVIRONMENT · 2023", SortOrder = 2 },
-            };
+            uganda.Services = ServiceCards(SeedData.UgandaServiceCards(), services);
+            uganda.Projects = featured.Take(3).Select((p, i) => new CountryPageProject { Project = p, SortOrder = i }).ToList();
 
             var zambia = SeedData.Zambia();
-            zambia.Services = new()
-            {
-                Card(services[0], "", "Groundwater assessment, borehole siting and supervision, supply planning for industry and institutions.", 0),
-                Card(null, "Energy & infrastructure", "Support to energy projects and the infrastructure that surrounds them.", 1),
-                Card(services[1], "", "Monitoring networks and reporting regimes for mining and industrial operations.", 2),
-                Card(services[3], "GIS & mapping", "Spatial analysis, remote sensing and field data systems.", 3),
-            };
-            zambia.Projects = zambiaProjects.Select((p, i) => new CountryPageProject { Project = p, SortOrder = i }).ToList();
+            zambia.Services = ServiceCards(SeedData.ZambiaServiceCards(), services);
+            zambia.Projects = featured.Skip(3).Take(3).Select((p, i) => new CountryPageProject { Project = p, SortOrder = i }).ToList();
 
             db.CountryPages.AddRange(uganda, zambia);
         }
@@ -121,8 +105,16 @@ public sealed class DatabaseInitializer : IHostedService
         await db.SaveChangesAsync(ct);
     }
 
-    private static CountryPageService Card(Service? service, string title, string text, int order) =>
-        new() { Service = service, Title = title, Text = text, SortOrder = order };
+    /// <summary>Builds a country page's service cards from their specs; a spec with no service index is a custom card.</summary>
+    public static List<CountryPageService> ServiceCards(List<SeedData.ServiceCardSpec> specs, List<Service> services) =>
+        specs.Select((c, i) => new CountryPageService
+        {
+            Service = c.ServiceIndex is { } index ? services[index] : null,
+            Title = c.Title,
+            Text = c.Text,
+            Url = c.Url,
+            SortOrder = i + 1,
+        }).ToList();
 
     private static async Task SeedListAsync<T>(AppDbContext db, DbSet<T> set, List<T> rows, CancellationToken ct) where T : ContentEntity
     {
@@ -167,10 +159,10 @@ public sealed class DatabaseInitializer : IHostedService
         }
 
         var known = (await db.Media.Select(m => m.Path).ToListAsync(ct)).ToHashSet();
-        foreach (var file in Directory.EnumerateFiles(folder).OrderBy(f => f, StringComparer.OrdinalIgnoreCase))
+        foreach (var file in Directory.EnumerateFiles(folder, "*", SearchOption.AllDirectories).OrderBy(f => f, StringComparer.OrdinalIgnoreCase))
         {
             var name = Path.GetFileName(file);
-            var url = "/img/optimum-earth-images/" + name;
+            var url = "/img/optimum-earth-images/" + Path.GetRelativePath(folder, file).Replace('\\', '/');
             if (known.Contains(url))
             {
                 continue;
@@ -182,7 +174,7 @@ public sealed class DatabaseInitializer : IHostedService
                 Path = url,
                 Alt = BuiltInAlt.GetValueOrDefault(name, string.Empty),
                 SizeBytes = new FileInfo(file).Length,
-                ContentType = "image/jpeg",
+                ContentType = Path.GetExtension(file).ToLowerInvariant() is ".png" ? "image/png" : "image/jpeg",
                 BuiltIn = true,
             });
         }

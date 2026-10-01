@@ -174,6 +174,8 @@
     if (data.custom) {
       row.querySelector('[data-title-label]').textContent = 'Card title';
       row.querySelector('[data-text-label]').textContent = 'Card text';
+      var urlField = row.querySelector('[data-url-field]');
+      if (urlField) { urlField.hidden = false; }
     }
     p.querySelector('[data-picker-list]').appendChild(row);
     refresh(p);

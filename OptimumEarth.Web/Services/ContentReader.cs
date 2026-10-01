@@ -12,7 +12,7 @@ public sealed record FoundationContent(
     IReadOnlyList<WorkPrinciple> WorkPrinciples,
     IReadOnlyList<StoryTile> StoryTiles,
     IReadOnlyList<StoryGallery> Galleries,
-    IReadOnlyList<(string Number, string Label)> SdgGoals);
+    IReadOnlyList<(string Number, string Label, string PdfUrl)> SdgGoals);
 
 public sealed record CountryPageContent(
     string Theme,
@@ -32,6 +32,7 @@ public sealed record CountryPageContent(
     string? SectionTwoLinkText,
     string? SectionTwoLinkHref,
     IReadOnlyList<ProjectCard> ProjectCards,
+    IReadOnlyList<ProjectCardDescription> ProjectDescriptions,
     string? SectionTwoNote,
     string CtaTitle,
     string CtaBody,
@@ -82,13 +83,13 @@ public sealed class ContentReader
         var paths = rows.Select(r => r.ImagePath).ToList();
         var alts = await _db.Media.AsNoTracking().Where(m => paths.Contains(m.Path)).ToDictionaryAsync(m => m.Path, m => m.Alt);
         return (IReadOnlyList<ServiceLine>)rows.Select((s, i) => new ServiceLine(Two(i), s.Title, s.Coverage, s.Description,
-            alts.GetValueOrDefault(s.ImagePath) is { Length: > 0 } alt ? alt : s.Title.Replace("&", "and"), s.ImagePath)).ToList();
+            alts.GetValueOrDefault(s.ImagePath) is { Length: > 0 } alt ? alt : s.Title, s.Deliverables.ToList(), s.ImagePath)).ToList();
     });
 
     public Task<IReadOnlyList<ProjectCard>> ProjectCardsAsync() => _cache.GetOrCreateAsync("projects", async () =>
     {
         var rows = await _db.Projects.AsNoTracking().Where(p => p.Status == ContentStatus.Published && p.OnListPage).OrderBy(p => p.SortOrder).ThenBy(p => p.Id).ToListAsync();
-        return (IReadOnlyList<ProjectCard>)rows.Select(p => new ProjectCard("Project photo", p.Tag, p.Title, p.Meta, p.Country, p.Service, p.ImagePath)).ToList();
+        return (IReadOnlyList<ProjectCard>)rows.Select(p => new ProjectCard("Project photo", p.Tag, p.Title, p.Meta, p.Country, p.Service, p.ImagePath, p.Description)).ToList();
     });
 
     public Task<WhoWeAreContent> WhoWeAreAsync() => _cache.GetOrCreateAsync("who", async () =>
@@ -127,7 +128,7 @@ public sealed class ContentReader
             gallery.GroupBy(g => g.StoryKey)
                 .Select(g => new StoryGallery(g.Key, g.Select(i => new StoryGalleryItem(i.Caption, i.ImagePath)).ToList()))
                 .ToList(),
-            goals.Select(g => (g.Number, g.Label)).ToList());
+            goals.Select(g => (g.Number, g.Label, g.DocumentPath)).ToList());
     });
 
     public Task<CountryPageContent?> CountryPageAsync(string slug) => _cache.GetOrCreateAsync("country." + slug, async () =>
@@ -146,7 +147,10 @@ public sealed class ContentReader
             .Where(s => s.Service is null || s.Service.Status == ContentStatus.Published)
             .Select(s => new SimpleCard(
                 string.IsNullOrWhiteSpace(s.Title) ? s.Service?.Title ?? string.Empty : s.Title,
-                string.IsNullOrWhiteSpace(s.Text) ? s.Service?.Description ?? string.Empty : s.Text))
+                string.IsNullOrWhiteSpace(s.Text) ? s.Service?.Description ?? string.Empty : s.Text,
+                null,
+                !string.IsNullOrWhiteSpace(s.Url),
+                string.IsNullOrWhiteSpace(s.Url) ? null : s.Url))
             .ToList();
 
         var projectCards = page.Projects
@@ -161,6 +165,18 @@ public sealed class ContentReader
                 p.Project.ImagePath))
             .ToList();
 
+        // The card text shown beneath each project tile comes from the project's own description.
+        var projectDescriptions = page.Projects
+            .Where(p => p.Project is not null && p.Project.Status == ContentStatus.Published)
+            .Select(p => new ProjectCardDescription(
+                new ProjectCard(string.Empty, string.Empty, p.Project!.Title, string.Empty).Slug,
+                p.Project.Description,
+                p.Project.ImagePath,
+                string.IsNullOrWhiteSpace(p.Meta) ? p.Project.Meta : p.Meta,
+                p.Project.Title,
+                "Project photo"))
+            .ToList();
+
         var facts = page.Facts.Select(f =>
         {
             var parts = f.Split('|', 2);
@@ -171,7 +187,7 @@ public sealed class ContentReader
             page.Theme, page.HeroImageLabel, page.HeroEyebrow, page.HeroHeadline, page.HeroSub,
             page.OverviewEyebrow, page.OverviewQuote, page.OverviewBody, facts,
             page.SectionOneTitle, NullIfEmpty(page.SectionOneLinkText), NullIfEmpty(page.SectionOneLinkHref), serviceCards,
-            page.SectionTwoTitle, NullIfEmpty(page.SectionTwoLinkText), NullIfEmpty(page.SectionTwoLinkHref), projectCards,
+            page.SectionTwoTitle, NullIfEmpty(page.SectionTwoLinkText), NullIfEmpty(page.SectionTwoLinkHref), projectCards, projectDescriptions,
             NullIfEmpty(page.SectionTwoNote),
             page.CtaTitle, page.CtaBody, page.CtaServiceLabel, page.CtaServices.ToList()));
     }).ContinueWith(t => t.Result.Value);

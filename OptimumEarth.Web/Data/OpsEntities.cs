@@ -17,6 +17,12 @@ public class SiteSettings
 
     /// <summary>Enquiries older than this are deleted, since they hold personal data.</summary>
     public int RetentionMonths { get; set; } = 24;
+
+    /// <summary>
+    /// Which revision of the built-in content this database has been brought up to.
+    /// Existing databases start at 1; see <see cref="ContentUpgrades"/>.
+    /// </summary>
+    public int ContentVersion { get; set; } = 1;
 }
 
 public enum InquiryStatus

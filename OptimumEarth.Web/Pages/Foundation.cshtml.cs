@@ -29,7 +29,7 @@ public class FoundationModel : PageModel
         "Learn more",
     };
 
-    public IReadOnlyList<(string Number, string Label)> SdgGoals { get; private set; } = Array.Empty<(string, string)>();
+    public IReadOnlyList<(string Number, string Label, string PdfUrl)> SdgGoals { get; private set; } = Array.Empty<(string, string, string)>();
 
     public IReadOnlyList<PillarDetail> Pillars { get; private set; } = Array.Empty<PillarDetail>();
 
