@@ -364,3 +364,6 @@ FodyWeavers.xsd
 
 # ASP.NET Core Data Protection keys (persisted locally in dev; see Program.cs)
 OptimumEarth.Web/keys/
+# Uploaded media and local data
+OptimumEarth.Web/uploads/
+OptimumEarth.Web/keys/
