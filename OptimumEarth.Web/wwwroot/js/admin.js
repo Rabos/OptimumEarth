@@ -67,3 +67,65 @@
   document.addEventListener('change', function (e) { if (e.target.name === 'Input.Role') { syncRole(); } });
   syncRole();
 })();
+
+// Selects and fields that reload the list when changed: <select data-autosubmit>.
+(function () {
+  'use strict';
+  document.addEventListener('change', function (e) {
+    var el = e.target;
+    if (el.matches && el.matches('[data-autosubmit]') && el.form) { el.form.submit(); }
+  });
+})();
+
+// Markdown editor: toolbar buttons, a live preview, and reading time.
+(function () {
+  'use strict';
+
+  function esc(t) { return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function inline(t) {
+    return esc(t)
+      .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+      .replace(/\*(.+?)\*/g, '<i>$1</i>')
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  }
+  function render(src) {
+    var out = [], list = false;
+    String(src || '').split('\n').forEach(function (l) {
+      if (/^[-*]\s+/.test(l)) {
+        if (!list) { out.push('<ul>'); list = true; }
+        out.push('<li>' + inline(l.replace(/^[-*]\s+/, '')) + '</li>');
+        return;
+      }
+      if (list) { out.push('</ul>'); list = false; }
+      var m = l.match(/^(#{1,3})\s+(.*)/);
+      if (m) { out.push('<h' + (m[1].length + 1) + '>' + inline(m[2]) + '</h' + (m[1].length + 1) + '>'); }
+      else if (l.trim()) { out.push('<p>' + inline(l) + '</p>'); }
+    });
+    if (list) { out.push('</ul>'); }
+    return out.join('') || '<p class="hint">Nothing to preview yet.</p>';
+  }
+  function readTime(t) {
+    var words = String(t || '').trim().split(/\s+/).filter(Boolean).length;
+    return Math.max(1, Math.round(words / 200)) + ' min read';
+  }
+  function refresh(area) {
+    var preview = document.getElementById(area.id + '-preview');
+    if (preview) { preview.innerHTML = render(area.value); }
+    var rt = document.querySelector('[data-reading-for="' + area.id + '"]');
+    if (rt) { rt.textContent = readTime(area.value); }
+  }
+
+  document.querySelectorAll('textarea[data-markdown]').forEach(refresh);
+  document.addEventListener('input', function (e) { if (e.target.matches && e.target.matches('textarea[data-markdown]')) { refresh(e.target); } });
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('[data-md]');
+    if (!btn) { return; }
+    var ta = document.getElementById(btn.dataset.target);
+    if (!ta || ta.disabled) { return; }
+    var a = ta.selectionStart, b = ta.selectionEnd, v = ta.value, sel = v.slice(a, b) || 'text';
+    var wrap = { b: ['**', '**'], i: ['*', '*'], h: ['\n## ', ''], a: ['[', '](https://)'], ul: ['\n- ', ''] }[btn.dataset.md];
+    ta.value = v.slice(0, a) + wrap[0] + sel + wrap[1] + v.slice(b);
+    ta.focus();
+    refresh(ta);
+  });
+})();

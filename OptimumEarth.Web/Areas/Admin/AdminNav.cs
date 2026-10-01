@@ -43,7 +43,7 @@ public static class AdminNav
         new("Library", new NavItem[] { new("Media", "/admin/media", AdminAreas.Media) }),
         new("Site", new NavItem[]
         {
-            new("Site settings", "/admin/settings", AdminAreas.Settings),
+            new("Site settings", "/admin/content/settings", AdminAreas.Settings),
             new("Audit log", "/admin/audit"),
         }),
         new("Access", new NavItem[] { new("Users", "/admin/users", SuperAdminOnly: true) }),
