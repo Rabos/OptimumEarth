@@ -82,8 +82,9 @@ public sealed class DatabaseInitializer : IHostedService
             var ugandaProjects = SeedData.UgandaProjects();
             var zambiaProjects = SeedData.ZambiaPlaceholders();
             Number(services);
-            Number(ugandaProjects);
-            Number(zambiaProjects);
+
+            // One running order across both lists, so the Zambia stand-ins sit after the Uganda projects.
+            Number(ugandaProjects.Concat(zambiaProjects).ToList());
             db.Services.AddRange(services);
             db.Projects.AddRange(ugandaProjects);
             db.Projects.AddRange(zambiaProjects);

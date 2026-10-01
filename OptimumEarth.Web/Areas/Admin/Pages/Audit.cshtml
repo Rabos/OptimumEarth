@@ -1,0 +1,31 @@
+@page "/admin/audit"
+@model AuditModel
+@{
+    ViewData["Title"] = "Audit log";
+    string WhoUrl(string? who) => "/admin/audit" + (string.IsNullOrEmpty(who) ? "" : "?who=" + Uri.EscapeDataString(who) + "&size=" + Model.Size);
+}
+
+<div class="page-head"><div><h1>Audit log</h1><p class="sub">@(Model.Access.IsSuperAdmin ? "Every change, who made it and when." : "Changes on the pages allocated to you.") Read-only.</p></div></div>
+
+<div class="chips" aria-label="Filter by person">
+    <a class="chip @(string.IsNullOrEmpty(Model.Who) ? "is-on" : "")" href="@WhoUrl(null)">Everyone</a>
+    @foreach (var a in Model.Actors) { <a class="chip @(Model.Who == a ? "is-on" : "")" href="@WhoUrl(a)">@a</a> }
+</div>
+
+@if (Model.Items.Count == 0)
+{
+    <div class="empty"><b>Nothing recorded yet</b><span>Changes made in the dashboard appear here.</span></div>
+}
+else
+{
+    <div class="tbl"><table>
+        <thead><tr><th>When (UTC)</th><th>Who</th><th>Action</th><th>Section</th><th>Item</th></tr></thead>
+        <tbody>
+        @foreach (var e in Model.Items)
+        {
+            <tr><td class="mono">@e.WhenUtc.ToString("d MMM yyyy HH:mm")</td><td>@e.Actor</td><td><span class="tag t-grey">@e.Action</span></td><td>@e.Section</td><td>@e.Item</td></tr>
+        }
+        </tbody>
+    </table></div>
+    <partial name="_Pager" model="@(new PagerModel(Model.P, Model.Size, Model.Total, "/admin/audit", Model.Carry, AuditModel.PageSizes))" />
+}

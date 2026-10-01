@@ -7,6 +7,11 @@ using OptimumEarth.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Must be the first hosted service registered. MVC, Identity and Data Protection each start work that
+// reads the database (Data Protection loads its key ring from it), so the migrator has to run before
+// them and create the tables, including the key store.
+builder.Services.AddHostedService<DatabaseInitializer>();
+
 // Razor Pages' default routing already gives us the brief's SEO-aligned
 // structure with no extra configuration: Pages/Index.cshtml -> "/",
 // Pages/Uganda.cshtml -> "/Uganda" (matches "/uganda" case-insensitively),
@@ -79,7 +84,6 @@ builder.Services.AddScoped<AccessContext>();
 builder.Services.AddScoped<AuditService>();
 builder.Services.AddScoped<InquiryService>();
 builder.Services.AddScoped<MediaService>();
-builder.Services.AddHostedService<DatabaseInitializer>();
 builder.Services.AddHostedService<InquiryRetentionService>();
 
 var app = builder.Build();
@@ -125,4 +129,33 @@ app.UseAuthorization();
 SeoEndpoints.Map(app);
 app.MapRazorPages();
 
+// Rotating the hidden super admin's password is a command-line step, not a screen:
+//   SuperAdmin__Password='new-long-password' dotnet OptimumEarth.Web.dll --reset-superadmin
+if (args.Contains("--reset-superadmin"))
+{
+    using var scope = app.Services.CreateScope();
+    var users = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+    var newPassword = app.Configuration["SuperAdmin:Password"];
+    var admin = await users.Users.FirstOrDefaultAsync(u => u.IsHidden);
+    if (admin is null || string.IsNullOrWhiteSpace(newPassword))
+    {
+        Console.Error.WriteLine("Nothing changed. The super admin must already exist, and SuperAdmin__Password must be set to the new password.");
+        return 1;
+    }
+
+    var token = await users.GeneratePasswordResetTokenAsync(admin);
+    var reset = await users.ResetPasswordAsync(admin, token, newPassword);
+    if (!reset.Succeeded)
+    {
+        Console.Error.WriteLine("Password not changed: " + string.Join(" ", reset.Errors.Select(e => e.Description)));
+        return 1;
+    }
+
+    await users.ResetAccessFailedCountAsync(admin);
+    await users.SetLockoutEndDateAsync(admin, null);
+    Console.WriteLine("The super admin password was changed.");
+    return 0;
+}
+
 app.Run();
+return 0;

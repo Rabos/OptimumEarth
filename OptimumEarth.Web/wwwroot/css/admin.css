@@ -41,7 +41,8 @@ body.admin {
 
 .admin h1, .admin h2, .admin h3, .admin h4 { margin: 0; font-family: var(--font); font-weight: 700; letter-spacing: -.02em; line-height: 1.15; }
 .admin p { margin: 0; }
-.admin a { color: var(--blue); }
+:where(.admin) a { color: var(--blue); }
+.admin [hidden] { display: none !important; }
 .admin code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; background: var(--surface-2); padding: 1px 5px; border-radius: 3px; }
 .admin :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 .mono { font-variant-numeric: tabular-nums; font-size: 12.5px; }

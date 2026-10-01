@@ -1,0 +1,101 @@
+@page "/admin/inquiries"
+@model InquiriesModel
+@{
+    ViewData["Title"] = "Inquiries";
+    var canEdit = Model.CanEdit;
+    string Link(int id)
+    {
+        var parts = Model.Carry.Where(kv => !string.IsNullOrEmpty(kv.Value)).Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value)}").ToList();
+        parts.Add("p=" + Model.P);
+        parts.Add("id=" + id);
+        return "/admin/inquiries?" + string.Join('&', parts);
+    }
+    string StatusUrl(string? status)
+    {
+        var parts = Model.Carry.Where(kv => kv.Key is not "status" && !string.IsNullOrEmpty(kv.Value)).Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value)}").ToList();
+        if (!string.IsNullOrEmpty(status)) { parts.Add("status=" + status); }
+        return "/admin/inquiries" + (parts.Count > 0 ? "?" + string.Join('&', parts) : "");
+    }
+    string StatusClass(InquiryStatus s) => s == InquiryStatus.New ? "t-amber" : s == InquiryStatus.Replied ? "t-green" : "t-grey";
+}
+
+<div class="page-head">
+    <div><h1>Inquiries</h1><p class="sub">Everything sent through the Contact page and the short forms on the country pages. Enquiries are deleted automatically after the retention period in Site settings.</p></div>
+    @if (canEdit)
+    {
+        <div class="actions"><a class="btn" href="/admin/inquiries?handler=Export&q=@Uri.EscapeDataString(Model.Q ?? "")&status=@Model.Status&dest=@Uri.EscapeDataString(Model.Dest ?? "")">Export CSV</a></div>
+    }
+</div>
+
+<form method="get" class="toolbar">
+    <input class="search" type="search" name="q" value="@Model.Q" placeholder="Search name, email, message" aria-label="Search inquiries" />
+    <input type="hidden" name="size" value="@Model.Size" />
+    @if (!string.IsNullOrEmpty(Model.Status)) { <input type="hidden" name="status" value="@Model.Status" /> }
+    <select name="dest" data-autosubmit aria-label="Routed to">
+        <option value="">Routed to: all</option>
+        @foreach (var d in InquiriesModel.Destinations) { <option selected="@(Model.Dest == d)">@d</option> }
+    </select>
+    <button class="btn" type="submit">Search</button>
+</form>
+<div class="chips" aria-label="Status filter">
+    <a class="chip @(string.IsNullOrEmpty(Model.Status) ? "is-on" : "")" href="@StatusUrl(null)">All</a>
+    @foreach (var s in new[] { "new", "replied", "closed" }) { <a class="chip @(Model.Status == s ? "is-on" : "")" href="@StatusUrl(s)">@(char.ToUpper(s[0]) + s[1..])</a> }
+</div>
+
+@if (Model.Items.Count == 0)
+{
+    <div class="empty"><b>@(string.IsNullOrEmpty(Model.Q) && string.IsNullOrEmpty(Model.Status) && string.IsNullOrEmpty(Model.Dest) ? "No inquiries yet" : "No inquiries match")</b><span>New enquiries from the website appear here.</span></div>
+}
+else
+{
+    <div class="inbox">
+        <div class="l">
+            @foreach (var i in Model.Items)
+            {
+                <a class="msg @(Model.Selected?.Id == i.Id ? "is-selected" : "")" href="@Link(i.Id)">
+                    <span class="a"><span>@i.FullName</span><span class="tag @StatusClass(i.Status)">@i.Status</span></span>
+                    <span class="b">@(string.IsNullOrEmpty(i.Service) ? "General" : i.Service) · @i.Destination · @i.CreatedUtc.ToString("d MMM HH:mm")</span>
+                </a>
+            }
+            <div style="padding:6px 12px"><partial name="_Pager" model="@(new PagerModel(Model.P, Model.Size, Model.Total, "/admin/inquiries", Model.Carry, InquiriesModel.PageSizes))" /></div>
+        </div>
+        <div class="r">
+            @if (Model.Selected is { } q)
+            {
+                <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><h2 style="font-size:20px;text-transform:none;letter-spacing:-.02em;color:var(--ink)">@q.FullName</h2><span class="tag @StatusClass(q.Status)">@q.Status</span></div>
+                <dl class="kv">
+                    <dt>Organisation</dt><dd>@(string.IsNullOrEmpty(q.Organisation) ? "—" : q.Organisation)</dd>
+                    <dt>Email</dt><dd>@q.Email</dd>
+                    <dt>Phone</dt><dd>@(string.IsNullOrEmpty(q.Phone) ? "—" : q.Phone)</dd>
+                    <dt>Audience</dt><dd>@(string.IsNullOrEmpty(q.Audience) ? "—" : q.Audience)</dd>
+                    <dt>Routed to</dt><dd><span class="tag t-blue">@q.Destination</span></dd>
+                    <dt>Service</dt><dd>@(string.IsNullOrEmpty(q.Service) ? "—" : q.Service)</dd>
+                    <dt>Form</dt><dd>@(q.Source == "Quick" ? "Short form on a country page" : "Contact page")</dd>
+                    <dt>Received</dt><dd>@q.CreatedUtc.ToString("d MMM yyyy HH:mm") UTC</dd>
+                </dl>
+                @if (!string.IsNullOrEmpty(q.Message)) { <div style="border-top:1px solid var(--line);padding-top:12px;white-space:pre-wrap">@q.Message</div> }
+                <form method="post" asp-page-handler="Note" asp-route-id="@q.Id" novalidate>
+                    <input type="hidden" name="q" value="@Model.Q" /><input type="hidden" name="dest" value="@Model.Dest" /><input type="hidden" name="size" value="@Model.Size" />
+                    <label class="fld"><span class="fl">Internal note</span><textarea name="note" rows="3" maxlength="2000" placeholder="Visible to staff only" disabled="@(!canEdit)">@q.Note</textarea></label>
+                    @if (canEdit)
+                    {
+                        <div class="btnrow" style="margin-top:10px">
+                            <button class="btn btn--pri" type="submit">Save note</button>
+                            <button class="btn" type="submit" name="status" value="replied">Mark replied</button>
+                            <button class="btn" type="submit" name="status" value="closed">Close</button>
+                            @if (q.Status != InquiryStatus.New) { <button class="btn btn--ghost" type="submit" name="status" value="new">Reopen</button> }
+                        </div>
+                    }
+                </form>
+                @if (canEdit)
+                {
+                    <details>
+                        <summary style="cursor:pointer;color:var(--red);font-weight:600">Delete (for a privacy request)…</summary>
+                        <p class="hint" style="margin:8px 0">This removes the enquiry and the personal details in it for good.</p>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@q.Id"><button class="btn btn--danger" type="submit">Yes, delete this inquiry</button></form>
+                    </details>
+                }
+            }
+        </div>
+    </div>
+}
