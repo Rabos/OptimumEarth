@@ -1,0 +1,38 @@
+@model PagerModel
+@{
+    var from = Model.Total == 0 ? 0 : (Model.Page - 1) * Model.Size + 1;
+    var to = Math.Min(Model.Total, Model.Page * Model.Size);
+    var numbers = new List<int>();
+    for (var n = 1; n <= Model.Pages; n++)
+    {
+        if (n == 1 || n == Model.Pages || Math.Abs(n - Model.Page) <= 1) { numbers.Add(n); }
+        else if (numbers.Count == 0 || numbers[^1] != 0) { numbers.Add(0); }
+    }
+}
+<div class="pager">
+    <span>Showing @from–@to of @Model.Total</span>
+    @if (Model.Pages > 1)
+    {
+        <nav class="pnav" aria-label="Pagination">
+            <a class="pgb @(Model.Page == 1 ? "is-disabled" : "")" href="@Model.Url(Model.Page - 1)" aria-label="Previous page">‹</a>
+            @foreach (var n in numbers)
+            {
+                if (n == 0) { <span class="pgap">…</span> }
+                else { <a class="pgb" href="@Model.Url(n)" aria-label="Page @n" aria-current="@(n == Model.Page ? "page" : null)">@n</a> }
+            }
+            <a class="pgb @(Model.Page == Model.Pages ? "is-disabled" : "")" href="@Model.Url(Model.Page + 1)" aria-label="Next page">›</a>
+        </nav>
+    }
+    <form method="get" action="@Model.Path" class="psize">
+        @foreach (var kv in Model.Query.Where(kv => kv.Key is not "p" and not "size" && !string.IsNullOrEmpty(kv.Value)))
+        {
+            <input type="hidden" name="@kv.Key" value="@kv.Value" />
+        }
+        <label>Rows per page
+            <select name="size" data-autosubmit aria-label="Rows per page">
+                @foreach (var s in Model.Sizes) { <option value="@s" selected="@(s == Model.Size)">@s</option> }
+            </select>
+        </label>
+        <noscript><button class="btn btn--sm" type="submit">Apply</button></noscript>
+    </form>
+</div>

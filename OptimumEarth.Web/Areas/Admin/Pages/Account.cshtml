@@ -1,0 +1,37 @@
+@page "/admin/account"
+@model AccountModel
+@{
+    ViewData["Title"] = "Account";
+}
+
+<div class="page-head"><div><h1>Your account</h1><p class="sub">@Model.Access.User!.Email</p></div></div>
+
+<div class="cols" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr);max-width:960px">
+    <form method="post" asp-page-handler="Name" class="card" novalidate>
+        <h3>Name</h3>
+        <label class="fld"><span class="fl">Shown in the audit log</span>
+            <input asp-for="DisplayName" maxlength="80" />
+            <span asp-validation-for="DisplayName" class="err"></span>
+        </label>
+        <div><button class="btn btn--pri" type="submit">Save name</button></div>
+    </form>
+
+    <form method="post" asp-page-handler="Password" class="card" novalidate>
+        <h3>Change password</h3>
+        @if (Model.Error is not null)
+        {
+            <div class="flash flash--error" role="alert">@Model.Error</div>
+        }
+        <label class="fld"><span class="fl">Current password</span>
+            <input asp-for="Input.Current" type="password" autocomplete="current-password" />
+            <span asp-validation-for="Input.Current" class="err"></span></label>
+        <label class="fld"><span class="fl">New password</span>
+            <input asp-for="Input.New" type="password" autocomplete="new-password" />
+            <span class="hint">At least 12 characters.</span>
+            <span asp-validation-for="Input.New" class="err"></span></label>
+        <label class="fld"><span class="fl">Repeat new password</span>
+            <input asp-for="Input.Confirm" type="password" autocomplete="new-password" />
+            <span asp-validation-for="Input.Confirm" class="err"></span></label>
+        <div><button class="btn btn--pri" type="submit">Change password</button></div>
+    </form>
+</div>

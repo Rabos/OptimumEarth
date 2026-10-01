@@ -1,0 +1,73 @@
+@page "/admin/content/{slug}/edit/{id:int?}"
+@model OptimumEarth.Web.Areas.Admin.Pages.Content.EditModel
+@{
+    var d = Model.Descriptor;
+    var data = Model.Data;
+    ViewData["Title"] = d.Single ? d.Label : (data.Id is null ? $"Add {d.Singular.ToLowerInvariant()}" : $"Edit {d.Singular.ToLowerInvariant()}");
+    var canEdit = Model.CanEdit;
+    var list = "/admin/content/" + d.Slug;
+}
+
+<div class="page-head">
+    <div>
+        <h1>@(d.Single ? d.Label : data.Id is null ? $"Add {d.Singular.ToLowerInvariant()}" : data.Title)</h1>
+        <p class="sub">@d.Description</p>
+    </div>
+    <div class="actions">
+        @if (!d.Single) { <a class="btn" href="@list">Back to @d.Label.ToLowerInvariant()</a> }
+        @if (d.HasStatus && data.Id is not null) { <span class="tag @(data.StatusKey == "draft" ? "t-amber" : data.StatusKey == "scheduled" ? "t-blue" : "t-green")">@data.StatusLabel</span> }
+    </div>
+</div>
+
+@if (!canEdit)
+{
+    <div class="flash flash--error" role="status" style="background:var(--amber-soft);color:var(--amber);border-color:#ecd9a0">View access only on this page. Ask the person who manages users for Edit.</div>
+}
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="flash flash--error" role="alert">Some fields need attention.</div>
+}
+@if (Model.Errors.TryGetValue(string.Empty, out var general))
+{
+    <div class="flash flash--error" role="alert">@general</div>
+}
+
+<form method="post" class="card formcard" novalidate>
+    <div class="fgrid">
+        @foreach (var f in d.Fields)
+        {
+            var value = data.Values.GetValueOrDefault(f.Key) ?? string.Empty;
+            var options = Model.Options.TryGetValue(f.Key, out var o) ? (IReadOnlyList<(string, string)>)o : Array.Empty<(string, string)>();
+            <partial name="_Field" model="@(new FieldVm(f, value, Model.Errors.GetValueOrDefault(f.Key), options, data.Placements, !canEdit, data.Pickers.GetValueOrDefault(f.Key)))" />
+        }
+    </div>
+    @if (canEdit)
+    {
+        <div class="savebar">
+            <span class="hint">@(d.HasStatus && !d.Single ? (d.Slug == "posts" ? "Publish makes it visible on its date (a future date schedules it). Save draft keeps it hidden." : "Publish makes it visible on the site. Save draft keeps it hidden.") : "")</span>
+            <span class="btnrow">
+                <a class="btn btn--ghost" href="@(d.Single ? "/admin" : list)">Cancel</a>
+                @if (d.HasStatus && !d.Single)
+                {
+                    <button type="submit" name="submit" value="draft" class="btn">Save draft</button>
+                    <button type="submit" name="submit" value="publish" class="btn btn--pri">Publish</button>
+                }
+                else
+                {
+                    <button type="submit" class="btn btn--pri">Save</button>
+                }
+            </span>
+        </div>
+    }
+</form>
+
+@if (canEdit && d.CanDelete && data.Id is not null)
+{
+    <details class="card formcard">
+        <summary style="cursor:pointer;font-weight:600;color:var(--red)">Delete this @d.Singular.ToLowerInvariant()…</summary>
+        <p class="hint" style="margin:10px 0">This removes “@data.Title” for good@(d.Slug is "projects" or "services" ? " and takes it off every page it appears on" : "").</p>
+        <form method="post" asp-page-handler="Delete" asp-route-slug="@d.Slug" asp-route-id="@data.Id">
+            <button type="submit" class="btn btn--danger">Yes, delete it</button>
+        </form>
+    </details>
+}

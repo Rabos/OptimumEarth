@@ -1,11 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OptimumEarth.Web.Models;
+using OptimumEarth.Web.Services;
 
 namespace OptimumEarth.Web.Pages;
 
 public class ContactModel : PageModel
 {
+    private readonly InquiryService _inquiries;
+
+    public ContactModel(InquiryService inquiries)
+    {
+        _inquiries = inquiries;
+    }
+
     [BindProperty]
     public ContactInquiry Contact { get; set; } = new() { Audience = "Client" };
 
@@ -30,16 +38,17 @@ public class ContactModel : PageModel
     {
     }
 
-    public IActionResult OnPost()
+    public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
         {
             return Page();
         }
 
-        // In production this would persist the enquiry and route it - by
+        // Stored for the dashboard inbox, where it is routed - by
         // Contact.Destination - to the Uganda team, the Zambia team or the
-        // Foundation, and reply within two working days.
+        // Foundation, and answered within two working days.
+        await _inquiries.AddContactAsync(Contact);
         ModelState.Clear();
         Contact = new ContactInquiry { Audience = "Client" };
         Submitted = true;

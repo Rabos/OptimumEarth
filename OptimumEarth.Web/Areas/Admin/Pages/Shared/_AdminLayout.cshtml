@@ -1,0 +1,63 @@
+@inject AccessContext AccessCtx
+@{
+    var access = await AccessCtx.GetAsync();
+    var path = Context.Request.Path.Value ?? string.Empty;
+    var title = ViewData["Title"] as string ?? "Dashboard";
+    var roleLabel = access.IsSuperAdmin ? "Super admin" : access.Role;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>@title - Optimum Earth Content Studio</title>
+    <link rel="icon" href="/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300&amp;display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+</head>
+<body class="admin">
+<div class="app">
+    <aside class="side">
+        <a class="brand" href="/admin"><img src="~/img/logo-icon.png" alt="" width="28" height="28" /><span>Optimum Earth<small>Content studio</small></span></a>
+        <nav class="nav" aria-label="Dashboard sections">
+            <a href="/admin" class="@(path.TrimEnd('/').Equals("/admin", StringComparison.OrdinalIgnoreCase) ? "is-current" : "")">Overview</a>
+            @foreach (var group in AdminNav.VisibleTo(access))
+            {
+                <div class="grp">@group.Title</div>
+                @foreach (var item in group.Items)
+                {
+                    <a href="@item.Href" class="@(path.StartsWith(item.Href, StringComparison.OrdinalIgnoreCase) ? "is-current" : "")">@item.Label</a>
+                }
+            }
+        </nav>
+        <div class="who">
+            <b>@access.Actor</b>
+            <span class="tag @(access.IsSuperAdmin ? "t-red" : access.Role == "Editor" ? "t-blue" : "t-grey")">@roleLabel</span>
+            <div class="btnrow">
+                <a class="lnk" href="/admin/account">Account</a>
+                <form method="post" action="/admin/logout" class="inline">
+                    <button type="submit" class="lnk">Sign out</button>
+                    @Html.AntiForgeryToken()
+                </form>
+            </div>
+        </div>
+    </aside>
+    <main class="main" id="main">
+        @if (TempData["Flash"] is string flash)
+        {
+            <div class="flash" role="status">@flash</div>
+        }
+        @if (TempData["FlashError"] is string flashError)
+        {
+            <div class="flash flash--error" role="alert">@flashError</div>
+        }
+        @RenderBody()
+    </main>
+</div>
+<script src="~/js/admin.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

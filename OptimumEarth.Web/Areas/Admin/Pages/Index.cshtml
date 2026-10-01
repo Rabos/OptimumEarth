@@ -1,0 +1,66 @@
+@page "/admin"
+@model IndexModel
+@{
+    ViewData["Title"] = "Overview";
+}
+
+<div class="page-head">
+    <div>
+        <h1>Overview</h1>
+        <p class="sub">@(Model.Access.IsSuperAdmin ? "What the site shows, and what needs attention." : "Showing only the pages allocated to you.")</p>
+    </div>
+    @if (Model.Access.CanEdit(AdminAreas.Projects))
+    {
+        <div class="actions"><a class="btn btn--pri" href="/admin/content/projects/edit">Add project</a></div>
+    }
+</div>
+
+@if (!Model.Access.HasAnyArea)
+{
+    <div class="empty"><b>No pages allocated yet</b><span>Ask the person who manages users to give you access to the pages you work on.</span></div>
+}
+else
+{
+    <div class="tiles">
+        @foreach (var t in Model.Tiles)
+        {
+            <a class="tile @(t.Hot ? "is-hot" : "")" href="@t.Href"><b>@t.Count</b><span>@t.Label</span></a>
+        }
+    </div>
+
+    <div class="cols">
+        <div class="card" id="coverage">
+            <h2>Published content by section</h2>
+            @if (Model.Sections.Count == 0)
+            {
+                <p class="hint">Nothing to show.</p>
+            }
+            else
+            {
+                <div class="bars">
+                    @foreach (var s in Model.Sections)
+                    {
+                        <a href="@s.Href"><span>@s.Label</span><div class="bar"><i style="width:@(s.Total == 0 ? 0 : 100 * s.Published / s.Total)%"></i></div><span class="mono">@s.Published/@s.Total</span></a>
+                    }
+                </div>
+            }
+        </div>
+        <div class="card">
+            <h2>Recent activity</h2>
+            @if (Model.Activity.Count == 0)
+            {
+                <p class="hint">No activity on your pages yet.</p>
+            }
+            else
+            {
+                <ul class="act">
+                    @foreach (var e in Model.Activity)
+                    {
+                        <li><time datetime="@e.WhenUtc.ToString("o")">@e.WhenUtc.ToString("d MMM HH:mm")</time><span><b>@e.Actor</b> @e.Action.ToLowerInvariant() <b>@e.Item</b> in @e.Section</span></li>
+                    }
+                </ul>
+            }
+            <a class="btn btn--ghost" href="/admin/audit" style="align-self:flex-start">Open audit log</a>
+        </div>
+    </div>
+}

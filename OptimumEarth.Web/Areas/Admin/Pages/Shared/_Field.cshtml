@@ -1,0 +1,97 @@
+@model FieldVm
+@{
+    var f = Model.Def;
+    var name = FormView.NameOf(f.Key);
+    var id = name;
+    var error = Model.Error;
+    var invalid = error is not null ? "input-validation-error" : "";
+    var disabled = Model.ReadOnly ? "disabled" : null;
+}
+@if (f.Group is not null)
+{
+    <div class="fg">@f.Group</div>
+}
+@switch (f.Kind)
+{
+    case FieldKind.Bool:
+        <label class="checkrow full"><input type="checkbox" name="@name" value="true" checked="@(Model.Value == "true")" disabled="@Model.ReadOnly" /> <span>@f.Label</span></label>
+        break;
+
+    case FieldKind.Placements:
+        <div class="fld full">
+            <span class="fl"><span>@f.Label</span></span>
+            <div class="onrow">
+                @foreach (var p in Model.Placements)
+                {
+                    <label class="checkrow"><input type="checkbox" name="@name" value="@p.Value" checked="@p.Checked" disabled="@(p.Disabled || Model.ReadOnly)" /> <span>@p.Label</span>@if (p.Note is not null) { <span class="hint">(@p.Note)</span> }</label>
+                }
+            </div>
+            <span class="hint">Tick every page this should appear on. Country pages show a limited number of projects (set in Site settings) and any number of services; their order is set under Country pages.</span>
+            @if (error is not null) { <span class="err">@error</span> }
+        </div>
+        break;
+
+    case FieldKind.Picker:
+        <div class="full"><partial name="_Picker" model="@(new PickerVm(f, Model.Picker!, error, Model.ReadOnly))" /></div>
+        break;
+
+    case FieldKind.Markdown:
+        <div class="fld full">
+            <span class="fl"><span>@f.Label @if (f.Required) { <i class="req">*</i> }</span><span class="cnt" data-reading-for="@id"></span></span>
+            <div class="mdbar">
+                @foreach (var b in new[] { ("b", "Bold"), ("i", "Italic"), ("h", "Heading"), ("a", "Link"), ("ul", "List") })
+                {
+                    <button type="button" class="btn btn--sm" data-md="@b.Item1" data-target="@id" disabled="@Model.ReadOnly">@b.Item2</button>
+                }
+            </div>
+            <div class="mdwrap">
+                <textarea id="@id" name="@name" rows="16" class="@invalid" data-markdown disabled="@Model.ReadOnly">@Model.Value</textarea>
+                <div class="mdprev" id="@(id)-preview" aria-label="Preview"></div>
+            </div>
+            <span class="hint">Markdown. Links must start with https://. The preview shows roughly how it will read on the blog.</span>
+            @if (error is not null) { <span class="err">@error</span> }
+        </div>
+        break;
+
+    case FieldKind.Select:
+        <label class="fld @(f.Half ? "" : "full")"><span class="fl"><span>@f.Label @if (f.Required) { <i class="req">*</i> }</span></span>
+            <select id="@id" name="@name" class="@invalid" disabled="@Model.ReadOnly">
+                @if (!f.Required || Model.Value == "") { <option value="">Choose…</option> }
+                @foreach (var o in Model.Options) { <option value="@o.Value" selected="@(o.Value == Model.Value)">@o.Label</option> }
+            </select>
+            @if (f.Hint is not null) { <span class="hint">@f.Hint</span> }
+            @if (error is not null) { <span class="err">@error</span> }
+        </label>
+        break;
+
+    case FieldKind.Image:
+        <label class="fld @(f.Half ? "" : "full")"><span class="fl"><span>@f.Label @if (f.Required) { <i class="req">*</i> }</span></span>
+            <span class="imgpick">
+                <span class="thumb" id="@(id)-thumb" style="background-image:url('@Model.Value')"></span>
+                <select id="@id" name="@name" class="@invalid" data-image-picker="@(id)-thumb" disabled="@Model.ReadOnly">
+                    <option value="">@(f.Required ? "Choose an image…" : "No image")</option>
+                    @foreach (var o in Model.Options) { <option value="@o.Value" selected="@(o.Value == Model.Value)">@o.Label</option> }
+                </select>
+            </span>
+            <span class="hint">Upload new images under Media.</span>
+            @if (error is not null) { <span class="err">@error</span> }
+        </label>
+        break;
+
+    case FieldKind.Area:
+    case FieldKind.Lines:
+        <label class="fld @(f.Half ? "" : "full")"><span class="fl"><span>@f.Label @if (f.Required) { <i class="req">*</i> }</span>@if (f.Max > 0) { <span class="cnt" data-count-for="@id">@Model.Value.Length/@f.Max</span> }</span>
+            <textarea id="@id" name="@name" rows="@(f.Rows > 0 ? f.Rows : 4)" class="@invalid" data-max="@(f.Max > 0 ? f.Max.ToString() : null)" disabled="@Model.ReadOnly">@Model.Value</textarea>
+            @if (f.Hint is not null) { <span class="hint">@f.Hint</span> }
+            @if (error is not null) { <span class="err">@error</span> }
+        </label>
+        break;
+
+    default:
+        <label class="fld @(f.Half ? "" : "full")"><span class="fl"><span>@f.Label @if (f.Required) { <i class="req">*</i> }</span>@if (f.Max > 0) { <span class="cnt" data-count-for="@id">@Model.Value.Length/@f.Max</span> }</span>
+            <input id="@id" name="@name" type="@(f.Kind == FieldKind.Date ? "date" : f.Kind == FieldKind.Number ? "number" : "text")" value="@Model.Value" class="@invalid" data-max="@(f.Max > 0 ? f.Max.ToString() : null)" disabled="@Model.ReadOnly" />
+            @if (f.Hint is not null) { <span class="hint">@f.Hint</span> }
+            @if (error is not null) { <span class="err">@error</span> }
+        </label>
+        break;
+}

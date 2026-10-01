@@ -82,7 +82,7 @@
             @for (var i = 0; i < Model.SdgGoals.Count; i++)
             {
                 var sdg = Model.SdgGoals[i];
-                <div class="sdg-loop" role="button" tabindex="0" data-sdg-trigger="@sdg.Number" aria-haspopup="dialog">
+                <div class="sdg-loop" role="@(string.IsNullOrEmpty(sdg.PdfUrl) ? null : "button")" tabindex="@(string.IsNullOrEmpty(sdg.PdfUrl) ? null : "0")" data-sdg-trigger="@(string.IsNullOrEmpty(sdg.PdfUrl) ? null : sdg.Number)" aria-haspopup="@(string.IsNullOrEmpty(sdg.PdfUrl) ? null : "dialog")">
                     <svg class="sdg-loop__ring" viewBox="0 0 320 190" aria-hidden="true">
                         <mask id="sdg-ring-@sdg.Number" maskUnits="userSpaceOnUse">
                             <path d="@(sdgLines[i % sdgLines.Length])" fill="none" stroke="#fff" stroke-width="15" stroke-linecap="round"
@@ -123,6 +123,7 @@
 @for (var i = 0; i < Model.SdgGoals.Count; i++)
 {
     var sdg = Model.SdgGoals[i];
+    if (string.IsNullOrEmpty(sdg.PdfUrl)) { continue; }
     <dialog class="lightbox lightbox--doc" id="sdg-@sdg.Number" aria-labelledby="sdg-@(sdg.Number)-title" data-lightbox>
         <div class="lightbox__panel">
             <header class="lightbox__head">

@@ -1,0 +1,87 @@
+@page "/admin/media"
+@model MediaModel
+@{
+    ViewData["Title"] = "Media";
+    var canEdit = Model.CanEdit;
+    string Link(int id)
+    {
+        var parts = Model.Carry.Where(kv => kv.Key is not "id" && !string.IsNullOrEmpty(kv.Value)).Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value)}").ToList();
+        parts.Add("p=" + Model.P);
+        parts.Add("id=" + id);
+        return "/admin/media?" + string.Join('&', parts);
+    }
+}
+
+<div class="page-head">
+    <div><h1>Media</h1><p class="sub">Images for the site. Where each is used is worked out from the content, so nothing live can be deleted by accident. @Model.Total image@(Model.Total == 1 ? "" : "s").</p></div>
+    @if (canEdit)
+    {
+        <form method="post" asp-page-handler="Upload" enctype="multipart/form-data" class="actions">
+            <label class="btn btn--pri" style="cursor:pointer">Upload images<input type="file" name="files" accept="image/jpeg,image/png,image/webp,image/gif" multiple hidden data-autosubmit /></label>
+            <noscript><button class="btn" type="submit">Upload</button></noscript>
+        </form>
+    }
+</div>
+
+<form method="get" class="toolbar">
+    <input class="search" type="search" name="q" value="@Model.Q" placeholder="Search by name or alt text" aria-label="Search media" />
+    <input type="hidden" name="size" value="@Model.Size" />
+    <label class="checkrow"><input type="checkbox" name="missingAlt" value="true" checked="@Model.MissingAlt" data-autosubmit /> <span>Missing alt text</span></label>
+    <button class="btn" type="submit">Search</button>
+    @if (!string.IsNullOrEmpty(Model.Q) || Model.MissingAlt) { <a class="btn btn--ghost" href="/admin/media">Clear</a> }
+</form>
+
+<div class="split">
+    <div>
+        @if (Model.Items.Count == 0)
+        {
+            <div class="empty"><b>No images found</b><span>@(string.IsNullOrEmpty(Model.Q) && !Model.MissingAlt ? "Upload the first image." : "Clear the search to see everything.")</span></div>
+        }
+        else
+        {
+            <div class="mgrid">
+                @foreach (var m in Model.Items)
+                {
+                    <a class="mi @(Model.Id == m.Id ? "is-selected" : "")" href="@Link(m.Id)">
+                        <div class="im" style="background-image:url('@m.Path')"></div>
+                        <div class="tx"><span class="nm">@m.FileName</span><span>@if (string.IsNullOrEmpty(m.Alt)) { <span class="tag t-red">No alt</span> } else { <span class="tag t-green">Alt set</span> } @if (m.BuiltIn) { <span class="tag t-grey">Built in</span> }</span></div>
+                    </a>
+                }
+            </div>
+            <partial name="_Pager" model="@(new PagerModel(Model.P, Model.Size, Model.Total, "/admin/media", Model.Carry.Where(kv => kv.Key is not "id").ToDictionary(kv => kv.Key, kv => kv.Value), MediaModel.PageSizes))" />
+        }
+    </div>
+
+    <div class="card">
+        @if (Model.Selected is { } s)
+        {
+            <h2>Image details</h2>
+            <div class="im-big" style="background-image:url('@s.Path')"></div>
+            <div><b>@s.FileName</b><div class="mono muted">@(s.SizeBytes / 1024) KB · uploaded @s.UploadedUtc.ToString("d MMM yyyy")</div></div>
+            <form method="post" asp-page-handler="Alt" asp-route-id="@s.Id" class="fld" novalidate>
+                <label class="fld"><span class="fl">Alt text</span>
+                    <textarea name="alt" rows="3" maxlength="200" disabled="@(!canEdit)">@s.Alt</textarea>
+                    <span class="hint">Describe the image for people using screen readers.</span></label>
+                @if (canEdit) { <div><button class="btn btn--pri" type="submit">Save alt text</button></div> }
+            </form>
+            <div>
+                <div class="fl" style="font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:4px">Used by</div>
+                @if (Model.UsedBy.Count == 0) { <p class="hint">Not used anywhere.</p> }
+                else { <ul class="used">@foreach (var u in Model.UsedBy) { <li>@u</li> }</ul> }
+            </div>
+            @if (canEdit && !s.BuiltIn)
+            {
+                <form method="post" asp-page-handler="Delete" asp-route-id="@s.Id" class="savebar">
+                    <span class="hint">@(Model.UsedBy.Count > 0 ? "In use, so it cannot be deleted." : "")</span>
+                    <button class="btn btn--danger" type="submit" disabled="@(Model.UsedBy.Count > 0)">Delete image</button>
+                </form>
+            }
+            @if (s.BuiltIn) { <p class="hint">This image ships with the site and cannot be deleted here.</p> }
+        }
+        else
+        {
+            <h2>Image details</h2>
+            <p class="hint">Select an image to edit its alt text and see where it is used.</p>
+        }
+    </div>
+</div>

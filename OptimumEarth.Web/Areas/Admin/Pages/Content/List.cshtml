@@ -1,0 +1,89 @@
+@page "/admin/content/{slug}"
+@model OptimumEarth.Web.Areas.Admin.Pages.Content.ListModel
+@{
+    var d = Model.Descriptor;
+    ViewData["Title"] = d.Label;
+    var path = ListModel_Path(d.Slug);
+    var canEdit = Model.CanEdit;
+    string StatusUrl(string key)
+    {
+        var parts = Model.Carry.Where(kv => kv.Key is not "status" and not "p" && !string.IsNullOrEmpty(kv.Value)).Select(kv => $"{Uri.EscapeDataString(kv.Key)}={Uri.EscapeDataString(kv.Value)}").ToList();
+        if (key != "all") { parts.Add("status=" + key); }
+        return path + (parts.Count > 0 ? "?" + string.Join('&', parts) : "");
+    }
+    string ListModel_Path(string slug) => "/admin/content/" + slug;
+}
+
+<div class="page-head">
+    <div><h1>@d.Label</h1><p class="sub">@d.Description@(Model.Result.Total > 0 ? $" · {Model.Result.Total} item{(Model.Result.Total == 1 ? "" : "s")}" : "")</p></div>
+    @if (d.CanAdd && canEdit)
+    {
+        <div class="actions"><a class="btn btn--pri" href="@path/edit">Add @d.Singular.ToLowerInvariant()</a></div>
+    }
+</div>
+
+<form method="get" action="@path" class="toolbar">
+    <input class="search" type="search" name="q" value="@Model.Query.Search" placeholder="Search @d.Label.ToLowerInvariant()" aria-label="Search" />
+    <input type="hidden" name="size" value="@Model.Query.Size" />
+    @if (Model.Query.Status != "all") { <input type="hidden" name="status" value="@Model.Query.Status" /> }
+    @foreach (var f in d.Filters)
+    {
+        <select name="f_@f.Key" data-autosubmit aria-label="@f.Label">
+            <option value="">@f.Label: all</option>
+            @foreach (var o in Model.FilterOptions[f.Key]) { <option value="@o.Value" selected="@(Model.Query.Filters[f.Key] == o.Value)">@o.Label</option> }
+        </select>
+    }
+    <button class="btn" type="submit">Search</button>
+    @if (Model.Query.IsFiltered) { <a class="btn btn--ghost" href="@path">Clear</a> }
+</form>
+
+@if (d.HasStatus)
+{
+    <div class="chips" aria-label="Status filter">
+        <a class="chip @(Model.Query.Status == "all" ? "is-on" : "")" href="@StatusUrl("all")">All</a>
+        @foreach (var s in d.StatusFilters) { <a class="chip @(Model.Query.Status == s.Key ? "is-on" : "")" href="@StatusUrl(s.Key)">@s.Label</a> }
+    </div>
+}
+
+@if (Model.Result.Rows.Count == 0)
+{
+    <div class="empty">
+        @if (Model.Query.IsFiltered) { <b>No matches</b><span>Clear the search or filters to see everything.</span> }
+        else { <b>Nothing here yet</b><span>@(d.CanAdd && canEdit ? "Add the first " + d.Singular.ToLowerInvariant() + " to get started." : "Nothing has been added.")</span> }
+    </div>
+}
+else
+{
+    <div class="tbl"><table>
+        <thead><tr>
+            @foreach (var h in d.ColumnHeaders) { <th>@h</th> }
+            @if (d.HasStatus) { <th>Status</th> }
+            @if (d.Orderable && canEdit) { <th class="num">Order</th> }
+        </tr></thead>
+        <tbody>
+        @foreach (var row in Model.Result.Rows)
+        {
+            <tr>
+                @for (var i = 0; i < row.Cells.Count; i++)
+                {
+                    <td>@if (i == 0) { <a class="rowlink" href="@path/edit/@row.Id">@Html.Raw(row.Cells[i])</a> } else { @Html.Raw(row.Cells[i]) }</td>
+                }
+                @if (d.HasStatus) { <td><span class="tag @(row.StatusKey == "draft" ? "t-amber" : row.StatusKey == "scheduled" ? "t-blue" : "t-green")">@row.StatusLabel</span></td> }
+                @if (d.Orderable && canEdit)
+                {
+                    <td class="num" style="white-space:nowrap">
+                        @foreach (var dir in new[] { (-1, "↑", "Move up"), (1, "↓", "Move down") })
+                        {
+                            <form method="post" asp-page-handler="Move" asp-route-slug="@d.Slug" asp-route-id="@row.Id" asp-route-delta="@dir.Item1" class="inline">
+                                @foreach (var kv in Model.Carry) { <input type="hidden" name="@kv.Key" value="@kv.Value" /> }
+                                <button type="submit" class="btn btn--sm btn--ghost" aria-label="@dir.Item3">@dir.Item2</button>
+                            </form>
+                        }
+                    </td>
+                }
+            </tr>
+        }
+        </tbody>
+    </table></div>
+    <partial name="_Pager" model="@(new PagerModel(Model.Result.Page, Model.Result.Size, Model.Result.Total, path, Model.Carry, ListQuery.Sizes))" />
+}

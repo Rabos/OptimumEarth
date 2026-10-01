@@ -1,0 +1,39 @@
+@page "/admin/users"
+@model UsersModel
+@{
+    ViewData["Title"] = "Users";
+}
+
+<div class="page-head">
+    <div><h1>Users</h1><p class="sub">Who can sign in, and which pages each person can see or change. Only you can see this screen.</p></div>
+    <div class="actions"><a class="btn btn--pri" href="/admin/users/edit">Invite user</a></div>
+</div>
+
+<div class="tiles">
+    <div class="tile"><b>@Model.Rows.Count(r => r.Role == Roles.Editor)</b><span>Editors</span></div>
+    <div class="tile"><b>@Model.Rows.Count(r => r.Role == Roles.Viewer)</b><span>Viewers</span></div>
+    <div class="tile"><b>@Model.Rows.Count(r => r.Status == "Invited")</b><span>Invites pending</span></div>
+</div>
+
+@if (Model.Rows.Count == 0)
+{
+    <div class="empty"><b>No users yet</b><span>Invite an editor or a viewer, then give them the pages they work on.</span></div>
+}
+else
+{
+    <div class="tbl"><table>
+        <thead><tr><th>User</th><th>Role</th><th>Page access</th><th>Status</th><th>Last sign-in</th></tr></thead>
+        <tbody>
+        @foreach (var u in Model.Rows)
+        {
+            <tr>
+                <td><a class="rowlink" href="/admin/users/edit/@u.Id">@u.Name</a><div class="mono muted">@u.Email</div></td>
+                <td><span class="tag @(u.Role == Roles.Editor ? "t-blue" : "t-grey")">@u.Role</span></td>
+                <td>@if (u.EditAreas + u.ViewAreas == 0) { <span class="tag t-red">No pages</span> } else { <span class="mono">@u.EditAreas edit · @u.ViewAreas view</span> }</td>
+                <td><span class="tag @(u.Status == "Active" ? "t-green" : u.Status == "Invited" ? "t-amber" : "t-red")">@u.Status</span></td>
+                <td class="mono">@(u.LastSignInUtc?.ToString("d MMM yyyy HH:mm") ?? "Never")</td>
+            </tr>
+        }
+        </tbody>
+    </table></div>
+}

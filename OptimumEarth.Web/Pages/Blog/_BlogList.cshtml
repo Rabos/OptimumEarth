@@ -1,0 +1,54 @@
+@model OptimumEarth.Web.Pages.Blog.BlogListVm
+@{
+    string PageUrl(int n) => n <= 1 ? Model.Path : Model.Path + "?p=" + n;
+}
+
+@if (Model.Categories.Count > 1)
+{
+    <nav class="projects-filter" aria-label="Filter posts by category">
+        <span class="projects-filter__label">Category</span>
+        <a class="filter-chip" href="/blog" aria-current="@(Model.ActiveCategory is null ? "true" : null)" aria-pressed="@(Model.ActiveCategory is null ? "true" : "false")">All</a>
+        @foreach (var c in Model.Categories)
+        {
+            var on = c.Slug == Model.ActiveCategory;
+            <a class="filter-chip" href="/blog/category/@c.Slug" aria-current="@(on ? "true" : null)" aria-pressed="@(on ? "true" : "false")">@c.Name</a>
+        }
+    </nav>
+}
+
+@if (Model.Posts.Posts.Count == 0)
+{
+    <p class="projects-empty">No posts here yet - <a class="text-link" href="/blog">view all posts</a>.</p>
+}
+else
+{
+    <div class="blog-grid">
+        @foreach (var p in Model.Posts.Posts)
+        {
+            <article class="blog-card">
+                @if (!string.IsNullOrEmpty(p.CoverPath))
+                {
+                    <a class="blog-card__media" href="/blog/@p.Slug" style="background-image: url('@p.CoverPath')" aria-hidden="true" tabindex="-1"></a>
+                }
+                <div class="blog-card__body">
+                    <span class="blog-card__tag">@p.CategoryName · @p.Date.ToString("d MMM yyyy")</span>
+                    <h2 class="blog-card__title"><a href="/blog/@p.Slug">@p.Title</a></h2>
+                    <p class="blog-card__excerpt">@p.Excerpt</p>
+                    <span class="blog-card__meta">@p.Author · @p.ReadingMinutes min read</span>
+                </div>
+            </article>
+        }
+    </div>
+
+    @if (Model.Posts.Pages > 1)
+    {
+        <nav class="blog-pager" aria-label="Pagination">
+            @if (Model.Posts.Page > 1) { <a class="filter-chip" rel="prev" href="@PageUrl(Model.Posts.Page - 1)">&larr; Newer</a> }
+            @for (var n = 1; n <= Model.Posts.Pages; n++)
+            {
+                <a class="filter-chip" href="@PageUrl(n)" aria-label="Page @n" aria-current="@(n == Model.Posts.Page ? "page" : null)" aria-pressed="@(n == Model.Posts.Page ? "true" : "false")">@n</a>
+            }
+            @if (Model.Posts.Page < Model.Posts.Pages) { <a class="filter-chip" rel="next" href="@PageUrl(Model.Posts.Page + 1)">Older &rarr;</a> }
+        </nav>
+    }
+}
