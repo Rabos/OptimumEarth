@@ -512,15 +512,38 @@ img {
 
 .site-footer__upper {
     display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr 1fr;
-    gap: 40px;
-    padding: 48px 56px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    align-items: start;
+    gap: 32px;
+    padding: 44px 56px;
 }
 
 .site-footer__brand {
+    grid-column: span 2;
     display: flex;
     flex-direction: column;
     gap: 12px;
+}
+
+.site-footer__heading {
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    margin: 0 0 2px;
+}
+
+.site-footer__office-list {
+    display: grid;
+    gap: 12px;
+}
+
+.site-footer__office {
+    display: grid;
+    gap: 8px;
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, .03);
 }
 
 .site-footer__wordmark {
@@ -531,7 +554,11 @@ img {
 }
 
 .site-footer__address {
-    line-height: 1.7;
+    display: grid;
+    gap: 1px;
+    margin: 0;
+    line-height: 1.6;
+    font-style: normal;
 }
 
     .site-footer__address a {
@@ -1411,6 +1438,15 @@ img {
     height: 460px;
 }
 
+.dest-hero__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
 .dest-hero__scrim {
     position: absolute;
     inset: 0;
@@ -1483,9 +1519,9 @@ img {
 }
 
 .dest-overview__eyebrow {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: .16em;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: .04em;
     color: var(--grey-500);
 }
 
@@ -1739,7 +1775,7 @@ img {
 }
 
 .glance-panel__title {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     letter-spacing: .14em;
     color: var(--grey-500);
@@ -1754,9 +1790,10 @@ img {
 }
 
 .glance-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    align-items: start;
+    gap: 12px;
     padding: 10px 0;
     border-bottom: 1px solid var(--grey-200);
     font-size: 14.5px;
@@ -1768,9 +1805,11 @@ img {
 
 .glance-row__key {
     color: var(--grey-600);
+    white-space: nowrap;
 }
 
 .glance-row__value {
+    min-width: 0;
     color: var(--navy-ink);
     font-weight: 600;
     text-align: right;
@@ -1848,23 +1887,23 @@ img {
     gap: 10px;
 }
 
-/* Destination service silhouettes: rounded on tablet/mobile, mirrored
-   curved tips in the first and third columns on desktop. */
+/* Destination service cards now share the same outline language as the
+   Foundation pillar cards, while keeping each page's own wash and theme
+   colours. */
 .destination-service-grid > .service-card {
-    --service-curve: clamp(24px, 3vw, 44px);
     position: relative;
     min-width: 0;
-    border: 0;
-    border-radius: var(--service-curve);
-    padding: 30px;
-    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 8%));
+    border: 1.5px solid var(--blue);
+    border-radius: 50px 0;
+    padding: 38px 36px 46px;
+    filter: none;
+    clip-path: none;
 }
 
-/* Excludes .service-card--cta so this doesn't outrank its own navy/green/grey
+/* Excludes .service-card--cta so this doesn't outrank its own navy/grey
    background further down the sheet - this selector's two classes otherwise
    beat that rule's one on specificity regardless of source order. */
 .destination-service-grid > .service-card:not(.service-card--cta) {
-    /* bottom-left origin sweeps toward the top-right corner as it grows */
     --wash-pos: 0% 100%;
     --wash-color: var(--blue-wash);
     background-color: #fff;
@@ -1873,129 +1912,29 @@ img {
     background-repeat: no-repeat;
     background-position: var(--wash-pos);
     background-size: 0% 0%;
-    transition: background-size .7s ease-out;
+    transition: background-size .7s ease-out, border-color .35s ease;
 }
 
 .destination-service-grid > .service-card:not(.service-card--cta):hover {
     background-size: 260% 260%;
+    border-color: var(--navy-deep);
 }
 
-/* middle column: no corner to sweep from, so the wash blooms from its own
-   centre outward like a ripple */
-.destination-service-grid > .service-card:nth-child(3n + 2):not(.service-card--cta) {
-    --wash-pos: 50% 50%;
-}
-
-/* right column mirrors the left: bottom-right origin sweeps toward top-left */
-.destination-service-grid > .service-card:nth-child(3n):not(.service-card--cta) {
-    --wash-pos: 100% 100%;
+.theme-zambia .destination-service-grid > .service-card {
+    border-color: var(--grey);
 }
 
 .theme-zambia .destination-service-grid > .service-card:not(.service-card--cta) {
     --wash-color: var(--grey-wash);
 }
 
+.theme-zambia .destination-service-grid > .service-card:not(.service-card--cta):hover {
+    border-color: var(--grey-900);
+}
+
 @media (prefers-reduced-motion: reduce) {
     .destination-service-grid > .service-card:not(.service-card--cta) {
         transition: none;
-    }
-}
-
-@media (min-width: 961px) {
-    /* Middle column: all four corners get the flag treatment instead of two
-       plain + two flag. Top and bottom edges run full width, touching both
-       their true corners directly (dead straight, no inset); left/right
-       stay inset by C the way the outer columns' straight sides do. Each
-       corner is the same flag arc as the outer columns, just rotated. */
-    .destination-service-grid > .service-card:nth-child(3n + 2):not(.service-card--cta--wide) {
-        padding: 30px calc(var(--service-curve) + 30px);
-        clip-path: polygon(
-            0 0,
-            100% 0,
-            calc(100% - var(--service-curve) * .7071) calc(var(--service-curve) * .2929),
-            calc(100% - var(--service-curve)) var(--service-curve),
-            calc(100% - var(--service-curve)) calc(100% - var(--service-curve)),
-            calc(100% - var(--service-curve) * .7071) calc(100% - var(--service-curve) * .2929),
-            100% 100%,
-            0 100%,
-            calc(var(--service-curve) * .7071) calc(100% - var(--service-curve) * .2929),
-            var(--service-curve) calc(100% - var(--service-curve)),
-            var(--service-curve) var(--service-curve),
-            calc(var(--service-curve) * .7071) calc(var(--service-curve) * .2929)
-        );
-    }
-
-    /* The curved tips used to be separate ::before/::after boxes glued on
-       beside the card, each painting its own copy of the wash gradient - so
-       on hover the two pieces bloomed independently instead of as one sweep.
-       A single clip-path polygon on the card itself (padding widened to
-       compensate for the tip room it used to get via margin) folds the tips
-       into the card's own box, so there's exactly one background layer and
-       the animation reads as one continuous corner-to-corner sweep.
-       Corners as fractions of --service-curve (C): the two plain corners are
-       quarter-circles inset from their edge (points at .2929/.7071C, i.e.
-       1-cos45deg/sin45deg); the two flag corners are a mirror-image quarter
-       circle that instead touches the card's true corner point and curves
-       away from it - giving the silhouette its "twisted flag" read. */
-    .destination-service-grid > .service-card:nth-child(3n + 1):not(.service-card--cta--wide) {
-        padding: 30px calc(var(--service-curve) + 30px);
-        clip-path: polygon(
-            calc(var(--service-curve) * 1) calc(var(--service-curve) * 1),
-            calc(var(--service-curve) * 1.2929) calc(var(--service-curve) * .2929),
-            calc(var(--service-curve) * 2) 0,
-            100% 0,
-            calc(100% - var(--service-curve) * .7071) calc(var(--service-curve) * .2929),
-            calc(100% - var(--service-curve)) var(--service-curve),
-            calc(100% - var(--service-curve)) calc(100% - var(--service-curve)),
-            calc(100% - var(--service-curve) * 1.2929) calc(100% - var(--service-curve) * .2929),
-            calc(100% - var(--service-curve) * 2) 100%,
-            0 100%,
-            calc(var(--service-curve) * .7071) calc(100% - var(--service-curve) * .2929),
-            var(--service-curve) calc(100% - var(--service-curve))
-        );
-    }
-
-    /* mirror of the above (x -> 100% - x): plain corners swap to top-right
-       and bottom-left, flag corners swap to top-left and bottom-right */
-    .destination-service-grid > .service-card:nth-child(3n):not(.service-card--cta--wide) {
-        padding: 30px calc(var(--service-curve) + 30px);
-        clip-path: polygon(
-            calc(100% - var(--service-curve) * 1) calc(var(--service-curve) * 1),
-            calc(100% - var(--service-curve) * 1.2929) calc(var(--service-curve) * .2929),
-            calc(100% - var(--service-curve) * 2) 0,
-            0 0,
-            calc(var(--service-curve) * .7071) calc(var(--service-curve) * .2929),
-            var(--service-curve) var(--service-curve),
-            var(--service-curve) calc(100% - var(--service-curve)),
-            calc(var(--service-curve) * 1.2929) calc(100% - var(--service-curve) * .2929),
-            calc(var(--service-curve) * 2) 100%,
-            100% 100%,
-            calc(100% - var(--service-curve) * .7071) calc(100% - var(--service-curve) * .2929),
-            calc(100% - var(--service-curve)) calc(100% - var(--service-curve))
-        );
-    }
-
-    /* The lonely-row CTA banner: same true-corner-to-inset footprint as the
-       other flag corners, but using the OTHER tangent circle at each corner
-       - since no smooth circle bulges outward from these two points, this
-       one deliberately pinches into a sharp ragged notch instead of the
-       concave scoop used everywhere else. */
-    .destination-service-grid > .service-card--cta--wide {
-        padding: 30px calc(var(--service-curve) + 30px);
-        clip-path: polygon(
-            0 0,
-            100% 0,
-            calc(100% - var(--service-curve) * .2929) calc(var(--service-curve) * .7071),
-            calc(100% - var(--service-curve)) var(--service-curve),
-            calc(100% - var(--service-curve)) calc(100% - var(--service-curve)),
-            calc(100% - var(--service-curve) * .2929) calc(100% - var(--service-curve) * .7071),
-            100% 100%,
-            0 100%,
-            calc(var(--service-curve) * .2929) calc(100% - var(--service-curve) * .7071),
-            var(--service-curve) calc(100% - var(--service-curve)),
-            var(--service-curve) var(--service-curve),
-            calc(var(--service-curve) * .2929) calc(var(--service-curve) * .7071)
-        );
     }
 }
 
@@ -4193,6 +4132,17 @@ img {
     }
 }
 
+@media (min-width: 1180px) {
+    .site-footer__office-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
+    }
+
+    .site-footer__office {
+        height: 100%;
+    }
+}
+
 /* Below this the parent logo and the hamburger need the whole row. The mark on
    its own would only put a second globe beside the first, which is the crowding
    this lockup was rebuilt to avoid, so the co-brand drops out entirely — the
@@ -4205,13 +4155,32 @@ img {
 }
 
 @media (max-width: 780px) {
+    .hero-carousel {
+        min-height: 560px;
+    }
+
+    .theme-home .hero-carousel {
+        height: 100dvh;
+        min-height: 560px;
+    }
+
     .hero-carousel__actions {
         flex-wrap: wrap;
         justify-content: center;
     }
 
     .hero-carousel__copy {
-        padding: 0 24px 210px;
+        padding: 0 24px 180px;
+        gap: 16px;
+    }
+
+    .hero-carousel__headline {
+        font-size: clamp(2rem, 1.35rem + 4vw, 3rem);
+    }
+
+    .hero-carousel__body {
+        font-size: 16px;
+        max-width: 560px;
     }
 
     .hero-carousel__who-btn {
@@ -4294,6 +4263,47 @@ img {
 }
 
 @media (max-width: 560px) {
+    .hero-carousel,
+    .theme-home .hero-carousel {
+        min-height: 520px;
+    }
+
+    .hero-carousel__copy {
+        justify-content: center;
+        padding: 88px 20px 112px;
+        gap: 14px;
+    }
+
+    .hero-carousel__headline {
+        font-size: clamp(1.85rem, 1.2rem + 3.8vw, 2.4rem);
+    }
+
+    .hero-carousel__body {
+        font-size: 15px;
+        line-height: 1.5;
+        max-width: 34ch;
+    }
+
+    .hero-carousel__row {
+        padding: 0 20px 24px;
+    }
+
+    .hero-carousel__actions {
+        width: min(100%, 320px);
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .hero-carousel__actions .btn {
+        width: 100%;
+    }
+
+    .hero-carousel__pip,
+    .hero-carousel__arrow {
+        display: none;
+    }
+
     .capability-grid {
         grid-template-columns: 1fr;
     }

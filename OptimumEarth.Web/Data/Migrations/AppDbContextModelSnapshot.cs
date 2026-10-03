@@ -538,6 +538,10 @@ namespace OptimumEarth.Web.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("HeroImagePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("HeroSub")
                         .IsRequired()
                         .HasColumnType("text");

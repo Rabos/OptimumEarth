@@ -370,7 +370,8 @@ public static class ContentRegistry
             DefaultOrder = q => q.OrderBy(x => x.Name),
             Fields = new FieldDef[]
             {
-                new() { Key = nameof(CountryPage.HeroEyebrow), Label = "Eyebrow", Required = true, Max = 40, Group = "Hero" },
+                new() { Key = nameof(CountryPage.HeroImagePath), Label = "Image", Kind = FieldKind.Image, Required = true, Group = "Hero" },
+                new() { Key = nameof(CountryPage.HeroEyebrow), Label = "Eyebrow", Required = true, Max = 40 },
                 new() { Key = nameof(CountryPage.HeroHeadline), Label = "Headline", Kind = FieldKind.Area, Required = true, Max = 160, Rows = 2 },
                 new() { Key = nameof(CountryPage.HeroSub), Label = "Sub-heading", Kind = FieldKind.Area, Max = 240, Rows = 3 },
                 new() { Key = nameof(CountryPage.OverviewQuote), Label = "Lead quote", Kind = FieldKind.Area, Required = true, Max = 500, Rows = 5, Group = "Overview" },

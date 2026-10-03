@@ -14,7 +14,7 @@ public static class SeedData
     private const string Img = "/img/optimum-earth-images/";
 
     /// <summary>The content version a freshly seeded database starts at. See <see cref="ContentUpgrades"/>.</summary>
-    public const int CurrentContentVersion = 2;
+    public const int CurrentContentVersion = 3;
 
     public static List<Slide> Slides() => new()
     {
@@ -273,6 +273,7 @@ public static class SeedData
     public static CountryPage Uganda() => new()
     {
         Slug = "uganda", Name = "Uganda", Theme = "uganda",
+        HeroImagePath = Img + "heroslide1.jpg",
         HeroImageLabel = "Uganda hero image",
         HeroEyebrow = "OPTIMUM EARTH UGANDA",
         HeroHeadline = "Water, environment and engineering expertise, delivered in Uganda since 2017.",
@@ -292,6 +293,7 @@ public static class SeedData
     public static CountryPage Zambia() => new()
     {
         Slug = "zambia", Name = "Zambia", Theme = "zambia",
+        HeroImagePath = Img + "heroslide2.jpg",
         HeroImageLabel = "Zambia hero image",
         HeroEyebrow = "OPTIMUM EARTH ZAMBIA",
         HeroHeadline = "Bringing regional engineering and environmental capability to the Zambian market.",
@@ -304,7 +306,7 @@ public static class SeedData
         SectionTwoTitle = "Projects", SectionTwoLinkText = "All projects", SectionTwoLinkHref = "/projects",
         SectionTwoNote = "Zambia case studies will be published as projects are delivered and client permissions are confirmed.",
         CtaTitle = "Work with our Zambia team",
-        CtaBody = "Office address to be confirmed · zambia@optimum-earth.com",
+        CtaBody = "Lusaka, Zambia · Office address to be confirmed · zambia@optimum-earth.com",
         CtaServices = new() { "Water supply solutions", "Energy & infrastructure", "Groundwater monitoring", "GIS & mapping" },
     };
 

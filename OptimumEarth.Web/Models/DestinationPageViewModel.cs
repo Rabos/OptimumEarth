@@ -9,6 +9,7 @@ public class DestinationPageViewModel
 {
     public required string Theme { get; init; }
 
+    public required string HeroImagePath { get; init; }
     public required string HeroImageLabel { get; init; }
     public required string HeroEyebrow { get; init; }
     public required string HeroHeadline { get; init; }
