@@ -886,32 +886,72 @@ img {
 .who-we-are__mission-vision {
     display: flex;
     flex-direction: column;
-    gap: 32px;
-    padding: 36px;
-    background: linear-gradient(135deg, #F8FAFB 0%, #F4F6F8 100%);
-    border-radius: 8px;
-    border-left: 4px solid var(--blue);
+    gap: 22px;
 }
 
 .mission-vision-item {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 24px;
+    padding: 30px 32px;
+    border-radius: 12px;
+}
+
+.mission-vision-item--vision {
+    background: #F3F7FC;
+    border: 1px solid rgba(33, 66, 146, .16);
+}
+
+.mission-vision-item--mission {
+    background: var(--navy-deep);
+    border: 1px solid rgba(255, 255, 255, .08);
 }
 
 .mission-vision-item__title {
-    font-size: 19px;
-    font-weight: 700;
-    color: var(--navy-ink);
-    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 12px;
     margin: 0;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--navy-ink);
+}
+
+.mission-vision-item__title::before {
+    content: "";
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .75);
+    flex: none;
+}
+
+.mission-vision-item__title::after {
+    content: "";
+    height: 1px;
+    flex: 1;
+    background: currentColor;
+    opacity: .26;
+}
+
+.mission-vision-item--mission .mission-vision-item__title {
+    color: #fff;
 }
 
 .mission-vision-item__text {
-    font-size: 15px;
-    line-height: 1.65;
-    color: var(--grey-900);
     margin: 0;
+    font-family: 'Newsreader', serif;
+    font-size: clamp(1.2rem, .98rem + .45vw, 1.55rem);
+    line-height: 1.5;
+    color: var(--navy-ink);
+    max-width: none;
+}
+
+.mission-vision-item--mission .mission-vision-item__text {
+    color: rgba(255, 255, 255, .96);
 }
 
 .values-section {
@@ -946,21 +986,84 @@ img {
     gap: 28px;
 }
 
-.value-item {
+.values-acronym {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.values-acronym__bubble {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(33, 66, 146, .18);
+    background: #fff;
+    color: var(--blue);
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    cursor: pointer;
+    transition: transform .22s ease, background-color .22s ease, color .22s ease, border-color .22s ease, box-shadow .22s ease;
+}
+
+    .values-acronym__bubble:hover,
+    .values-acronym__bubble:focus-visible,
+    .values-acronym__bubble.is-active {
+        background: var(--blue);
+        border-color: var(--blue);
+        color: #fff;
+        box-shadow: 0 10px 22px rgba(33, 66, 146, .16);
+        transform: translateY(-2px);
+    }
+
+.values-tooltip {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    justify-content: flex-start;
+    gap: 8px;
+    height: 148px;
+    padding: 18px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(33, 66, 146, .12);
+    background: var(--blue-wash);
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.values-tooltip__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy-ink);
+}
+
+.values-tooltip__body {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--grey-700);
+}
+
+.value-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     padding: 20px;
     background: #fff;
     border-radius: 6px;
     border: 1px solid var(--grey-200);
-    transition: all .3s ease;
+    transition: border-color .28s ease, box-shadow .28s ease, transform .28s ease;
 }
 
     .value-item:hover {
         border-color: var(--blue);
-        box-shadow: 0 8px 24px rgba(33, 66, 146, .1);
-        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(33, 66, 146, .12);
+        transform: translateY(-4px);
     }
 
 .value-item__title {
@@ -1015,6 +1118,22 @@ img {
         color: var(--grey-600);
     }
 
+.capabilities-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.capabilities-section__title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy-ink);
+    letter-spacing: -0.01em;
+    margin: 0;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--blue-tint);
+}
+
 .capability-grid {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -1025,12 +1144,10 @@ img {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 22px 0 0;
-    border-top: 2px solid var(--grey-300);
-    transition: border-color .2s;
 }
 
-    .capability-cell:hover, .capability-cell:focus-within {
+    .capability-cell:hover .capability-cell__desc,
+    .capability-cell:focus-within .capability-cell__desc {
         border-top-color: var(--blue);
     }
 
@@ -1047,13 +1164,18 @@ img {
     color: var(--navy-ink);
     letter-spacing: -0.01em;
     line-height: 1.25;
-    min-height: 21px;
+    min-height: calc(1.25em * 2);
 }
 
 .capability-cell__desc {
+    display: block;
+    margin-top: 14px;
+    padding-top: 22px;
+    border-top: 2px solid var(--grey-300);
     font-size: 13.5px;
     color: var(--grey);
     line-height: 1.5;
+    transition: border-color .2s;
 }
 
 /* ---------- Home: service scroll sequence ---------- */
@@ -3592,20 +3714,34 @@ img {
     }
 
     .who-we-are__mission-vision {
-        padding: 28px;
-        gap: 24px;
+        gap: 18px;
+    }
+
+    .mission-vision-item {
+        padding: 26px 28px;
+        gap: 20px;
     }
 
     .mission-vision-item__title {
-        font-size: 17px;
+        font-size: 11px;
     }
 
     .mission-vision-item__text {
-        font-size: 14px;
+        font-size: clamp(1.12rem, .96rem + .35vw, 1.35rem);
     }
 
     .values-section__title {
         font-size: 20px;
+    }
+
+    .values-acronym__bubble {
+        width: 44px;
+        height: 44px;
+        font-size: 18px;
+    }
+
+    .values-tooltip {
+        padding: 16px 18px;
     }
 
     .values-grid {
@@ -3639,18 +3775,29 @@ img {
     }
 
     .who-we-are__mission-vision {
-        padding: 20px;
-        gap: 20px;
-        border-left-width: 3px;
+        gap: 16px;
+    }
+
+    .mission-vision-item {
+        padding: 22px 22px 24px;
+        gap: 18px;
+        border-radius: 10px;
     }
 
     .mission-vision-item__title {
-        font-size: 16px;
+        font-size: 10.5px;
+        gap: 10px;
+        letter-spacing: .16em;
+    }
+
+    .mission-vision-item__title::before {
+        width: 11px;
+        height: 11px;
     }
 
     .mission-vision-item__text {
-        font-size: 13px;
-        line-height: 1.6;
+        font-size: clamp(1rem, .9rem + .3vw, 1.18rem);
+        line-height: 1.5;
     }
 
     .values-section__title {
@@ -3658,6 +3805,30 @@ img {
     }
 
     .values-section__intro {
+        font-size: 13px;
+    }
+
+    .values-acronym {
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .values-acronym__bubble {
+        width: 42px;
+        height: 42px;
+        font-size: 17px;
+    }
+
+    .values-tooltip {
+        height: 156px;
+        padding: 14px 16px;
+    }
+
+    .values-tooltip__title {
+        font-size: 15px;
+    }
+
+    .values-tooltip__body {
         font-size: 13px;
     }
 
@@ -3726,17 +3897,29 @@ img {
     }
 
     .who-we-are__mission-vision {
-        padding: 16px;
+        gap: 14px;
+    }
+
+    .mission-vision-item {
+        padding: 18px 16px 20px;
         gap: 16px;
+        border-radius: 9px;
     }
 
     .mission-vision-item__title {
-        font-size: 15px;
+        font-size: 10px;
+        gap: 8px;
+        letter-spacing: .14em;
+    }
+
+    .mission-vision-item__title::before {
+        width: 10px;
+        height: 10px;
     }
 
     .mission-vision-item__text {
-        font-size: 12px;
-        line-height: 1.55;
+        font-size: clamp(.95rem, .9rem + .2vw, 1.05rem);
+        line-height: 1.5;
     }
 
     .values-section__title {
@@ -3744,6 +3927,32 @@ img {
     }
 
     .values-section__intro {
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    .values-acronym {
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .values-acronym__bubble {
+        width: 38px;
+        height: 38px;
+        font-size: 15px;
+    }
+
+    .values-tooltip {
+        height: 168px;
+        padding: 12px 14px;
+        border-radius: 10px;
+    }
+
+    .values-tooltip__title {
+        font-size: 14px;
+    }
+
+    .values-tooltip__body {
         font-size: 12px;
         line-height: 1.55;
     }

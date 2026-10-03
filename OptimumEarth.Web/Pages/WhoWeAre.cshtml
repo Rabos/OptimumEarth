@@ -17,14 +17,14 @@
             <h1 class="who-we-are__statement">Engineering solutions for industry and resilience for communities, across East, Central and Southern Africa since <em>2017</em></h1>
 
             <div class="who-we-are__mission-vision">
-                <div class="mission-vision-item">
-                    <h2 class="mission-vision-item__title">Mission</h2>
-                    <p class="mission-vision-item__text">@Model.Mission</p>
+                <div class="mission-vision-item mission-vision-item--vision">
+                    <h2 class="mission-vision-item__title">Our Vision</h2>
+                    <p class="mission-vision-item__text">@Model.Vision</p>
                 </div>
 
-                <div class="mission-vision-item">
-                    <h2 class="mission-vision-item__title">Vision</h2>
-                    <p class="mission-vision-item__text">@Model.Vision</p>
+                <div class="mission-vision-item mission-vision-item--mission">
+                    <h2 class="mission-vision-item__title">Our Mission</h2>
+                    <p class="mission-vision-item__text">@Model.Mission</p>
                 </div>
             </div>
         </div>
@@ -55,25 +55,53 @@
         <h2 class="values-section__title">Values</h2>
         <p class="values-section__intro">Across the Optimum Earth Group (Optimum Earth (U) Ltd, Optimum Earth Engineering Ltd and the Optimum Earth Foundation), what we do matters, and so does how we do it. Our core values set the standard for how our staff, associates and volunteers work, the relationships we build with clients, partners and communities, and the difference we seek to make. They are the <b>SCALES</b> we measure ourselves against, and we hold ourselves and one another to them.</p>
 
-        <div class="values-grid">
-            @foreach (var value in Model.Values)
+        @{
+            var scaleItems = Model.Values
+                .Select((value, index) => new
+                {
+                    Value = value,
+                    Index = index,
+                    Letter = string.IsNullOrWhiteSpace(value.Title) ? string.Empty : value.Title.Trim()[0].ToString().ToUpperInvariant()
+                })
+                .ToList();
+            var firstScaleItem = scaleItems.FirstOrDefault();
+        }
+
+        @if (firstScaleItem is not null)
+        {
+            <div class="values-acronym" aria-label="SCALES values">
+                @foreach (var item in scaleItems)
+                {
+                    <button type="button"
+                            class="values-acronym__bubble@(item.Index == 0 ? " is-active" : "")"
+                            data-scale-trigger
+                            data-scale-title="@item.Value.Title"
+                            data-scale-body="@item.Value.Description"
+                            aria-pressed="@(item.Index == 0 ? "true" : "false")"
+                            aria-label="Show @item.Value.Title">
+                        @item.Letter
+                    </button>
+                }
+            </div>
+
+            <div class="values-tooltip" data-scale-panel role="status" aria-live="polite">
+                <h3 class="values-tooltip__title" data-scale-panel-title>@firstScaleItem.Value.Title</h3>
+                <p class="values-tooltip__body" data-scale-panel-body>@firstScaleItem.Value.Description</p>
+            </div>
+        }
+    </div>
+
+    <div class="capabilities-section">
+        <h2 class="capabilities-section__title">Capabilities</h2>
+        <div class="capability-grid">
+            @foreach (var c in Model.Capabilities)
             {
-                <div class="value-item">
-                    <h3 class="value-item__title">@value.Title</h3>
-                    <p class="value-item__description">@value.Description</p>
+                <div class="capability-cell">
+                    <span class="capability-cell__index">@c.Index</span>
+                    <span class="capability-cell__title">@c.Title</span>
+                    <span class="capability-cell__desc">@c.Description</span>
                 </div>
             }
         </div>
-    </div>
-
-    <div class="capability-grid">
-        @foreach (var c in Model.Capabilities)
-        {
-            <div class="capability-cell">
-                <span class="capability-cell__index">@c.Index</span>
-                <span class="capability-cell__title">@c.Title</span>
-                <span class="capability-cell__desc">@c.Description</span>
-            </div>
-        }
     </div>
 </section>

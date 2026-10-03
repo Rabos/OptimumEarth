@@ -87,6 +87,32 @@
     start();
   }
 
+  // Values acronym: hovering a S/C/A/L/E/S bubble swaps the shared helper
+  // panel so the visitor can read each value without hunting through the grid.
+  var scaleTriggers = document.querySelectorAll("[data-scale-trigger]");
+  var scalePanelTitle = document.querySelector("[data-scale-panel-title]");
+  var scalePanelBody = document.querySelector("[data-scale-panel-body]");
+  if (scaleTriggers.length && scalePanelTitle && scalePanelBody) {
+    var setScaleActive = function (trigger) {
+      scaleTriggers.forEach(function (item) {
+        var active = item === trigger;
+        item.classList.toggle("is-active", active);
+        item.setAttribute("aria-pressed", String(active));
+      });
+      scalePanelTitle.textContent = trigger.getAttribute("data-scale-title") || "";
+      scalePanelBody.textContent = trigger.getAttribute("data-scale-body") || "";
+    };
+
+    scaleTriggers.forEach(function (trigger) {
+      trigger.addEventListener("mouseenter", function () {
+        setScaleActive(trigger);
+      });
+      trigger.addEventListener("focus", function () {
+        setScaleActive(trigger);
+      });
+    });
+  }
+
   // Foundation page sub-nav: highlights the section currently in view as
   // the visitor scrolls (scroll-spy), on top of the browser's native
   // smooth-scroll-to-anchor on click.
