@@ -13,6 +13,7 @@ public class CountryPage
     public string Slug { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Theme { get; set; } = string.Empty;
+    public string HeroImagePath { get; set; } = string.Empty;
     public string HeroImageLabel { get; set; } = string.Empty;
     public string HeroEyebrow { get; set; } = string.Empty;
     public string HeroHeadline { get; set; } = string.Empty;

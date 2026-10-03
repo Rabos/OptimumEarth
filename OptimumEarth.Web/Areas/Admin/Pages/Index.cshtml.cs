@@ -69,7 +69,7 @@ public class IndexModel : AdminPageModel
         if (a.CanView(AdminAreas.Media))
         {
             var noAlt = await _db.Media.CountAsync(m => m.Alt == string.Empty && (
-                _db.Projects.Any(p => p.ImagePath == m.Path) || _db.Services.Any(s => s.ImagePath == m.Path) || _db.Slides.Any(s => s.ImagePath == m.Path)));
+                _db.Projects.Any(p => p.ImagePath == m.Path) || _db.Services.Any(s => s.ImagePath == m.Path) || _db.Slides.Any(s => s.ImagePath == m.Path) || _db.CountryPages.Any(p => p.HeroImagePath == m.Path)));
             Tiles.Add(new Tile(noAlt, noAlt == 1 ? "image in use without alt text" : "images in use without alt text", "/admin/media?missingAlt=true", noAlt > 0));
         }
 

@@ -21,7 +21,7 @@
 <body class="admin">
 <div class="app">
     <aside class="side">
-        <a class="brand" href="/admin"><img src="~/img/logo-icon.png" alt="" width="28" height="28" /><span>Optimum Earth<small>Content studio</small></span></a>
+        <a class="brand" href="/admin"><img src="~/img/logo-icon.png" alt="" width="28" height="28" loading="lazy" decoding="async" /><span>Optimum Earth<small>Content studio</small></span></a>
         <nav class="nav" aria-label="Dashboard sections">
             <a href="/admin" class="@(path.TrimEnd('/').Equals("/admin", StringComparison.OrdinalIgnoreCase) ? "is-current" : "")">Overview</a>
             @foreach (var group in AdminNav.VisibleTo(access))

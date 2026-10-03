@@ -16,6 +16,7 @@ public sealed record FoundationContent(
 
 public sealed record CountryPageContent(
     string Theme,
+    string HeroImagePath,
     string HeroImageLabel,
     string HeroEyebrow,
     string HeroHeadline,
@@ -184,7 +185,7 @@ public sealed class ContentReader
         }).ToList();
 
         return new Optional<CountryPageContent>(new CountryPageContent(
-            page.Theme, page.HeroImageLabel, page.HeroEyebrow, page.HeroHeadline, page.HeroSub,
+            page.Theme, page.HeroImagePath, page.HeroImageLabel, page.HeroEyebrow, page.HeroHeadline, page.HeroSub,
             page.OverviewEyebrow, page.OverviewQuote, page.OverviewBody, facts,
             page.SectionOneTitle, NullIfEmpty(page.SectionOneLinkText), NullIfEmpty(page.SectionOneLinkHref), serviceCards,
             page.SectionTwoTitle, NullIfEmpty(page.SectionTwoLinkText), NullIfEmpty(page.SectionTwoLinkHref), projectCards, projectDescriptions,

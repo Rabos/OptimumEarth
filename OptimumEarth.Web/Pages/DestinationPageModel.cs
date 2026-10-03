@@ -61,6 +61,7 @@ public abstract class DestinationPageModel : PageModel
         Content = new DestinationPageViewModel
         {
             Theme = page.Theme,
+            HeroImagePath = page.HeroImagePath,
             HeroImageLabel = page.HeroImageLabel,
             HeroEyebrow = page.HeroEyebrow,
             HeroHeadline = page.HeroHeadline,

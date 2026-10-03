@@ -98,6 +98,7 @@ public sealed class MediaService
     {
         var used = new List<string>();
         used.AddRange((await _db.Slides.Where(x => x.ImagePath == path).Select(x => x.Headline).ToListAsync()).Select(x => "Hero slide: " + x));
+        used.AddRange((await _db.CountryPages.Where(x => x.HeroImagePath == path).Select(x => x.Name).ToListAsync()).Select(x => "Country page hero: " + x));
         used.AddRange((await _db.Projects.Where(x => x.ImagePath == path).Select(x => x.Title).ToListAsync()).Select(x => "Project: " + x));
         used.AddRange((await _db.Services.Where(x => x.ImagePath == path).Select(x => x.Title).ToListAsync()).Select(x => "Service: " + x));
         used.AddRange((await _db.Stories.Where(x => x.CoverPath == path).Select(x => x.Title).ToListAsync()).Select(x => "Story: " + x));
