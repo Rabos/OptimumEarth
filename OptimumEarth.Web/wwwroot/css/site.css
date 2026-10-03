@@ -1774,6 +1774,7 @@ img {
     color: var(--navy-ink);
     font-weight: 600;
     text-align: right;
+    white-space: nowrap;
 }
 
 .theme-foundation .glance-row__value {
