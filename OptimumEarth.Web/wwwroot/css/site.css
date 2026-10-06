@@ -541,9 +541,9 @@ img {
     display: grid;
     gap: 8px;
     padding: 12px 14px;
-    border: 1px solid rgba(255, 255, 255, .12);
+/*    border: 1px solid rgba(255, 255, 255, .12);
     border-radius: var(--radius);
-    background: rgba(255, 255, 255, .03);
+    background: rgba(255, 255, 255, .03);*/
 }
 
 .site-footer__wordmark {
@@ -1045,7 +1045,7 @@ img {
     margin: 0;
     font-size: 14px;
     line-height: 1.6;
-    color: var(--grey-700);
+    color: var(--grey-600);
 }
 
 .value-item {
