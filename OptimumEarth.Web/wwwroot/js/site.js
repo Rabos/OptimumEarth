@@ -104,6 +104,9 @@
     };
 
     scaleTriggers.forEach(function (trigger) {
+      trigger.addEventListener("click", function () {
+        setScaleActive(trigger);
+      });
       trigger.addEventListener("mouseenter", function () {
         setScaleActive(trigger);
       });

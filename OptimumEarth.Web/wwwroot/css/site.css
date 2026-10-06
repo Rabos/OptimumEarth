@@ -539,33 +539,35 @@ img {
 
 .site-footer__office {
     display: grid;
-    gap: 8px;
-    padding: 12px 14px;
+    gap: 11px;
+    padding: 0;
 /*    border: 1px solid rgba(255, 255, 255, .12);
     border-radius: var(--radius);
     background: rgba(255, 255, 255, .03);*/
 }
 
 .site-footer__wordmark {
-    font-size: 16px;
-    font-weight: 800;
+    /*font-size: 16px;*/
+    font-weight: 600;
     color: #fff;
-    letter-spacing: .02em;
+    /*letter-spacing: .02em;*/
 }
 
 .site-footer__address {
     display: grid;
-    gap: 1px;
+    gap: 9px;
     margin: 0;
-    line-height: 1.6;
+    font: inherit;
     font-style: normal;
 }
 
     .site-footer__address a {
         color: inherit;
+        transition: color .18s;
     }
 
-        .site-footer__address a:hover {
+        .site-footer__address a:hover,
+        .site-footer__address a:focus-visible {
             color: #fff;
         }
 
@@ -826,6 +828,7 @@ img {
 /* ---------- Who we are ---------- */
 
 .who-we-are {
+    --who-body-size: 16px;
     padding: 56px var(--gutter) 96px;
     background: #fff;
     display: flex;
@@ -869,7 +872,7 @@ img {
 }
 
 .who-we-are__statement {
-    font-size: clamp(1.75rem, 1.1rem + 2vw, 2.625rem);
+    font-size: clamp(1.75rem, 1.1rem + 1.4vw, 2.125rem);
     line-height: 1.14;
     font-weight: 700;
     letter-spacing: -0.032em;
@@ -958,7 +961,7 @@ img {
     display: flex;
     flex-direction: column;
     gap: 24px;
-    padding: 56px var(--gutter);
+    padding: 56px 0;
     background: #fff;
 }
 
@@ -1025,13 +1028,14 @@ img {
     flex-direction: column;
     justify-content: flex-start;
     gap: 8px;
-    height: 148px;
+    min-height: 148px;
     padding: 18px 20px;
     border-radius: 12px;
     border: 1px solid rgba(33, 66, 146, .12);
     background: var(--blue-wash);
     box-sizing: border-box;
-    overflow: hidden;
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 .values-tooltip__title {
@@ -1176,6 +1180,28 @@ img {
     color: var(--grey);
     line-height: 1.5;
     transition: border-color .2s;
+}
+
+.who-we-are .who-we-are__lede,
+.who-we-are .mission-vision-item__text,
+.who-we-are .values-section__intro,
+.who-we-are .values-tooltip__body,
+.who-we-are .capability-cell__desc {
+    font-family: inherit;
+    font-size: var(--who-body-size);
+    line-height: 1.65;
+}
+
+@media (max-width: 768px) {
+    .who-we-are {
+        --who-body-size: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .who-we-are {
+        --who-body-size: 14px;
+    }
 }
 
 /* ---------- Home: service scroll sequence ---------- */
@@ -3820,7 +3846,7 @@ img {
     }
 
     .values-tooltip {
-        height: 156px;
+        min-height: 156px;
         padding: 14px 16px;
     }
 
@@ -3943,7 +3969,7 @@ img {
     }
 
     .values-tooltip {
-        height: 168px;
+        min-height: 168px;
         padding: 12px 14px;
         border-radius: 10px;
     }
