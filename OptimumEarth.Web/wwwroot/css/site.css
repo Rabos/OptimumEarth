@@ -136,22 +136,6 @@ img {
     border: 0;
 }
 
-.skip-link {
-    position: absolute;
-    left: 16px;
-    top: -60px;
-    background: var(--blue);
-    color: #fff;
-    padding: 12px 18px;
-    border-radius: var(--radius);
-    z-index: 100;
-    transition: top .18s;
-}
-
-    .skip-link:focus {
-        top: 16px;
-    }
-
 .shell {
     max-width: 1440px;
     margin: 0 auto;
