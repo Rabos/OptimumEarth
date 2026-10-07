@@ -313,9 +313,52 @@ img {
 
 /* ---------- Header ---------- */
 
-.site-header {
+.has-dashboard-banner {
+    --dashboard-banner-height: 44px;
+}
+
+.dashboard-banner {
     position: sticky;
     top: 0;
+    z-index: 30;
+    flex-shrink: 0;
+    background: var(--navy-deep);
+    color: var(--white);
+    font-size: 13px;
+}
+
+.dashboard-banner__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 44px;
+    padding: 8px clamp(16px, 4vw, 56px);
+}
+
+.dashboard-banner a {
+    color: var(--white);
+    font-weight: 600;
+    white-space: nowrap;
+    padding: 4px 0;
+}
+
+.dashboard-banner a:hover {
+    text-decoration: underline;
+}
+
+.dashboard-banner a:focus-visible {
+    outline: 2px solid var(--white);
+    outline-offset: 4px;
+}
+
+.has-dashboard-banner [id] {
+    scroll-margin-top: calc(var(--header-height) + var(--dashboard-banner-height) + 16px);
+}
+
+.site-header {
+    position: sticky;
+    top: var(--dashboard-banner-height, 0px);
     z-index: 20;
     border-bottom: 1px solid var(--grey-150);
 }
@@ -496,29 +539,16 @@ img {
 
 .site-footer__upper {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.3fr) minmax(0, .8fr) minmax(0, 1.1fr) minmax(0, .8fr);
     align-items: start;
     gap: 32px;
     padding: 44px 56px;
 }
 
-.site-footer__brand {
-    grid-column: span 2;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.site-footer__heading {
-    color: #fff;
-    font-weight: 600;
-    font-size: 14px;
-    margin: 0 0 2px;
-}
-
+/* Let older compiled layouts use the same five-column footer. */
+.site-footer__brand,
 .site-footer__office-list {
-    display: grid;
-    gap: 12px;
+    display: contents;
 }
 
 .site-footer__office {
@@ -543,6 +573,7 @@ img {
     margin: 0;
     font: inherit;
     font-style: normal;
+    overflow-wrap: anywhere;
 }
 
     .site-footer__address a {
@@ -656,7 +687,7 @@ img {
 /* The home page has no site header (see .theme-home below), so its hero
    fills the full viewport instead of leaving room for one. */
 .theme-home .hero-carousel {
-    height: 100vh;
+    height: calc(100vh - var(--dashboard-banner-height, 0px));
 }
 
 .hero-carousel__slide {
@@ -1661,10 +1692,6 @@ img {
     color: var(--green);
 }
 
-.theme-zambia .dest-overview__eyebrow {
-    color: var(--grey);
-}
-
 .dest-overview__quote {
     font-family: 'Newsreader', serif;
     font-size: 16px;
@@ -1678,15 +1705,21 @@ img {
     color: var(--green-ink);
 }
 
-.theme-zambia .dest-overview__quote {
-    color: var(--grey-900);
-}
-
 .dest-overview__body {
     font-size: 16px;
     line-height: 1.7;
     color: var(--grey);
     max-width: 680px;
+}
+
+:is(.theme-uganda, .theme-zambia) .dest-overview__main > p {
+    font-family: 'Archivo', system-ui, sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--grey);
+    max-width: 680px;
+    text-wrap: pretty;
 }
 
 .dest-overview__quote--intro {
@@ -1917,10 +1950,6 @@ img {
     color: var(--green);
 }
 
-.theme-zambia .glance-panel__title {
-    color: var(--grey);
-}
-
 .glance-row {
     display: grid;
     grid-template-columns: max-content minmax(0, 1fr);
@@ -1949,10 +1978,6 @@ img {
 
 .theme-foundation .glance-row__value {
     color: var(--green-ink);
-}
-
-.theme-zambia .glance-row__value {
-    color: var(--grey-900);
 }
 
 .dest-section {
@@ -4351,14 +4376,9 @@ img {
     }
 }
 
-@media (min-width: 1180px) {
-    .site-footer__office-list {
+@media (max-width: 1179px) {
+    .site-footer__upper {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        align-items: start;
-    }
-
-    .site-footer__office {
-        height: 100%;
     }
 }
 
@@ -4379,7 +4399,7 @@ img {
     }
 
     .theme-home .hero-carousel {
-        height: 100dvh;
+        height: calc(100dvh - var(--dashboard-banner-height, 0px));
         min-height: 560px;
     }
 

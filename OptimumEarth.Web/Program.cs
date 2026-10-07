@@ -83,6 +83,8 @@ builder.Services.AddScoped<ContentReader>();
 builder.Services.AddScoped<AccessContext>();
 builder.Services.AddScoped<AuditService>();
 builder.Services.AddScoped<InquiryService>();
+builder.Services.AddScoped<InquiryEmailService>();
+builder.Services.AddHostedService<InquiryEmailWorker>();
 builder.Services.AddScoped<MediaService>();
 builder.Services.AddHostedService<InquiryRetentionService>();
 

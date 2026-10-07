@@ -32,6 +32,7 @@ public class AppDbContext : IdentityDbContext<AppUser, Microsoft.AspNetCore.Iden
     public DbSet<BlogRevision> BlogRevisions => Set<BlogRevision>();
     public DbSet<SiteSettings> Settings => Set<SiteSettings>();
     public DbSet<Inquiry> Inquiries => Set<Inquiry>();
+    public DbSet<EmailMailbox> EmailMailboxes => Set<EmailMailbox>();
     public DbSet<MediaAsset> Media => Set<MediaAsset>();
     public DbSet<AuditEntry> AuditEntries => Set<AuditEntry>();
     public DbSet<UserAreaAccess> AreaAccess => Set<UserAreaAccess>();
@@ -76,9 +77,17 @@ public class AppDbContext : IdentityDbContext<AppUser, Microsoft.AspNetCore.Iden
         });
 
         b.Entity<SiteSettings>().Property(s => s.ContentVersion).HasDefaultValue(1);
+        b.Entity<SiteSettings>().Property(s => s.DefaultEmailDestination).HasDefaultValue("Uganda");
 
         b.Entity<MediaAsset>().HasIndex(m => m.Path).IsUnique();
         b.Entity<Inquiry>().HasIndex(i => i.CreatedUtc);
+        b.Entity<Inquiry>().HasIndex(i => i.EmailDelivery);
+        b.Entity<EmailMailbox>(e =>
+        {
+            e.HasKey(m => m.Destination);
+            e.Property(m => m.Destination).HasMaxLength(20);
+            e.Property(m => m.Address).HasMaxLength(180);
+        });
         b.Entity<AuditEntry>().HasIndex(a => a.WhenUtc);
     }
 }

@@ -14,7 +14,7 @@ public static class SeedData
     private const string Img = "/img/optimum-earth-images/";
 
     /// <summary>The content version a freshly seeded database starts at. See <see cref="ContentUpgrades"/>.</summary>
-    public const int CurrentContentVersion = 3;
+    public const int CurrentContentVersion = 4;
 
     public static List<Slide> Slides() => new()
     {
@@ -306,7 +306,7 @@ public static class SeedData
         SectionTwoTitle = "Projects", SectionTwoLinkText = "All projects", SectionTwoLinkHref = "/projects",
         SectionTwoNote = "Zambia case studies will be published as projects are delivered and client permissions are confirmed.",
         CtaTitle = "Work with our Zambia team",
-        CtaBody = "Lusaka, Zambia · Office address to be confirmed · zambia@optimum-earth.com",
+        CtaBody = "Oilfield Garden, Plot 12 - Flat 4 · Kabulonga, Kudu Rd · Lusaka, Zambia · zambia@optimum-earth.com",
         CtaServices = new() { "Water supply solutions", "Energy & infrastructure", "Groundwater monitoring", "GIS & mapping" },
     };
 
