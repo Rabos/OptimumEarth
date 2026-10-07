@@ -11,6 +11,7 @@ namespace OptimumEarth.Web.Data;
 /// SDG approach documents and the rewritten Uganda and Zambia pages.
 ///
 /// Version 3 normalizes the Zambia country-page contact line to match the footer.
+/// Version 4 fills the confirmed Zambia office address.
 ///
 /// Each section is replaced only if it still matches the original seeded content exactly;
 /// a section someone has edited in the dashboard is left alone and reported in the log, so
@@ -39,6 +40,7 @@ public static class ContentUpgrades
     private const string V1UgandaFacts = "Sectors | Water · Energy · Mining";
     private const string V1ZambiaFacts = "Status | Establishing";
     private const string V2ZambiaCtaBody = "Office address to be confirmed · zambia@optimum-earth.com";
+    private const string V3ZambiaCtaBody = "Lusaka, Zambia · Office address to be confirmed · zambia@optimum-earth.com";
 
     public static async Task ApplyAsync(AppDbContext db, ILogger logger, CancellationToken ct)
     {
@@ -196,7 +198,7 @@ public static class ContentUpgrades
             upgraded.Add("Country pages");
         }
 
-        if (zambia is not null && zambia.CtaBody == V2ZambiaCtaBody)
+        if (zambia is not null && (zambia.CtaBody == V2ZambiaCtaBody || zambia.CtaBody == V3ZambiaCtaBody))
         {
             zambia.CtaBody = SeedData.Zambia().CtaBody;
             upgraded.Add("Zambia CTA contact line");

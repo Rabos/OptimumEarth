@@ -72,7 +72,13 @@ else
                     <dt>Service</dt><dd>@(string.IsNullOrEmpty(q.Service) ? "—" : q.Service)</dd>
                     <dt>Form</dt><dd>@(q.Source == "Quick" ? "Short form on a country page" : "Contact page")</dd>
                     <dt>Received</dt><dd>@q.CreatedUtc.ToString("d MMM yyyy HH:mm") UTC</dd>
+                    <dt>Email delivery</dt><dd>@q.EmailDelivery @(q.EmailSentUtc is { } sent ? "· " + sent.ToString("d MMM yyyy HH:mm") + " UTC" : "")</dd>
                 </dl>
+                @if (!string.IsNullOrEmpty(q.EmailDeliveryError)) { <p class="hint">@q.EmailDeliveryError</p> }
+                @if (canEdit && q.EmailDelivery is EmailDeliveryStatus.Failed or EmailDeliveryStatus.NotConfigured or EmailDeliveryStatus.NotQueued)
+                {
+                    <form method="post" asp-page-handler="RetryEmail" asp-route-id="@q.Id"><button class="btn" type="submit">@(q.EmailDelivery == EmailDeliveryStatus.NotQueued ? "Send email notification" : "Retry email")</button></form>
+                }
                 @if (!string.IsNullOrEmpty(q.Message)) { <div style="border-top:1px solid var(--line);padding-top:12px;white-space:pre-wrap">@q.Message</div> }
                 <form method="post" asp-page-handler="Note" asp-route-id="@q.Id" novalidate>
                     <input type="hidden" name="q" value="@Model.Q" /><input type="hidden" name="dest" value="@Model.Dest" /><input type="hidden" name="size" value="@Model.Size" />

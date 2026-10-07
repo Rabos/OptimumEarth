@@ -14,6 +14,7 @@ public class SiteSettings
     public string UgandaTo { get; set; } = string.Empty;
     public string ZambiaTo { get; set; } = string.Empty;
     public string FoundationTo { get; set; } = string.Empty;
+    public string DefaultEmailDestination { get; set; } = "Uganda";
 
     /// <summary>Enquiries older than this are deleted, since they hold personal data.</summary>
     public int RetentionMonths { get; set; } = 24;
@@ -53,6 +54,10 @@ public class Inquiry
     public string Message { get; set; } = string.Empty;
     public InquiryStatus Status { get; set; } = InquiryStatus.New;
     public string Note { get; set; } = string.Empty;
+    public EmailDeliveryStatus EmailDelivery { get; set; } = EmailDeliveryStatus.NotQueued;
+    public DateTime? EmailAttemptUtc { get; set; }
+    public DateTime? EmailSentUtc { get; set; }
+    public string EmailDeliveryError { get; set; } = string.Empty;
 }
 
 public class MediaAsset

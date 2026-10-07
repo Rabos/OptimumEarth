@@ -133,6 +133,21 @@ public class InquiriesModel : AdminPageModel
         return RedirectToPage(new { q = Q, status = Status, dest = Dest, size = Size });
     }
 
+    public async Task<IActionResult> OnPostRetryEmailAsync(int id)
+    {
+        var updated = await _db.Inquiries.Where(i => i.Id == id &&
+            (i.EmailDelivery == EmailDeliveryStatus.Failed || i.EmailDelivery == EmailDeliveryStatus.NotConfigured || i.EmailDelivery == EmailDeliveryStatus.NotQueued))
+            .ExecuteUpdateAsync(s => s.SetProperty(i => i.EmailDelivery, EmailDeliveryStatus.Pending)
+                .SetProperty(i => i.EmailDeliveryError, string.Empty));
+        if (updated > 0)
+        {
+            await _audit.LogAsync(AdminAreas.Inquiries, "Inquiries", "Queued email retry", id.ToString());
+            TempData["Flash"] = "Email queued for delivery.";
+        }
+        else TempData["FlashError"] = "Email is already queued, sending or sent.";
+        return Back(id);
+    }
+
     /// <summary>Downloads the filtered inquiries as CSV. Personal data, so it needs Edit.</summary>
     public async Task<IActionResult> OnGetExportAsync()
     {

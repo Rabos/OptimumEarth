@@ -1,0 +1,44 @@
+@page "/admin/email"
+@model EmailModel
+@{
+    ViewData["Title"] = "Email configuration";
+}
+<div class="page-head">
+    <div><h1>Email configuration</h1><p class="sub">Hostinger mailboxes for website enquiries. Each destination uses its own sending mailbox. Replies go to the visitor's email address.</p></div>
+    <a class="btn" href="/admin/content/settings">Site settings</a>
+</div>
+<div class="card formcard">
+    <p><b>Hostinger SMTP:</b> smtp.hostinger.com · Port 465 · SSL/TLS</p>
+    <p class="hint">Mailbox passwords are encrypted and never shown after saving. Only the super admin can manage these settings.</p>
+    <form method="post" asp-page-handler="Default">
+        <label class="fld"><span class="fl">Default destination for “Not sure yet”</span>
+            <select name="destination">
+                @foreach (var destination in InquiryEmailService.Destinations)
+                {
+                    <option value="@destination" selected="@(destination == Model.DefaultDestination)">@destination</option>
+                }
+            </select>
+        </label>
+        <button class="btn" type="submit">Save default</button>
+    </form>
+</div>
+@foreach (var mailbox in Model.Mailboxes)
+{
+    <section class="card formcard" style="margin-top:24px" aria-labelledby="mailbox-@mailbox.Destination">
+        <h2 id="mailbox-@mailbox.Destination">@mailbox.Destination</h2>
+        <form method="post" asp-page-handler="Save" autocomplete="off">
+            <input type="hidden" name="Input.Destination" value="@mailbox.Destination" />
+            <div class="fgrid">
+                <label class="fld"><span class="fl">Sending mailbox / SMTP username</span><input type="email" name="Input.Address" value="@mailbox.Address" required maxlength="180" /></label>
+                <label class="fld"><span class="fl">Send enquiries to</span><input type="email" name="Input.Recipient" value="@mailbox.Recipient" required maxlength="180" /></label>
+                <label class="fld"><span class="fl">Mailbox password</span><input type="password" name="Input.Password" autocomplete="new-password" maxlength="1000" /><span class="hint">@(mailbox.HasPassword ? "Password saved. Leave blank to keep it; enter a new password to replace it." : "Enter this mailbox's password to enable delivery.")</span></label>
+            </div>
+            <div class="btnrow"><button class="btn btn--pri" type="submit">Save @mailbox.Destination mailbox</button></div>
+        </form>
+        <form method="post" asp-page-handler="Test" style="margin-top:12px">
+            <input type="hidden" name="destination" value="@mailbox.Destination" />
+            <button class="btn" type="submit" disabled="@(!mailbox.HasPassword)">Send test email</button>
+            <span class="hint">Uses the saved settings and sends to the configured recipient.</span>
+        </form>
+    </section>
+}

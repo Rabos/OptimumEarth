@@ -14,6 +14,7 @@
         <p class="sub">@d.Description</p>
     </div>
     <div class="actions">
+        @if (d.Slug == "settings" && Model.Access.IsSuperAdmin) { <a class="btn" href="/admin/email">Email configuration</a> }
         @if (!d.Single) { <a class="btn" href="@list">Back to @d.Label.ToLowerInvariant()</a> }
         @if (d.HasStatus && data.Id is not null) { <span class="tag @(data.StatusKey == "draft" ? "t-amber" : data.StatusKey == "scheduled" ? "t-blue" : "t-green")">@data.StatusLabel</span> }
     </div>

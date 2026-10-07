@@ -1,7 +1,9 @@
 @using System.Text.Json
 @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @inject OptimumEarth.Web.Services.ContentReader Content
+@inject OptimumEarth.Web.Services.AccessContext AccessContext
 @{
+    var showDashboardBanner = User.Identity?.IsAuthenticated == true && (await AccessContext.GetAsync()).IsSignedIn;
     var theme = ViewData["Theme"] as string ?? "home";
     var title = ViewData["Title"] as string ?? "Optimum Earth";
     var description = ViewData["Description"] as string ??
@@ -119,7 +121,17 @@
         <script type="application/ld+json">@Html.Raw(breadcrumbJsonLd)</script>
     }
 </head>
-<body class="theme-@theme">
+<body class="theme-@theme @(showDashboardBanner ? "has-dashboard-banner" : "")">
+
+    @if (showDashboardBanner)
+    {
+        <nav class="dashboard-banner" aria-label="Admin navigation">
+            <div class="shell dashboard-banner__inner">
+                <span>You're signed in</span>
+                <a href="/admin">Back to dashboard <span aria-hidden="true">&rarr;</span></a>
+            </div>
+        </nav>
+    }
 
     @if (theme != "home")
     {
@@ -134,9 +146,6 @@
     {
         <footer class="site-footer">
             <div class="shell site-footer__upper">
-                <div class="site-footer__brand">
-                    <!--<h3 class="site-footer__heading">Offices</h3>-->
-                    <div class="site-footer__office-list">
                         <section class="site-footer__office" aria-label="Uganda office">
                             <span class="site-footer__wordmark">OPTIMUM EARTH Uganda</span>
                             <address class="site-footer__address">
@@ -153,13 +162,9 @@
                                 <span>Oilfield Garden, Plot 12 - Flat 4</span>
                                 <span>Kabulonga, Kudu Rd</span>
                                 <span>Lusaka, Zambia</span>
-                                <span>Office address to be confirmed</span>
                                 <a href="mailto:zambia@optimum-earth.com">zambia@optimum-earth.com</a>
                             </address>
                         </section>
-                    </div>
-                </div>
-
                 <nav class="site-footer__col" aria-label="Destinations">
                     <h3>Destinations</h3>
                     <a href="/uganda">Uganda</a>

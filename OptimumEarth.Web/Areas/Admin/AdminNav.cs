@@ -44,6 +44,7 @@ public static class AdminNav
         new("Site", new NavItem[]
         {
             new("Site settings", "/admin/content/settings", AdminAreas.Settings),
+            new("Email configuration", "/admin/email", SuperAdminOnly: true),
             new("Audit log", "/admin/audit"),
         }),
         new("Access", new NavItem[] { new("Users", "/admin/users", SuperAdminOnly: true) }),

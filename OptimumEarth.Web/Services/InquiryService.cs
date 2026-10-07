@@ -20,6 +20,7 @@ public sealed class InquiryService
         _db.Inquiries.Add(new Inquiry
         {
             Source = "Contact",
+            EmailDelivery = EmailDeliveryStatus.Pending,
             Destination = form.Destination,
             FullName = form.FullName.Trim(),
             Organisation = form.Organisation?.Trim() ?? string.Empty,
@@ -39,6 +40,7 @@ public sealed class InquiryService
         _db.Inquiries.Add(new Inquiry
         {
             Source = "Quick",
+            EmailDelivery = EmailDeliveryStatus.Pending,
             Destination = form.Destination,
             FullName = form.FullName.Trim(),
             Email = form.Email.Trim(),

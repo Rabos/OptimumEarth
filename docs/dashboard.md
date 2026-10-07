@@ -30,6 +30,18 @@ dotnet run --project OptimumEarth.Web
 
 `appsettings.Development.json` points at `oe_dev` on localhost. New migrations: `dotnet ef migrations add <Name> -o Data/Migrations` from `OptimumEarth.Web`.
 
+## Website enquiry email
+
+The super admin manages **Site → Email configuration** (`/admin/email`), also linked from Site settings. Enter a sending mailbox, its Hostinger password and a recipient for each destination (Uganda, Zambia and Foundation). The shared server is `smtp.hostinger.com`, port 465 with SSL/TLS. Save each profile, then use **Send test email** to send to its saved recipient. A blank password keeps the existing credential; changing the sending mailbox requires a password. Passwords are encrypted with ASP.NET Data Protection and never displayed, exported or written to the audit log. Preserve the database's Data Protection key ring along with the mailbox records when backing up or moving the site.
+
+The Contact page selects Foundation for Foundation supporters, otherwise the selected country. Country and Foundation forms use their own destination. “Not sure yet” uses the default selected in Email configuration (initially Uganda). The sending mailbox is the SMTP username and From address; Reply-To is the visitor's email. Recipient addresses are shared with the existing Site settings enquiry-routing fields.
+
+Forms save enquiries before email delivery. A background worker checks the durable queue every ten seconds; SMTP failures do not discard enquiries or fail the visitor's submission. Delivery status and a retry button appear in **Inquiries**. Failed or unconfigured deliveries require a manual retry after correcting settings. Existing enquiries remain unqueued until explicitly sent. If delivery was interrupted, check the inbox before retrying because Hostinger may already have accepted the message. “Sent” means SMTP acceptance, not guaranteed inbox delivery.
+
+The `AddHostingerEmail` migration adds mailbox profiles, the default destination and enquiry delivery fields. The app applies pending migrations on startup; restart the updated application to install the schema before opening Email configuration.
+
+Run the offline routing, encryption and migration checks with `dotnet run --project tests/EmailChecks`. These checks do not connect to a database or send email. Verify actual SMTP delivery using each profile's test button after entering real credentials.
+
 ## People and access
 
 - **Super admin** is hidden: it is never listed, counted or searchable, cannot be edited from the screen, and appears in the audit log as "Platform admin". It is the only role that can open Users. To rotate its password: `SuperAdmin__Password='new-long-passphrase' dotnet OptimumEarth.Web.dll --reset-superadmin`.
