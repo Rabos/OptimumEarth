@@ -22,7 +22,24 @@
         {
             <div class="glance-row">
                 <span class="glance-row__key">@fact.Key</span>
-                <span class="glance-row__value">@fact.Value</span>
+                <span class="glance-row__value">
+                    @if (string.Equals(fact.Key, "Sectors", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var sectors = fact.Value.Split('·', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                        @for (var i = 0; i < sectors.Length; i++)
+                        {
+                            if (i > 0)
+                            {
+                                <text> · </text>
+                            }
+                            <span class="glance-row__sector">@sectors[i]</span>
+                        }
+                    }
+                    else
+                    {
+                        @fact.Value
+                    }
+                </span>
             </div>
         }
     </aside>
