@@ -44,7 +44,6 @@ public sealed partial class ResponsiveImageTagHelper(IWebHostEnvironment env, IC
             var variants = ImageOptimizer.Widths.Select(w => $"{QueryHelpers.AddQueryString(path, "w", w.ToString())} {w}w");
             output.Attributes.SetAttribute("src", QueryHelpers.AddQueryString(path, "w", "1920"));
             output.Attributes.SetAttribute("srcset", string.Join(", ", variants));
-            if (!output.Attributes.ContainsName("sizes")) output.Attributes.SetAttribute("sizes", "100vw");
             if (!output.Attributes.ContainsName("loading")) output.Attributes.SetAttribute("loading", "lazy");
             output.Attributes.SetAttribute("decoding", "async");
             if (Priority == "high")
@@ -52,6 +51,8 @@ public sealed partial class ResponsiveImageTagHelper(IWebHostEnvironment env, IC
                 output.Attributes.SetAttribute("loading", "eager");
                 output.Attributes.SetAttribute("fetchpriority", "high");
             }
+            if (!output.Attributes.ContainsName("sizes"))
+                output.Attributes.SetAttribute("sizes", output.Attributes["loading"]?.Value?.ToString() == "lazy" ? "auto, 100vw" : "100vw");
             return;
         }
         var style = output.Attributes["style"]?.Value?.ToString() ?? "";
