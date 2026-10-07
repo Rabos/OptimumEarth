@@ -9,9 +9,11 @@ public static class ImageOptimizer
 
     public static byte[] Optimize(byte[] bytes, int width = MaxDimension)
     {
-        using var probe = new MagickImage();
+        using var probe = new MagickImageCollection();
         probe.Ping(bytes);
-        if ((long)probe.Width * probe.Height > 40_000_000)
+        if (probe.Count != 1)
+            throw new InvalidDataException("Please upload a still image; animated images are not supported.");
+        if ((long)probe[0].Width * probe[0].Height > 40_000_000)
             throw new InvalidDataException("Images must contain fewer than 40 million pixels.");
         using var frames = new MagickImageCollection(bytes);
         if (frames.Count != 1)
