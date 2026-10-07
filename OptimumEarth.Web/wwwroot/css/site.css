@@ -1976,6 +1976,10 @@ img {
     text-align: right;
 }
 
+.glance-row__sector {
+    display: inline-block;
+    white-space: nowrap;
+}
 .theme-foundation .glance-row__value {
     color: var(--green-ink);
 }
