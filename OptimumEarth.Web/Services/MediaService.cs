@@ -65,19 +65,32 @@ public sealed class MediaService
 
         var folder = DateTime.UtcNow.ToString("yyyyMM");
         Directory.CreateDirectory(Path.Combine(_uploadsPath, folder));
-        var stored = $"{Guid.NewGuid():N}{extension.ToLowerInvariant()}";
-        var physical = Path.Combine(_uploadsPath, folder, stored);
-        await using (var target = File.Create(physical))
+        byte[] optimized;
+        try
         {
-            await file.CopyToAsync(target);
+            await using var input = file.OpenReadStream();
+            using var buffer = new MemoryStream();
+            await input.CopyToAsync(buffer);
+            optimized = ImageOptimizer.Optimize(buffer.ToArray());
         }
+        catch (InvalidDataException ex)
+        {
+            return new(null, ex.Message);
+        }
+        catch (ImageMagick.MagickException)
+        {
+            return new(null, $"{file.FileName} could not be decoded. Please upload a valid image.");
+        }
+        var stored = $"{Guid.NewGuid():N}.webp";
+        var physical = Path.Combine(_uploadsPath, folder, stored);
+        await File.WriteAllBytesAsync(physical, optimized);
 
         var asset = new MediaAsset
         {
             FileName = Path.GetFileName(file.FileName),
             Path = $"/uploads/{folder}/{stored}",
-            SizeBytes = file.Length,
-            ContentType = contentType,
+            SizeBytes = optimized.Length,
+            ContentType = "image/webp",
         };
         _db.Media.Add(asset);
         await _db.SaveChangesAsync();

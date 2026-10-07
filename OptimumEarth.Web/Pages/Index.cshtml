@@ -9,14 +9,14 @@
 <section class="hero-carousel" data-hero-carousel aria-roledescription="carousel" aria-label="Optimum Earth destinations">
     <a href="/who-we-are" class="hero-carousel__who-btn btn btn--nav btn--ghost">Who We Are</a>
     <a href="/" class="hero-carousel__logo" aria-label="Optimum Earth home">
-        <img class="hero-carousel__logo-img" src="~/img/logo.svg" alt="Optimum Earth" loading="lazy" decoding="async" />
+        <img class="hero-carousel__logo-img" src="~/img/logo.svg" alt="Optimum Earth" loading="eager" decoding="async" />
     </a>
 
     @for (var i = 0; i < Model.HeroSlides.Count; i++)
     {
         var slide = Model.HeroSlides[i];
         <div class="hero-carousel__slide@(i == 0 ? " is-active" : "")" data-hero-slide="@i">
-            <div class="img-slot" role="img" aria-label="@slide.ImageLabel" style="background-image: url('@slide.ImagePath')"></div>
+            <div class="img-slot" role="img" aria-label="@slide.ImageLabel" image-priority="@(i == 0 ? "high" : "deferred")" style="background-image: url('@slide.ImagePath')"></div>
         </div>
     }
     <div class="hero-carousel__scrim" aria-hidden="true"></div>

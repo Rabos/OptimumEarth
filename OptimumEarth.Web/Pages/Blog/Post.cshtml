@@ -19,7 +19,7 @@
 
     @if (!string.IsNullOrEmpty(p.CoverPath))
     {
-        <div class="blog-post__cover" role="img" aria-label="@p.Title" style="background-image: url('@p.CoverPath')"></div>
+        <div class="blog-post__cover" role="img" aria-label="@p.Title" image-priority="high" style="background-image: url('@p.CoverPath')"></div>
     }
 
     <div class="blog-prose">@Html.Raw(p.Html)</div>

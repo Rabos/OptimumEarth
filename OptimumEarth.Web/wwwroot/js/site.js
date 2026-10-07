@@ -3,6 +3,29 @@
 
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  var loadBackground = function (element) {
+    var template = element.getAttribute("data-image-style");
+    if (!template) return;
+    var needed = Math.max(element.clientWidth, 1) * (window.devicePixelRatio || 1);
+    var width = needed <= 480 ? 480 : needed <= 960 ? 960 : 1920;
+    element.setAttribute("style", template.replace(/IMAGE_WIDTH/g, String(width)));
+    element.removeAttribute("data-image-style");
+  };
+  var backgroundImages = document.querySelectorAll("[data-image-style]:not([data-image-deferred])");
+  if ("IntersectionObserver" in window) {
+    var imageObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          loadBackground(entry.target);
+          imageObserver.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: "300px" });
+    backgroundImages.forEach(function (element) { imageObserver.observe(element); });
+  } else {
+    backgroundImages.forEach(loadBackground);
+  }
+
   // Mobile navigation: full-page overlay, opened by the header hamburger
   // and closed via its own close button, a link tap, or Escape.
   var toggle = document.querySelector("[data-nav-toggle]");
@@ -44,6 +67,7 @@
     var timer = null;
 
     var show = function (index) {
+      slides[index].querySelectorAll("[data-image-style]").forEach(loadBackground);
       current = index;
       slides.forEach(function (slide, i) { slide.classList.toggle("is-active", i === index); });
       copies.forEach(function (copy, i) { copy.hidden = i !== index; });
