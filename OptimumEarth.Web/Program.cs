@@ -98,7 +98,11 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseResponseCompression();
-app.UseStaticFiles();
+app.UseMiddleware<ImageVariantMiddleware>();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = context => context.Context.Response.Headers.CacheControl = "public,max-age=86400"
+});
 
 // Uploaded images live outside wwwroot so a redeploy that replaces the app
 // folder does not delete them. Point Storage:UploadsPath at a folder that
@@ -109,6 +113,7 @@ app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(uploadsPath),
     RequestPath = "/uploads",
+    OnPrepareResponse = context => context.Context.Response.Headers.CacheControl = "public,max-age=86400",
 });
 
 // The dashboard is for staff only: keep it out of search results.

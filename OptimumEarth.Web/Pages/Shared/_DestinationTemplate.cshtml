@@ -1,7 +1,7 @@
 @model OptimumEarth.Web.Models.DestinationPageViewModel
 
 <div class="dest-hero">
-    <img class="dest-hero__media" src="@Model.HeroImagePath" alt="@Model.HeroImageLabel" loading="lazy" decoding="async" />
+    <img class="dest-hero__media" src="@Model.HeroImagePath" alt="@Model.HeroImageLabel" image-priority="high" />
     <div class="dest-hero__scrim" aria-hidden="true"></div>
     <div class="dest-hero__copy">
         <span class="dest-hero__eyebrow">@Model.HeroEyebrow</span>
