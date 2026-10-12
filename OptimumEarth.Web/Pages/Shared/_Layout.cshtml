@@ -16,7 +16,7 @@
     var siteUrl = (Configuration["SiteUrl"] ?? "https://optimum-earth.com").TrimEnd('/');
     var path = Context.Request.Path.Value?.ToLowerInvariant().TrimEnd('/') ?? "";
     var canonicalUrl = siteUrl + (path.Length == 0 ? "/" : path);
-    var ogImageUrl = ViewData["OgImage"] as string ?? (siteUrl + "/img/og-image.png");
+    var ogImageUrl = ViewData["OgImage"] as string ?? (siteUrl + $"/img/{(path.Contains("foundation", StringComparison.OrdinalIgnoreCase) ? "foundation-logo" : "og-image")}.png");
     var logoUrl = siteUrl + "/img/logo-icon.png";
 
     // Most page titles are already brand-qualified ("Optimum Earth Foundation
@@ -146,25 +146,25 @@
     {
         <footer class="site-footer">
             <div class="shell site-footer__upper">
-                        <section class="site-footer__office" aria-label="Uganda office">
-                            <span class="site-footer__wordmark">OPTIMUM EARTH Uganda</span>
-                            <address class="site-footer__address">
-                                <span>Roston House, Plot 56/57</span>
-                                <span>Chorley Crescent Rd</span>
-                                <span>Luzira, Uganda</span>
-                                <a href="tel:+256784080551">+256 784 080551</a>
-                                <a href="mailto:uganda@optimum-earth.com">uganda@optimum-earth.com</a>
-                            </address>
-                        </section>
-                        <section class="site-footer__office" aria-label="Zambia office">
-                            <span class="site-footer__wordmark">OPTIMUM EARTH Zambia</span>
-                            <address class="site-footer__address">
-                                <span>Oilfield Garden, Plot 12 - Flat 4</span>
-                                <span>Kabulonga, Kudu Rd</span>
-                                <span>Lusaka, Zambia</span>
-                                <a href="mailto:zambia@optimum-earth.com">zambia@optimum-earth.com</a>
-                            </address>
-                        </section>
+                <section class="site-footer__office" aria-label="Uganda office">
+                    <span class="site-footer__wordmark">OPTIMUM EARTH Uganda</span>
+                    <address class="site-footer__address">
+                        <span>Roston House, Plot 56/57</span>
+                        <span>Chorley Crescent Rd</span>
+                        <span>Luzira, Uganda</span>
+                        <a href="tel:+256784080551">+256 784 080551</a>
+                        <a href="mailto:uganda@optimum-earth.com">uganda@optimum-earth.com</a>
+                    </address>
+                </section>
+                <section class="site-footer__office" aria-label="Zambia office">
+                    <span class="site-footer__wordmark">OPTIMUM EARTH Zambia</span>
+                    <address class="site-footer__address">
+                        <span>Oilfield Garden, Plot 12 - Flat 4</span>
+                        <span>Kabulonga, Kudu Rd</span>
+                        <span>Lusaka, Zambia</span>
+                        <a href="mailto:zambia@optimum-earth.com">zambia@optimum-earth.com</a>
+                    </address>
+                </section>
                 <nav class="site-footer__col" aria-label="Destinations">
                     <h3>Destinations</h3>
                     <a href="/uganda">Uganda</a>
@@ -184,7 +184,10 @@
                     <h3>Company</h3>
                     <a href="/">Home</a>
                     <a href="/projects">Projects</a>
-                    @if (await Content.HasBlogAsync()) { <a href="/blog">Blog</a> }
+                    @if (await Content.HasBlogAsync())
+                    {
+                        <a href="/blog">Blog</a>
+                    }
                     <a href="/contact">Work With Us</a>
                 </nav>
             </div>
