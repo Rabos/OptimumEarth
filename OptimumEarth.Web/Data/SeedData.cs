@@ -14,7 +14,7 @@ public static class SeedData
     private const string Img = "/img/optimum-earth-images/";
 
     /// <summary>The content version a freshly seeded database starts at. See <see cref="ContentUpgrades"/>.</summary>
-    public const int CurrentContentVersion = 6;
+    public const int CurrentContentVersion = 7;
 
     public static List<Slide> Slides() => new()
     {
@@ -151,19 +151,17 @@ public static class SeedData
     /// <summary>The project each service shows as "In practice", by service slug and project title.</summary>
     public static readonly IReadOnlyDictionary<string, string> PracticeProjects = new Dictionary<string, string>
     {
-        ["technical-studies"] = "Makuutu Bankable Feasibility Study - Hydrogeology Programme",
+        ["technical-studies"] = "Makuutu Bankable Feasibility Study: Hydrogeology Programme",
         ["engineering-design"] = "Mbale Industrial Park Water & Sewage Masterplan",
-        ["construction"] = "Groundwater Monitoring Network - Kingfisher Oilfield",
+        ["construction"] = "Groundwater Monitoring Network, Kingfisher Oilfield",
         ["esia"] = "Pivot Irrigation ESIA",
         ["climate-resilience"] = ImatongTitle,
     };
 
-    public const string ImatongTitle = "Imatong Forest Reserve: land cover change and management zoning";
+    public const string ImatongTitle = "Imatong Forest Reserve: Land Cover Change & Management Zoning";
 
-    /// <summary>Added for the Services page's climate case study; existing databases get it from the content upgrade.</summary>
-    public static Project Imatong() =>
-        P(ImatongTitle, "SOUTH SUDAN · 2025", "Client: IUCN", "southsudan", "climate", Img + "aerial/drone-orom-03.jpg",
-            "Ten-year change analysis, hot spot statistics, erosion and landslide risk, and management zoning for the reserve and its surrounding landscape.");
+    /// <summary>The Services page's climate case study project; databases from before it was seeded get it from the content upgrade.</summary>
+    public static Project Imatong() => ListProjects().Single(p => p.Title == ImatongTitle);
 
     /// <summary>The Services page text, applied to a fresh database and to existing ones where it is still empty.</summary>
     public static void ApplyServicesText(SiteSettings s)
@@ -192,7 +190,31 @@ public static class SeedData
         new() { Key = "public", Name = "Utilities & public sector", Blurb = "Production wells, piped schemes and tank stands", ImagePath = Field + "tank-stand-p.jpg" },
         new() { Key = "community", Name = "Communities", Blurb = "Boreholes and water for schools, hospitals and settlements", ImagePath = Field + "pump-test-p.jpg" },
         new() { Key = "private", Name = "Industry & private", Blurb = "Water, treatment and permitting for industrial sites", ImagePath = Field + "water-treatment-p.jpg" },
+
+        // A sector for projects only: as a draft it stays off the six Services page tiles.
+        new() { Key = "conservation", Name = "Conservation & climate", Blurb = "Land cover, catchment and climate studies for conservation landscapes", ImagePath = Img + "aerial/drone-orom-03.jpg", Status = ContentStatus.Draft },
     };
+
+    /// <summary>The Projects page text, applied to a fresh database and to existing ones where it is still empty.</summary>
+    public static void ApplyProjectsText(SiteSettings s)
+    {
+        s.ProjectsHeadline = "Work delivered, with the client and service attached.";
+        s.ProjectsLede = "Since 2017 we have surveyed, designed and built for oil companies, mines, utilities, power developers and development partners, from Kampala and Lusaka across East, Central and Southern Africa.";
+        s.ProjectsStatFigure = "150+";
+        s.ProjectsStatLabel = "Groundwater development assignments";
+        s.ProjectsCtaImagePath = Img + "aerial/drone-orom-02.jpg";
+    }
+
+    public static List<FieldPhoto> FieldPhotos() => new[]
+    {
+        ("tank-stand-p", "Water supply", "Elevated steel tank stand, commissioned"),
+        ("zambia-truck-p", "Zambia", "Plant and haulage fleet, Optimum Earth Engineering"),
+        ("mining-geology-p", "Mining", "Hydrogeology fieldwork with the client's geologists"),
+        ("pump-test-p", "Groundwater", "Pumping test on a new production borehole"),
+        ("drilling-rig-p", "Drilling", "Borehole drilling and construction"),
+        ("drainage-works-p", "Construction", "Drainage channel excavation under our supervision"),
+        ("solar-handover-p", "Energy", "Solar-powered water system handover"),
+    }.Select(f => new FieldPhoto { ImagePath = Field + f.Item1 + ".jpg", Kicker = f.Item2, Caption = f.Item3 }).ToList();
 
     public static List<Client> Clients() => new[]
     {
@@ -210,59 +232,70 @@ public static class SeedData
         ("camp-03", "Bushland toward the escarpment"),
     }.Select(a => new AerialPhoto { Caption = a.Item2, ImagePath = Img + "aerial/drone-" + a.Item1 + ".jpg" }).ToList();
 
+    private const string Projects = Img + "projects/";
+
     /// <summary>The projects shown on the Projects page, in the order they appear.</summary>
     public static List<Project> ListProjects() => new()
     {
-        P("Kilyango & Kasinyi Borehole Programme", "UGANDA · 2026", "Client: TotalEnergies EP Uganda", "uganda", "construction", Img + "project1.jpg", "Geo-seismic and borehole process/reprocess works: hydrogeological survey, drilling, testing and installation of a new borehole, plus rehabilitation of an existing one."),
-        P("RAP 2-5 Compensation Boreholes", "UGANDA · 2025", "Client: TotalEnergies EP Uganda", "uganda", "construction", Img + "project2.jpg", "Drilling and equipping of six boreholes delivered under an in-kind resettlement compensation programme."),
-        P("Replacement Boreholes for Project-Affected Persons", "UGANDA · 2024-2025", "Client: TotalEnergies EP Uganda", "uganda", "technical", Img + "project3.jpg", "Hydrogeological studies for six replacement boreholes serving communities affected by oil-field development."),
-        P("Tilenga - Production Well Integrity Survey", "UGANDA · 2024", "Client: ASTRO Energy & Mining", "uganda", "technical", Img + "project4.jpg", "Survey, test pumping and borehole integrity assessment of production wells on the Tilenga oil development."),
-        P("Groundwater Monitoring Network - Kingfisher Oilfield", "UGANDA · 2022-2023", "Client: CNOOC Uganda Limited", "uganda", "construction", Img + "recentwork2.jpg", "Drilling of six groundwater monitoring boreholes across the Kingfisher Oil Field Development Area."),
-        P("Hohwa Production Well", "UGANDA · COMPLETED", "Client: Daqing / Kikuube Oil Field", "uganda", "construction", Img + "project6.jpg", "Construction of a production water well serving oil-field operations in Hohwa, Kikuube district."),
-        P("Groundwater Supply Development - Tilenga Industrial Area", "UGANDA · 2026", "Client: Gauff Consultants Uganda Ltd", "uganda", "construction", Img + "project7.jpg", "Drilling and later flushing of production wells supplying the Buliisa oil-industry support zone."),
-        P("Buliisa Borehole Integrity Assessment", "UGANDA · 2024", "Client: ATRO Engineering", "uganda", "technical", Img + "project8.jpg", "Test pumping and borehole integrity assessment of production boreholes supporting oil-field infrastructure."),
-        P("Orom Cross Graphite Mine - Community Water Programme", "UGANDA · 2024", "Client: Consolidated African Resources Ltd / Blencowe Plc", "uganda", "technical", Img + "project9.jpg", "Rehabilitation and upgrade of the locomo solar powered community water-system"),
-        P("Makuutu Bankable Feasibility Study - Hydrogeology Programme", "UGANDA · 2021-2022", "Client: Rwenzori Rare Metals / Ionic Rare Earth", "uganda", "technical", Img + "makuttu.jpg", "Hydrogeology programme delivered as part of the mine's Bankable Feasibility Study."),
-        P("Orom-Cross Graphite DFS Borefield Assessment", "UGANDA · 2023", "Client: Consolidated African Resources Ltd / Blencowe Plc", "uganda", "technical", Img + "project11.jpg", "Definitive Feasibility Study hydrological work and project borefield assessment for a graphite development. Including: drilling, aquifer testing, water quality assessments, hydrogeological design studies"),
-        P("Hima Limestone Quarry Dewatering", "UGANDA · 2021-2022", "Client: Lafarge Holcim / Hima Cement Ltd", "uganda", "construction", Img + "project12.jpg", "Mine dewatering and groundwater control, plus a new water-supply system for a limestone quarry."),
-        P("Dura Quarry Topographic Survey", "UGANDA · 2022", "Client: Hima Cement Ltd", "uganda", "technical", Img + "project13.jpg", "Topographic surveying in support of quarry operations and expansion planning."),
-        P("Hima Quarry Water Supply System", "UGANDA · 2021", "Client: Hima Cement Ltd", "uganda", "construction", Img + "hima-quarry.jpg", "Pipeline and powered water-supply infrastructure serving quarry operations."),
-        P("Quarry Site ERT Survey", "UGANDA · 2022", "Client: Agaba South West Services", "uganda", "technical", Img + "servicepanel4.jpg", "2D electrical resistivity tomography survey for bedrock and site assessment ahead of quarry development."),
-        P("Quarry Bedrock Characterisation Surveys", "UGANDA · 2021", "Client: Private quarry operators", "uganda", "technical", Img + "project15.jpg", "Geophysical surveys for bedrock characterisation at two quarry sites in Mukono district."),
-        P("50 MW Kasempa Solar PV Plant", "ZAMBIA · ONGOING", "Client: Optimum Earth Engineering Ltd", "zambia", "technical", Img + "project16.jpg", "Prefeasibility study complete; detailed feasibility study under way for a 50 MW utility-scale solar PV plant."),
-        P("Pensulo-Mansa 330 kV Transmission Line Corridor", "ZAMBIA · 2026 (ONGOING)", "Client: Optimum Earth Engineering Ltd / ZESCO Limited", "zambia", "technical", Img + "project17.jpg", "Authorised by Zambia's Ministry of Energy to undertake feasibility studies for a 330 kV transmission corridor from Pensulo to Mansa, in collaboration with ZESCO Limited."),
-        P("Waste-to-Energy Plant Site Investigation", "UGANDA · 2024", "Client: NLS Waste Services Ltd", "uganda", "technical", Img + "project18.jpg", "Geotechnical and hydrological investigations for a proposed waste-to-energy generation plant."),
-        P("Pilot Aquifer Recharge Pre-Feasibility Studies", "BURUNDI · 2025", "Client: Rivan Engineering Ltd / Nile Basin Initiative", "burundi", "technical", Img + "project19.jpg", "Geophysical, geotechnical and topographic surveys for pre-feasibility studies of pilot managed aquifer recharge systems."),
-        P("Solar Water Supply & Irrigation, Several Sites", "UGANDA · 2021-2022", "Client: EPM / Nexus Green Ltd / Ministry of Water", "uganda", "engineering", Img + "project20.jpg", "Engineering design and construction supervision for solar-powered water supply and irrigation systems across up to 687 locations nationwide."),
-        P("Corporate Operations Environmental Review", "UGANDA · 2023", "Client: NASECO", "uganda", "environmental", Img + "project21.jpg", "Independent review of company operations and assessment of their environmental impact."),
-        P("Pivot Irrigation ESIA", "UGANDA · ONGOING", "Client: NASECO", "uganda", "environmental", Img + "enhancing-climate.jpg", "Environmental and Social Impact Assessment closure works for an irrigation development project."),
-        P("Nile Basin Transboundary Groundwater Database", "NILE BASIN · COMPLETED", "Client: Centric Solutions Ltd", "uganda", "climate", Img + "project23.jpg", "Development of an online groundwater database management system for transboundary aquifers across the Nile Basin."),
-        P("Namanve Wastewater Quality Testing & Monitoring", "UGANDA · 2022", "Client: Lagan DOTT", "uganda", "environmental", Img + "project24.jpg", "Wastewater quality monitoring programme supporting an industrial park."),
-        P("Fire Protection System Installation", "DRC · COMPLETED", "Client: CAAMENIHU", "drc", "construction", Img + "project25.jpg", "Design, supply and installation of a fire-protection system for an institutional facility."),
-        P("Kiryandongo Solar-Powered Water Supply - Design & Build", "UGANDA · 2024-2025", "Client: DBS Establishments - Embassy of the UAE", "uganda", "construction", Img + "project26.jpg", "Full design-and-build delivery of a solar-powered water-supply system serving a refugee settlement."),
-        P("Kasese Solar Borehole Development", "UGANDA · 2024", "Client: Tulima Solar", "uganda", "technical", Img + "project27.jpg", "Hydrogeological investigation ahead of drilling a solar-powered production well."),
-        P("National Surface Water Source Mapping", "UGANDA · 2026", "Client: Tulima Solar", "uganda", "climate", Img + "project28.jpg", "Surface water source mapping across five districts to guide solar-powered water infrastructure planning."),
-        P("Solar-Powered Piped Water System - Feasibility & Design", "UGANDA · 2025-2026", "Client: Ibanda District Local Government", "uganda", "engineering", Img + "project29.jpg", "Feasibility study and detailed engineering design for a solar-powered piped water supply scheme."),
-        P("National Utility Hydrogeological Survey Programme", "UGANDA · 2023-2024", "Client: National Water & Sewerage Corporation (NWSC)", "uganda", "technical", Img + "project30.jpg", "Hydrogeological survey for twelve production wells delivered across twelve NWSC regions nationwide."),
-        P("VIP Latrine Construction Programme", "UGANDA · 2025", "Client: DBS Establishments - Embassy of the UAE", "uganda", "construction", Img + "project31.jpg", "Design and construction of eight VIP latrine blocks serving a refugee settlement community."),
-        P("Bwindi Eco School Water & Treatment System", "UGANDA · 2020-2021", "Client: Bwindi Eco School", "uganda", "construction", Img + "project32.jpg", "Design and construction of a complete water-supply and treatment system for a school campus."),
-        P("Muhazi Legacy Estate Water Infrastructure", "UGANDA · ONGOING", "Client: Eco-Lakes International", "uganda", "engineering", Img + "project33.jpg", "Feasibility study, design and construction of water infrastructure for a lakeside estate development."),
-        P("Kyaliwajjala Water Supply Network Trenching", "UGANDA · 2023", "Client: National Water & Sewerage Corporation (NWSC)", "uganda", "construction", Img + "project34.jpg", "Trenching works for gate crossings on a piped water-distribution network."),
-        P("Kako Hospital Water Programme", "UGANDA · 2019-2020", "Client: Engineers Without Borders", "uganda", "construction", Img + "project35.jpg", "Borehole situation analysis, siting, drilling and construction delivering a reliable water source for a rural hospital."),
-        P("Ten-Village Borehole Programme", "UGANDA · 2020", "Client: A Chance for Children", "uganda", "construction", Img + "project36.jpg", "Construction of ten boreholes across rural villages under a framework arrangement."),
-        P("Borehole Rehabilitation Assessment", "UGANDA · 2021", "Client: Windle Trust International", "uganda", "technical", Img + "project37.jpg", "Rehabilitation and test pumping of boreholes serving a refugee-education programme."),
-        P("Data Centre Water Supply Borehole", "UGANDA · 2021", "Client: Raxio Data Centre", "uganda", "construction", Img + "project38.jpg", "Survey and construction of a dedicated production borehole for a regional data-centre facility."),
-        P("Hospitality Sector Borehole Development", "UGANDA · 2024-2025", "Client: The Great Wall Hotel & Investments", "uganda", "construction", Img + "project39.jpg", "Survey and drilling of production boreholes securing water supply for hospitality developments."),
-        P("Multi-District Borehole Casing Integrity Verification", "UGANDA · 2020", "Client: NSI Water Ltd", "uganda", "technical", Img + "project40.jpg", "Casing integrity verification and rehabilitation of four production boreholes across four districts."),
-        P("Regional Borehole Performance Assessment", "UGANDA · 2021-2022", "Client: EPM Engineering Consults (U) Ltd", "uganda", "technical", Img + "project41.jpg", "Test pumping of 47 boreholes and water-quality analysis across 75 sites region-wide."),
-        P("Nakivale Refugee Settlement Borehole Testing", "UGANDA · 2021", "Client: Karf Aqua Engineering", "uganda", "technical", Img + "project42.jpg", "Test pumping of boreholes supporting water supply to a major refugee settlement."),
-        P("Borehole Construction & Water Permitting", "UGANDA · COMPLETED", "Client: The Xsabo Group", "uganda", "construction", Img + "project43.jpg", "Borehole siting, drilling and water-use permitting services delivered under a repeat engagement."),
-        P("Mbale Industrial Park Water & Sewage Masterplan", "UGANDA · 2020, 2022", "Client: Tangshan Mbale Industrial Park", "uganda", "engineering", Img + "waterweb.jpg", "Preliminary feasibility studies and designs for a 5,000 m3/day water supply and 5,000 m3/day sewage system, followed by geotechnical, topographic and hydrological assessment."),
-        P("St Joseph of Nazareth School Water Programme", "UGANDA · 2023 & 2025", "Client: St Joseph of Nazareth High School", "uganda", "construction", Img + "project45.jpg", "Survey, drilling, test pumping, casing and hand-pump installation delivering safe water to a school community, in two phases."),
-        P("Kitukiro Rural Water Supply - Pipeline Trenching & Fabrication", "UGANDA · 2026 (ONGOING)", "Client: Water Mission Uganda", "uganda", "construction", Img + "project46.jpg", "Trenching and backfilling of a 27 km pipeline route, plus fabrication works, for a rural community water-supply scheme."),
-        P("Buliisa & Hoima Regional Water Programme", "UGANDA · 2018-2026", "Client: Multiple institutional and private clients", "uganda", "construction", Img + "borehole.jpg", "150+ borehole siting, drilling, test pumping and rehabilitation assignments completed since 2018 across households, schools, hospitals, hotels, refugee settlements and utilities nationwide."),
-        Imatong(),
+        L("Kilyango & Kasinyi Borehole Programme", "UGANDA · 2026", "TotalEnergies EP Uganda", "uganda", "Buliisa District", "oil", false, new() { "technical", "construction" }, Projects + "kilyango-kasinyi.jpg", false, "Geo-seismic and borehole process and reprocess works: hydrogeological survey, drilling, testing and installation of a new borehole, plus rehabilitation of an existing one."),
+        L("RAP 2-5 Compensation Boreholes", "UGANDA · 2025", "TotalEnergies EP Uganda", "uganda", "Buliisa District", "oil", false, new() { "construction" }, Projects + "rap-2-5.jpg", false, "Drilling and equipping of six boreholes delivered under an in-kind resettlement compensation programme."),
+        L("Replacement Boreholes for Project-Affected Persons", "UGANDA · 2024-2025", "TotalEnergies EP Uganda", "uganda", "Buliisa District", "oil", false, new() { "technical" }, Projects + "pap-replacement.jpg", true, "Hydrogeological studies for six replacement boreholes serving communities affected by oil-field development."),
+        L("Tilenga Production Well Integrity Survey", "UGANDA · 2024", "ATRO Engineering", "uganda", "Buliisa District", "oil", false, new() { "technical" }, Projects + "tilenga-well-integrity.jpg", true, "Survey, test pumping and borehole integrity assessment of production wells on the Tilenga oil development."),
+        L("Groundwater Monitoring Network, Kingfisher Oilfield", "UGANDA · 2022-2023", "CNOOC Uganda Limited", "uganda", "Kikuube District", "oil", false, new() { "construction", "technical" }, Projects + "kingfisher-monitoring.jpg", false, "Drilling of six groundwater monitoring boreholes across the Kingfisher Oil Field Development Area.", flag: ("6", "monitoring boreholes across the Kingfisher development area", 3)),
+        L("Hohwa Production Well", "UGANDA · COMPLETED", "Daqing Oilfield Services Ltd", "uganda", "Hohwa, Kikuube District", "oil", false, new() { "construction" }, Projects + "hohwa-production-well.jpg", true, "Construction of a production water well serving oil-field operations in Hohwa, Kikuube District."),
+        L("Groundwater Supply Development, Tilenga Industrial Area", "UGANDA · 2026", "Gauff Consultants Uganda Ltd", "uganda", "Buliisa District", "oil", false, new() { "construction" }, Projects + "tilenga-industrial-area.jpg", false, "Drilling and later flushing of production wells supplying the Buliisa oil-industry support zone.", flag: ("Tilenga", "production wells for the industrial area", 4)),
+        L("Buliisa Borehole Integrity Assessment", "UGANDA · 2024", "ATRO Engineering", "uganda", "Buliisa District", "oil", false, new() { "technical" }, Projects + "buliisa-integrity.jpg", true, "Test pumping and borehole integrity assessment of production boreholes supporting oil-field infrastructure."),
+        L("Orom Cross Graphite Mine: Community Water Programme", "UGANDA · 2024", "Consolidated African Resources Ltd / Blencowe Plc", "uganda", "Orom, northern Uganda", "mining", false, new() { "construction" }, Img + "aerial/drone-orom-03.jpg", false, "Rehabilitation and upgrade of the Locomo Solar Powered Water Supply System serving the community around the mine."),
+        L("Makuutu Bankable Feasibility Study: Hydrogeology Programme", "UGANDA · 2021-2022", "Rwenzori Rare Metals / Ionic Rare Earth", "uganda", "Bugweri, eastern Uganda", "mining", false, new() { "technical" }, Projects + "makuutu-bfs.jpg", false, "Hydrogeology programme delivered as part of the rare earth mine's Bankable Feasibility Study."),
+        L("Orom-Cross Graphite DFS Borefield Assessment", "UGANDA · 2023", "Consolidated African Resources Ltd / Blencowe Plc", "uganda", "Orom, northern Uganda", "mining", false, new() { "technical", "construction" }, Img + "aerial/drone-orom-01.jpg", false, "Definitive Feasibility Study hydrological work and borefield assessment for a graphite development, including drilling, aquifer testing, water quality assessment and hydrogeological design studies.", flag: ("DFS", "borefield for a graphite mine", 7)),
+        L("Hima Limestone Quarry Dewatering", "UGANDA · 2021-2022", "Lafarge Holcim / Hima Cement Ltd", "uganda", "Hima, Kasese District", "mining", false, new() { "engineering", "construction" }, Projects + "hima-dewatering.jpg", false, "Mine dewatering and groundwater control, plus a new water-supply system for a limestone quarry."),
+        L("Dura Quarry Topographic Survey & Drainage Works", "UGANDA · 2022", "Hima Cement Ltd", "uganda", "Dura, Kamwenge District", "mining", false, new() { "technical", "construction" }, Projects + "dura-quarry.jpg", false, "Topographic surveying in support of quarry operations and expansion planning, followed by excavation and reinstatement of the quarry drainage channels."),
+        L("Hima Quarry Water Supply System", "UGANDA · 2021", "Hima Cement Ltd", "uganda", "Hima, Kasese District", "mining", false, new() { "engineering", "construction" }, Projects + "hima-water-supply.jpg", false, "Pipeline and powered water-supply infrastructure serving quarry operations."),
+        L("Quarry Site ERT Survey", "UGANDA · 2022", "Agaba South West Services", "uganda", "South-western Uganda", "mining", false, new() { "technical" }, Projects + "quarry-ert.jpg", true, "2D electrical resistivity tomography survey for bedrock and site assessment ahead of quarry development."),
+        L("Quarry Bedrock Characterisation Surveys", "UGANDA · 2021", "Private quarry operators", "uganda", "Mukono District", "mining", false, new() { "technical" }, Projects + "quarry-bedrock.jpg", true, "Geophysical surveys for bedrock characterisation at two quarry sites in Mukono District."),
+        L("50 MW Kasempa Solar PV Plant", "ZAMBIA · ONGOING", "Optimum Earth Engineering Ltd", "zambia", "Kasempa, North-Western Province", "energy", true, new() { "technical", "engineering" }, Projects + "kasempa-solar.jpg", true, "Prefeasibility study complete; detailed feasibility study under way for a 50 MW utility-scale solar PV plant.", flag: ("50 MW", "utility-scale solar PV, Zambia", 2)),
+        L("Pensulo-Mansa 330 kV Transmission Line Corridor", "ZAMBIA · 2026 (ONGOING)", "Optimum Earth Engineering Ltd / ZESCO Limited", "zambia", "Central to Luapula Province", "energy", true, new() { "technical" }, Projects + "pensulo-mansa.jpg", true, "Authorised by Zambia's Ministry of Energy to undertake feasibility studies for a 330 kV transmission corridor from Pensulo to Mansa, in collaboration with ZESCO Limited.", flag: ("330 kV", "Pensulo to Mansa transmission corridor", 1)),
+        L("Waste-to-Energy Plant Site Investigation", "UGANDA · 2024", "NLS Waste Services Ltd", "uganda", "Uganda", "energy", false, new() { "technical" }, Projects + "waste-to-energy.jpg", true, "Geotechnical and hydrological investigations for a proposed waste-to-energy generation plant."),
+        L("Pilot Aquifer Recharge Pre-Feasibility Studies", "BURUNDI · 2025", "Rivan Engineering Ltd / Nile Basin Initiative", "burundi", "Burundi", "public", false, new() { "technical", "climate" }, Projects + "burundi-mar.jpg", false, "Geophysical, geotechnical and topographic surveys for pre-feasibility studies of pilot managed aquifer recharge systems."),
+        L("Solar Water Supply & Irrigation, Several Sites", "UGANDA · 2021-2022", "EPM / Nexus Green Ltd / Ministry of Water", "uganda", "Nationwide", "public", false, new() { "engineering", "construction" }, Projects + "solar-water-irrigation.jpg", true, "Engineering design and construction supervision for solar-powered water supply and irrigation systems across 79 sites nationwide.", flag: ("79", "solar water and irrigation sites designed", 9)),
+        L("Corporate Operations Environmental Review", "UGANDA · 2023", "NASECO", "uganda", "Uganda", "private", false, new() { "environmental" }, Projects + "naseco-review.jpg", false, "Independent review of company operations and assessment of their environmental impact."),
+        L("Pivot Irrigation ESIA", "UGANDA · ONGOING", "NASECO", "uganda", "Uganda", "private", true, new() { "environmental" }, Projects + "naseco-pivot-esia.jpg", false, "Environmental and Social Impact Assessment and closure works for an irrigation development project."),
+        L("Nile Basin Transboundary Groundwater Database", "NILE BASIN · COMPLETED", "Centric Solutions Ltd", "nilebasin", "Nile Basin, regional", "public", false, new() { "technical", "climate" }, Projects + "nile-gw-database.jpg", true, "Development of an online groundwater database management system for transboundary aquifers across the Nile Basin."),
+        L("Namanve Wastewater Quality Testing & Monitoring", "UGANDA · 2022", "Lagan DOTT", "uganda", "Namanve, Mukono District", "private", false, new() { "environmental" }, Projects + "namanve-wastewater.jpg", true, "Wastewater quality monitoring programme supporting an industrial park."),
+        L("Fire Protection System Installation", "DRC · COMPLETED", "CAAMENIHU", "drc", "DRC", "community", false, new() { "engineering", "construction" }, Projects + "drc-fire-protection.jpg", true, "Design, supply and installation of a fire-protection system for an institutional facility."),
+        L("Kiryandongo Solar-Powered Water Supply: Design & Build", "UGANDA · 2024-2025", "DBS Establishments - Embassy of the UAE", "uganda", "Kiryandongo District", "community", false, new() { "engineering", "construction" }, Projects + "kiryandongo-dnb.jpg", true, "Full design-and-build delivery of a solar-powered water-supply system serving a refugee settlement."),
+        L("Kasese Solar Borehole Development", "UGANDA · 2024", "Tulima Solar", "uganda", "Kasese District", "private", false, new() { "technical" }, Projects + "kasese-solar-borehole.jpg", true, "Hydrogeological investigation ahead of drilling a solar-powered production well."),
+        L("Multi Regional Surface Water Sources Mapping", "UGANDA · 2026", "Tulima Solar", "uganda", "Multiple regions", "private", false, new() { "technical", "climate" }, Projects + "surface-water-mapping.jpg", true, "Surface water source mapping across five districts to guide solar-powered water infrastructure planning."),
+        L("Solar-Powered Piped Water System: Feasibility & Design", "UGANDA · 2025-2026", "Ibanda District Local Government", "uganda", "Ibanda District", "public", false, new() { "technical", "engineering" }, Projects + "ibanda-piped-water.jpg", true, "Feasibility study and detailed engineering design for a solar-powered piped water supply scheme."),
+        L("National Utility Hydrogeological Survey Programme", "UGANDA · 2023-2024", "National Water & Sewerage Corporation (NWSC)", "uganda", "Twelve NWSC regions", "public", false, new() { "technical" }, Projects + "nwsc-national-survey.jpg", true, "Hydrogeological survey for twelve production wells delivered across twelve NWSC regions nationwide.", flag: ("12", "NWSC regions, production well surveys", 8)),
+        L("VIP Latrine Construction Programme", "UGANDA · 2025", "DBS Establishments - Embassy of the UAE", "uganda", "Refugee settlement, Uganda", "community", false, new() { "engineering", "construction" }, Projects + "vip-latrines.jpg", true, "Design and construction of eight VIP latrine blocks serving a refugee settlement community."),
+        L("Bwindi Eco School Water & Treatment System", "UGANDA · 2020-2021", "Bwindi Eco School", "uganda", "Bwindi, south-western Uganda", "community", false, new() { "engineering", "construction" }, Projects + "bwindi-eco-school.jpg", true, "Design and construction of a complete water-supply and treatment system for a school campus."),
+        L("Muhazi Legacy Estate Water Infrastructure", "UGANDA · ONGOING", "Eco-Lakes International", "uganda", "Masindi District", "private", true, new() { "technical", "engineering", "construction" }, Projects + "muhazi-estate.jpg", false, "Feasibility study, design and construction of water infrastructure for a lakeside estate development."),
+        L("Kyaliwajjala Water Supply Network Trenching", "UGANDA · 2023", "National Water & Sewerage Corporation (NWSC)", "uganda", "Kyaliwajjala, Wakiso District", "public", false, new() { "construction" }, Projects + "kyaliwajjala-trenching.jpg", true, "Trenching works for gate crossings on a piped water-distribution network."),
+        L("Kako Hospital Water Programme", "UGANDA · 2019-2020", "Engineers Without Borders", "uganda", "Kako, Masaka District", "community", false, new() { "technical", "construction" }, Projects + "kako-hospital.jpg", true, "Borehole situation analysis, siting, drilling and construction delivering a reliable water source for a rural hospital."),
+        L("Ten-Village Borehole Programme", "UGANDA · 2020", "A Chance for Children", "uganda", "Rural Uganda", "community", false, new() { "construction" }, Projects + "ten-village.jpg", false, "Construction of ten boreholes across rural villages under a framework arrangement."),
+        L("Borehole Rehabilitation Assessment", "UGANDA · 2021", "Windle Trust International", "uganda", "Uganda", "community", false, new() { "construction", "technical" }, Field + "pump-test.jpg", true, "Rehabilitation and test pumping of boreholes serving a refugee-education programme."),
+        L("Data Centre Water Supply Borehole", "UGANDA · 2021", "Raxio Data Centre", "uganda", "Kampala", "private", false, new() { "technical", "construction" }, Projects + "raxio-data-centre.jpg", true, "Survey and construction of a dedicated production borehole for a regional data-centre facility."),
+        L("Hospitality Sector Borehole Development", "UGANDA · 2024-2025", "The Great Wall Hotel & Investments", "uganda", "Uganda", "private", false, new() { "technical", "construction" }, Field + "drilling-rig.jpg", true, "Survey and drilling of production boreholes securing water supply for hospitality developments."),
+        L("Multi-District Borehole Casing Integrity Verification", "UGANDA · 2020", "NSI Water Ltd", "uganda", "Four districts", "private", false, new() { "technical", "construction" }, Projects + "nsi-casing.jpg", true, "Casing integrity verification and rehabilitation of four production boreholes across four districts."),
+        L("Regional Borehole Performance Assessment", "UGANDA · 2021-2022", "EPM Engineering Consults (U) Ltd", "uganda", "75 sites region-wide", "public", false, new() { "technical" }, Projects + "epm-performance.jpg", true, "Test pumping of 47 boreholes and water-quality analysis across 75 sites region-wide."),
+        L("Nakivale Refugee Settlement Borehole Testing", "UGANDA · 2021", "Karf Aqua Engineering", "uganda", "Nakivale, Isingiro District", "community", false, new() { "technical" }, Projects + "nakivale-testing.jpg", true, "Test pumping of boreholes supporting water supply to a major refugee settlement."),
+        L("Borehole Construction & Water Permitting", "UGANDA · COMPLETED", "The Xsabo Group", "uganda", "Uganda", "private", false, new() { "technical", "construction" }, Projects + "xsabo-permitting.jpg", false, "Borehole siting, drilling and water-use permitting services delivered under a repeat engagement."),
+        L("Mbale Industrial Park Water & Sewage Masterplan", "UGANDA · 2020, 2022", "Tangshan Mbale Industrial Park", "uganda", "Mbale", "private", false, new() { "technical", "engineering" }, Projects + "mbale-industrial-park.jpg", false, "Preliminary feasibility studies and designs for a 5,000 m³/day water supply and 5,000 m³/day sewage system, followed by geotechnical, topographic and hydrological assessment."),
+        L("St Joseph of Nazareth School Water Programme", "UGANDA · 2023 & 2025", "St Joseph of Nazareth High School", "uganda", "Uganda", "community", false, new() { "technical", "construction" }, Projects + "st-joseph-nazareth.jpg", true, "Survey, drilling, test pumping, casing and hand-pump installation delivering safe water to a school community, in two phases."),
+        L("Kitukiro Rural Water Supply: Pipeline Trenching & Fabrication", "UGANDA · 2026 (ONGOING)", "Water Mission Uganda", "uganda", "Kitukiro, Buyende District", "community", true, new() { "construction" }, Projects + "kitukiro-trenching.jpg", false, "Trenching and backfilling of a 27 km pipeline route, plus fabrication works, for a rural community water-supply scheme.", flag: ("27 km", "pipeline trench for a rural water scheme", 5)),
+        L("Buliisa & Hoima Regional Water Programme", "UGANDA · 2018-2026", "Multiple institutional and private clients", "uganda", "Buliisa, Hoima and nationwide", "community", false, new() { "technical", "construction" }, Projects + "buliisa-hoima-programme.jpg", true, "150+ groundwater development assignments, from borehole siting and drilling to test pumping and rehabilitation, completed since 2018 across households, schools, hospitals, hotels, refugee settlements and utilities nationwide."),
+        L("Imatong Forest Reserve: Land Cover Change & Management Zoning", "SOUTH SUDAN · 2025", "IUCN", "southsudan", "Eastern Equatoria, South Sudan", "conservation", false, new() { "climate", "environmental" }, Projects + "imatong-landcover.jpg", false, "Ten-year land cover change analysis from 10 m Sentinel-2 imagery over 584,660 ha, with hot spot statistics, erosion and landslide risk, and management zoning for the reserve and its surrounding landscape. Prepared for IUCN and the Ministry of Environment & Forestry.", flag: ("584,660 ha", "classified, Imatong landscape", 6)),
     };
+
+    private static Project L(string title, string tag, string client, string country, string location, string sector, bool ongoing,
+        List<string> services, string image, bool representative, string description, (string Figure, string Label, int Order)? flag = null) =>
+        new()
+        {
+            Title = title, Tag = tag, Meta = "Client: " + client, Client = client, Country = country, Location = location, Sector = sector,
+            Ongoing = ongoing, Services = services, Service = services[0], ImagePath = image, RepresentativePhoto = representative,
+            Description = description, FlagshipFigure = flag?.Figure ?? string.Empty, FlagshipLabel = flag?.Label ?? string.Empty, FlagshipOrder = flag?.Order ?? 0,
+        };
 
     /// <summary>
     /// The six cards the Uganda and Zambia pages feature. They are projects in

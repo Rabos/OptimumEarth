@@ -16,6 +16,9 @@ public enum FieldKind
     Number,
     Markdown,
 
+    /// <summary>Tick-boxes for any number of the field's Options; the property is a List&lt;string&gt;.</summary>
+    Checks,
+
     /// <summary>The "Appears on" checkboxes. Not a property: handled by the descriptor's hooks.</summary>
     Placements,
 

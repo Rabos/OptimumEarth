@@ -25,6 +25,13 @@ public sealed record ServicesPageContent(
     IReadOnlyList<SectorTile> Sectors,
     IReadOnlyList<ClientLogo> Clients);
 
+public sealed record ProjectsPageContent(
+    ProjectsPageText Text,
+    IReadOnlyList<ProjectItem> Projects,
+    IReadOnlyList<SectorOption> Sectors,
+    IReadOnlyList<HeroPhoto> HeroPhotos,
+    IReadOnlyList<ClientLogo> Clients);
+
 public sealed record FoundationContent(
     IReadOnlyList<PillarDetail> Pillars,
     IReadOnlyList<string> FocusAreas,
@@ -96,11 +103,6 @@ public sealed class ContentReader
         return (IReadOnlyList<HeroSlide>)rows.Select(s => new HeroSlide(s.Eyebrow.Split(' ', StringSplitOptions.RemoveEmptyEntries).LastOrDefault() + " hero", s.Eyebrow, s.Headline, s.Body, s.ImagePath)).ToList();
     });
 
-    private static readonly Dictionary<string, string> CountryNames = new()
-    {
-        ["uganda"] = "Uganda", ["zambia"] = "Zambia", ["burundi"] = "Burundi", ["drc"] = "DRC", ["southsudan"] = "South Sudan",
-    };
-
     public Task<ServicesPageContent> ServicesPageAsync() => _cache.GetOrCreateAsync("services.page", async () =>
     {
         var settings = await SettingsAsync();
@@ -122,9 +124,9 @@ public sealed class ContentReader
         PracticeCard? Practice(Project? p) => p is null || p.Status != ContentStatus.Published ? null : new PracticeCard(
             p.Title,
             p.Description,
-            string.Join(" · ", new[] { ClientName(p.Meta), CountryNames.GetValueOrDefault(p.Country, string.Empty) }.Where(x => x.Length > 0)),
+            string.Join(" · ", new[] { p.Client.Length > 0 ? p.Client : ClientName(p.Meta), ProjectCountries.NameOf(p.Country) }.Where(x => x.Length > 0)),
             p.ImagePath,
-            "/projects?filter=" + p.Service);
+            "/projects?service=" + p.Service + "#" + ProjectSlugs.From(p.Title));
 
         var text = new ServicesPageText(
             settings.ServicesHeadline,
@@ -167,10 +169,54 @@ public sealed class ContentReader
         return (IReadOnlyList<ServiceLink>)rows.Select(s => new ServiceLink(s.ShortTitle.Length > 0 ? s.ShortTitle : s.Title, s.Slug)).ToList();
     });
 
-    public Task<IReadOnlyList<ProjectCard>> ProjectCardsAsync() => _cache.GetOrCreateAsync("projects", async () =>
+    public Task<ProjectsPageContent> ProjectsPageAsync() => _cache.GetOrCreateAsync("projects.page", async () =>
     {
-        var rows = await _db.Projects.AsNoTracking().Where(p => p.Status == ContentStatus.Published && p.OnListPage).OrderBy(p => p.SortOrder).ThenBy(p => p.Id).ToListAsync();
-        return (IReadOnlyList<ProjectCard>)rows.Select(p => new ProjectCard("Project photo", p.Tag, p.Title, p.Meta, p.Country, p.Service, p.ImagePath, p.Description)).ToList();
+        var settings = await SettingsAsync();
+
+        // Ongoing work first, then the order set in the dashboard.
+        var rows = await _db.Projects.AsNoTracking().Where(p => p.Status == ContentStatus.Published && p.OnListPage)
+            .OrderByDescending(p => p.Ongoing).ThenBy(p => p.SortOrder).ThenBy(p => p.Id).ToListAsync();
+        var sectors = await _db.Sectors.AsNoTracking().OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToListAsync();
+        var photos = await _db.FieldPhotos.AsNoTracking().Where(x => x.Status == ContentStatus.Published).OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToListAsync();
+        var clients = settings.ShowClientLogos
+            ? await _db.Clients.AsNoTracking().Where(x => x.Status == ContentStatus.Published).OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToListAsync()
+            : new List<Client>();
+
+        var slugs = new HashSet<string>();
+        string UniqueSlug(string title)
+        {
+            var slug = ProjectSlugs.From(title);
+            var unique = slug;
+            for (var n = 2; !slugs.Add(unique); n++) unique = slug + "-" + n;
+            return unique;
+        }
+
+        var projects = rows.Select(p => new ProjectItem(
+            UniqueSlug(p.Title),
+            p.Title,
+            p.Client.Length > 0 ? p.Client : ClientName(p.Meta),
+            p.Country,
+            p.Location,
+            p.Sector,
+            p.Ongoing,
+            // The main service always counts, ticked or not.
+            p.Services.Prepend(p.Service).Where(s => ProjectServices.Find(s) is not null).Distinct().ToList(),
+            p.ImagePath,
+            p.RepresentativePhoto,
+            p.Description,
+            p.FlagshipFigure,
+            p.FlagshipLabel,
+            p.FlagshipOrder)).ToList();
+
+        // Only sectors some project uses are offered as filters; a draft sector still counts.
+        var used = projects.Select(p => p.Sector).ToHashSet();
+
+        return new ProjectsPageContent(
+            new ProjectsPageText(settings.ProjectsHeadline, settings.ProjectsLede, settings.ProjectsStatFigure, settings.ProjectsStatLabel, settings.ProjectsCtaImagePath),
+            projects,
+            sectors.Where(s => used.Contains(s.Key)).Select(s => new SectorOption(s.Key, s.Name)).ToList(),
+            photos.Select(f => new HeroPhoto(f.Kicker, f.Caption, f.ImagePath)).ToList(),
+            clients.Select(c => new ClientLogo(c.Name, c.LogoPath)).ToList());
     });
 
     public Task<WhoWeAreContent> WhoWeAreAsync() => _cache.GetOrCreateAsync("who", async () =>

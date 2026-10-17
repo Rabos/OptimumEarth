@@ -20,6 +20,9 @@ namespace OptimumEarth.Web.Data;
 /// stat badge and "In practice" project, and untouched services take the shorter section text and
 /// new photos. It also adds the Imatong project, the "Explore" links on the Who We Are service
 /// cards, and the Services page text (sectors, clients and drone photos are seeded as empty tables).
+/// Version 7 is the Projects redesign: each listed project gains its client, location, sector,
+/// status, services and flagship figure, and untouched ones take the new title, text and photo.
+/// It also adds the draft "Conservation & climate" sector and the Projects page text.
 ///
 /// Each section is replaced only if it still matches the original seeded content exactly;
 /// a section someone has edited in the dashboard is left alone and reported in the log, so
@@ -141,6 +144,60 @@ public static class ContentUpgrades
             } },
     };
 
+    // The Projects page list as seeded up to version 6: old title, new title, and the text and photo that mark it untouched.
+    private static readonly (string OldTitle, string NewTitle, string ImagePath, string Description)[] V6Projects =
+    {
+        ("Kilyango & Kasinyi Borehole Programme", "Kilyango & Kasinyi Borehole Programme", V5Img + "project1.jpg", "Geo-seismic and borehole process/reprocess works: hydrogeological survey, drilling, testing and installation of a new borehole, plus rehabilitation of an existing one."),
+        ("RAP 2-5 Compensation Boreholes", "RAP 2-5 Compensation Boreholes", V5Img + "project2.jpg", "Drilling and equipping of six boreholes delivered under an in-kind resettlement compensation programme."),
+        ("Replacement Boreholes for Project-Affected Persons", "Replacement Boreholes for Project-Affected Persons", V5Img + "project3.jpg", "Hydrogeological studies for six replacement boreholes serving communities affected by oil-field development."),
+        ("Tilenga - Production Well Integrity Survey", "Tilenga Production Well Integrity Survey", V5Img + "project4.jpg", "Survey, test pumping and borehole integrity assessment of production wells on the Tilenga oil development."),
+        ("Groundwater Monitoring Network - Kingfisher Oilfield", "Groundwater Monitoring Network, Kingfisher Oilfield", V5Img + "recentwork2.jpg", "Drilling of six groundwater monitoring boreholes across the Kingfisher Oil Field Development Area."),
+        ("Hohwa Production Well", "Hohwa Production Well", V5Img + "project6.jpg", "Construction of a production water well serving oil-field operations in Hohwa, Kikuube district."),
+        ("Groundwater Supply Development - Tilenga Industrial Area", "Groundwater Supply Development, Tilenga Industrial Area", V5Img + "project7.jpg", "Drilling and later flushing of production wells supplying the Buliisa oil-industry support zone."),
+        ("Buliisa Borehole Integrity Assessment", "Buliisa Borehole Integrity Assessment", V5Img + "project8.jpg", "Test pumping and borehole integrity assessment of production boreholes supporting oil-field infrastructure."),
+        ("Orom Cross Graphite Mine - Community Water Programme", "Orom Cross Graphite Mine: Community Water Programme", V5Img + "project9.jpg", "Rehabilitation and upgrade of the locomo solar powered community water-system"),
+        ("Makuutu Bankable Feasibility Study - Hydrogeology Programme", "Makuutu Bankable Feasibility Study: Hydrogeology Programme", V5Img + "makuttu.jpg", "Hydrogeology programme delivered as part of the mine's Bankable Feasibility Study."),
+        ("Orom-Cross Graphite DFS Borefield Assessment", "Orom-Cross Graphite DFS Borefield Assessment", V5Img + "project11.jpg", "Definitive Feasibility Study hydrological work and project borefield assessment for a graphite development. Including: drilling, aquifer testing, water quality assessments, hydrogeological design studies"),
+        ("Hima Limestone Quarry Dewatering", "Hima Limestone Quarry Dewatering", V5Img + "project12.jpg", "Mine dewatering and groundwater control, plus a new water-supply system for a limestone quarry."),
+        ("Dura Quarry Topographic Survey", "Dura Quarry Topographic Survey & Drainage Works", V5Img + "project13.jpg", "Topographic surveying in support of quarry operations and expansion planning."),
+        ("Hima Quarry Water Supply System", "Hima Quarry Water Supply System", V5Img + "hima-quarry.jpg", "Pipeline and powered water-supply infrastructure serving quarry operations."),
+        ("Quarry Site ERT Survey", "Quarry Site ERT Survey", V5Img + "servicepanel4.jpg", "2D electrical resistivity tomography survey for bedrock and site assessment ahead of quarry development."),
+        ("Quarry Bedrock Characterisation Surveys", "Quarry Bedrock Characterisation Surveys", V5Img + "project15.jpg", "Geophysical surveys for bedrock characterisation at two quarry sites in Mukono district."),
+        ("50 MW Kasempa Solar PV Plant", "50 MW Kasempa Solar PV Plant", V5Img + "project16.jpg", "Prefeasibility study complete; detailed feasibility study under way for a 50 MW utility-scale solar PV plant."),
+        ("Pensulo-Mansa 330 kV Transmission Line Corridor", "Pensulo-Mansa 330 kV Transmission Line Corridor", V5Img + "project17.jpg", "Authorised by Zambia's Ministry of Energy to undertake feasibility studies for a 330 kV transmission corridor from Pensulo to Mansa, in collaboration with ZESCO Limited."),
+        ("Waste-to-Energy Plant Site Investigation", "Waste-to-Energy Plant Site Investigation", V5Img + "project18.jpg", "Geotechnical and hydrological investigations for a proposed waste-to-energy generation plant."),
+        ("Pilot Aquifer Recharge Pre-Feasibility Studies", "Pilot Aquifer Recharge Pre-Feasibility Studies", V5Img + "project19.jpg", "Geophysical, geotechnical and topographic surveys for pre-feasibility studies of pilot managed aquifer recharge systems."),
+        ("Solar Water Supply & Irrigation, Several Sites", "Solar Water Supply & Irrigation, Several Sites", V5Img + "project20.jpg", "Engineering design and construction supervision for solar-powered water supply and irrigation systems across up to 687 locations nationwide."),
+        ("Corporate Operations Environmental Review", "Corporate Operations Environmental Review", V5Img + "project21.jpg", "Independent review of company operations and assessment of their environmental impact."),
+        ("Pivot Irrigation ESIA", "Pivot Irrigation ESIA", V5Img + "enhancing-climate.jpg", "Environmental and Social Impact Assessment closure works for an irrigation development project."),
+        ("Nile Basin Transboundary Groundwater Database", "Nile Basin Transboundary Groundwater Database", V5Img + "project23.jpg", "Development of an online groundwater database management system for transboundary aquifers across the Nile Basin."),
+        ("Namanve Wastewater Quality Testing & Monitoring", "Namanve Wastewater Quality Testing & Monitoring", V5Img + "project24.jpg", "Wastewater quality monitoring programme supporting an industrial park."),
+        ("Fire Protection System Installation", "Fire Protection System Installation", V5Img + "project25.jpg", "Design, supply and installation of a fire-protection system for an institutional facility."),
+        ("Kiryandongo Solar-Powered Water Supply - Design & Build", "Kiryandongo Solar-Powered Water Supply: Design & Build", V5Img + "project26.jpg", "Full design-and-build delivery of a solar-powered water-supply system serving a refugee settlement."),
+        ("Kasese Solar Borehole Development", "Kasese Solar Borehole Development", V5Img + "project27.jpg", "Hydrogeological investigation ahead of drilling a solar-powered production well."),
+        ("National Surface Water Source Mapping", "Multi Regional Surface Water Sources Mapping", V5Img + "project28.jpg", "Surface water source mapping across five districts to guide solar-powered water infrastructure planning."),
+        ("Solar-Powered Piped Water System - Feasibility & Design", "Solar-Powered Piped Water System: Feasibility & Design", V5Img + "project29.jpg", "Feasibility study and detailed engineering design for a solar-powered piped water supply scheme."),
+        ("National Utility Hydrogeological Survey Programme", "National Utility Hydrogeological Survey Programme", V5Img + "project30.jpg", "Hydrogeological survey for twelve production wells delivered across twelve NWSC regions nationwide."),
+        ("VIP Latrine Construction Programme", "VIP Latrine Construction Programme", V5Img + "project31.jpg", "Design and construction of eight VIP latrine blocks serving a refugee settlement community."),
+        ("Bwindi Eco School Water & Treatment System", "Bwindi Eco School Water & Treatment System", V5Img + "project32.jpg", "Design and construction of a complete water-supply and treatment system for a school campus."),
+        ("Muhazi Legacy Estate Water Infrastructure", "Muhazi Legacy Estate Water Infrastructure", V5Img + "project33.jpg", "Feasibility study, design and construction of water infrastructure for a lakeside estate development."),
+        ("Kyaliwajjala Water Supply Network Trenching", "Kyaliwajjala Water Supply Network Trenching", V5Img + "project34.jpg", "Trenching works for gate crossings on a piped water-distribution network."),
+        ("Kako Hospital Water Programme", "Kako Hospital Water Programme", V5Img + "project35.jpg", "Borehole situation analysis, siting, drilling and construction delivering a reliable water source for a rural hospital."),
+        ("Ten-Village Borehole Programme", "Ten-Village Borehole Programme", V5Img + "project36.jpg", "Construction of ten boreholes across rural villages under a framework arrangement."),
+        ("Borehole Rehabilitation Assessment", "Borehole Rehabilitation Assessment", V5Img + "project37.jpg", "Rehabilitation and test pumping of boreholes serving a refugee-education programme."),
+        ("Data Centre Water Supply Borehole", "Data Centre Water Supply Borehole", V5Img + "project38.jpg", "Survey and construction of a dedicated production borehole for a regional data-centre facility."),
+        ("Hospitality Sector Borehole Development", "Hospitality Sector Borehole Development", V5Img + "project39.jpg", "Survey and drilling of production boreholes securing water supply for hospitality developments."),
+        ("Multi-District Borehole Casing Integrity Verification", "Multi-District Borehole Casing Integrity Verification", V5Img + "project40.jpg", "Casing integrity verification and rehabilitation of four production boreholes across four districts."),
+        ("Regional Borehole Performance Assessment", "Regional Borehole Performance Assessment", V5Img + "project41.jpg", "Test pumping of 47 boreholes and water-quality analysis across 75 sites region-wide."),
+        ("Nakivale Refugee Settlement Borehole Testing", "Nakivale Refugee Settlement Borehole Testing", V5Img + "project42.jpg", "Test pumping of boreholes supporting water supply to a major refugee settlement."),
+        ("Borehole Construction & Water Permitting", "Borehole Construction & Water Permitting", V5Img + "project43.jpg", "Borehole siting, drilling and water-use permitting services delivered under a repeat engagement."),
+        ("Mbale Industrial Park Water & Sewage Masterplan", "Mbale Industrial Park Water & Sewage Masterplan", V5Img + "waterweb.jpg", "Preliminary feasibility studies and designs for a 5,000 m3/day water supply and 5,000 m3/day sewage system, followed by geotechnical, topographic and hydrological assessment."),
+        ("St Joseph of Nazareth School Water Programme", "St Joseph of Nazareth School Water Programme", V5Img + "project45.jpg", "Survey, drilling, test pumping, casing and hand-pump installation delivering safe water to a school community, in two phases."),
+        ("Kitukiro Rural Water Supply - Pipeline Trenching & Fabrication", "Kitukiro Rural Water Supply: Pipeline Trenching & Fabrication", V5Img + "project46.jpg", "Trenching and backfilling of a 27 km pipeline route, plus fabrication works, for a rural community water-supply scheme."),
+        ("Buliisa & Hoima Regional Water Programme", "Buliisa & Hoima Regional Water Programme", V5Img + "borehole.jpg", "150+ borehole siting, drilling, test pumping and rehabilitation assignments completed since 2018 across households, schools, hospitals, hotels, refugee settlements and utilities nationwide."),
+        ("Imatong Forest Reserve: land cover change and management zoning", SeedData.ImatongTitle, V5Img + "aerial/drone-orom-03.jpg", "Ten-year change analysis, hot spot statistics, erosion and landslide risk, and management zoning for the reserve and its surrounding landscape."),
+    };
+
     public static async Task ApplyAsync(AppDbContext db, ILogger logger, CancellationToken ct)
     {
         var settings = await db.Settings.FirstOrDefaultAsync(ct);
@@ -173,6 +230,11 @@ public static class ContentUpgrades
         if (settings.ContentVersion < 6)
         {
             await ApplyV6Async(db, settings, Report, ct);
+        }
+
+        if (settings.ContentVersion < 7)
+        {
+            await ApplyV7Async(db, settings, Report, ct);
         }
 
         settings.ContentVersion = SeedData.CurrentContentVersion;
@@ -453,6 +515,84 @@ public static class ContentUpgrades
 
         // The page text is new, so there is nothing to overwrite.
         SeedData.ApplyServicesText(settings);
+    }
+
+    private static async Task ApplyV7Async(AppDbContext db, SiteSettings settings, Action<string, bool> report, CancellationToken ct)
+    {
+        var seeded = SeedData.ListProjects().ToDictionary(p => p.Title);
+        var previous = V6Projects.ToDictionary(p => p.OldTitle);
+        var projects = await db.Projects.ToListAsync(ct);
+        var allPristine = true;
+        foreach (var project in projects)
+        {
+            // A project already under its new title (Imatong, added by version 6) only needs its new fields.
+            Project? next;
+            if (previous.TryGetValue(project.Title, out var old))
+            {
+                next = seeded[old.NewTitle];
+                var pristine = project.Description == old.Description && project.ImagePath == old.ImagePath;
+                if (pristine)
+                {
+                    project.Title = next.Title;
+                    project.Description = next.Description;
+                    project.ImagePath = next.ImagePath;
+                    project.Meta = next.Meta;
+                    project.Country = next.Country;
+                    project.Service = next.Service;
+                }
+
+                allPristine &= pristine;
+            }
+            else if (!seeded.TryGetValue(project.Title, out next))
+            {
+                // Country-page cards and projects added in the dashboard keep what they have; their one service carries over.
+                if (project.Services.Count == 0)
+                {
+                    project.Services = new() { project.Service };
+                }
+
+                continue;
+            }
+
+            // The new fields are empty on every existing project, so filling them overwrites nothing.
+            if (project.Services.Count == 0)
+            {
+                project.Client = next.Client;
+                project.Location = next.Location;
+                project.Sector = next.Sector;
+                project.Ongoing = next.Ongoing;
+                project.Services = next.Services.Contains(project.Service) ? next.Services : next.Services.Prepend(project.Service).ToList();
+                project.RepresentativePhoto = next.RepresentativePhoto;
+                project.FlagshipFigure = next.FlagshipFigure;
+                project.FlagshipLabel = next.FlagshipLabel;
+                project.FlagshipOrder = next.FlagshipOrder;
+            }
+
+            project.UpdatedUtc = DateTime.UtcNow;
+        }
+
+        report("Projects text and photos", allPristine);
+
+        // Version 6 linked "In practice" projects by their old titles; relink any it missed under the new ones.
+        // A link version 6 made in this same run (to the Imatong project it added) is not saved yet, so check the entity too.
+        foreach (var service in await db.Services.Where(s => s.PracticeProjectId == null).ToListAsync(ct))
+        {
+            if (service.PracticeProject is null && SeedData.PracticeProjects.TryGetValue(service.Slug, out var title)
+                && projects.FirstOrDefault(p => p.Title == title) is { } match)
+            {
+                service.PracticeProject = match;
+            }
+        }
+
+        if (!await db.Sectors.AnyAsync(s => s.Key == "conservation", ct))
+        {
+            var conservation = SeedData.Sectors().Single(s => s.Key == "conservation");
+            conservation.SortOrder = (await db.Sectors.MaxAsync(s => (int?)s.SortOrder, ct) ?? 0) + 1;
+            db.Sectors.Add(conservation);
+        }
+
+        // The page text is new, so there is nothing to overwrite.
+        SeedData.ApplyProjectsText(settings);
     }
 
     private static string Slugify(string title) =>

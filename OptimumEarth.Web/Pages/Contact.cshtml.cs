@@ -46,9 +46,14 @@ public class ContactModel : PageModel
         ["careers"] = "I'd like to work with Optimum Earth. ",
     };
 
-    public void OnGet(string? project)
+    // ?project=similar&about=<project title> comes from a project's "Discuss a similar project" button.
+    public void OnGet(string? project, string? about)
     {
-        if (project is not null && ProjectOpeners.TryGetValue(project, out var opener))
+        if (project == "similar" && !string.IsNullOrWhiteSpace(about))
+        {
+            Contact.Message = $"We're planning something similar to your project “{about.Trim()[..Math.Min(about.Trim().Length, 120)]}”. ";
+        }
+        else if (project is not null && ProjectOpeners.TryGetValue(project, out var opener))
         {
             Contact.Message = opener;
         }

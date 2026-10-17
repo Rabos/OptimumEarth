@@ -46,6 +46,27 @@ public class Project : ContentEntity
 
     /// <summary>Whether the card appears on the public Projects page itself.</summary>
     public bool OnListPage { get; set; } = true;
+
+    public string Client { get; set; } = string.Empty;
+
+    /// <summary>Where the work was, in words, e.g. "Buliisa District". The map pins projects by country.</summary>
+    public string Location { get; set; } = string.Empty;
+
+    /// <summary>A Sector key, for the Projects page's sector filter.</summary>
+    public string Sector { get; set; } = string.Empty;
+
+    public bool Ongoing { get; set; }
+
+    /// <summary>Every service line the project used; Service is the main one.</summary>
+    public List<string> Services { get; set; } = new();
+
+    /// <summary>The photo illustrates the kind of work rather than coming from this project.</summary>
+    public bool RepresentativePhoto { get; set; }
+
+    /// <summary>A flagship card shows a headline figure, e.g. "330 kV", over a line under it. Order 0 keeps it out of the flagship row.</summary>
+    public string FlagshipFigure { get; set; } = string.Empty;
+    public string FlagshipLabel { get; set; } = string.Empty;
+    public int FlagshipOrder { get; set; }
 }
 
 public class Service : ContentEntity
@@ -113,6 +134,15 @@ public class Client : ContentEntity
 {
     public string Name { get; set; } = string.Empty;
     public string LogoPath { get; set; } = string.Empty;
+}
+
+/// <summary>A photo in the slideshow beside the Projects page hero.</summary>
+public class FieldPhoto : ContentEntity
+{
+    /// <summary>The small line over the caption, e.g. "Groundwater".</summary>
+    public string Kicker { get; set; } = string.Empty;
+    public string Caption { get; set; } = string.Empty;
+    public string ImagePath { get; set; } = string.Empty;
 }
 
 /// <summary>A photo in the "From the air" strip on the Services page.</summary>

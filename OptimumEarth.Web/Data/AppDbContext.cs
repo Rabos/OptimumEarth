@@ -25,6 +25,7 @@ public class AppDbContext : IdentityDbContext<AppUser, Microsoft.AspNetCore.Iden
     public DbSet<Sector> Sectors => Set<Sector>();
     public DbSet<Client> Clients => Set<Client>();
     public DbSet<AerialPhoto> AerialPhotos => Set<AerialPhoto>();
+    public DbSet<FieldPhoto> FieldPhotos => Set<FieldPhoto>();
     public DbSet<Pillar> Pillars => Set<Pillar>();
     public DbSet<Principle> Principles => Set<Principle>();
     public DbSet<FocusArea> FocusAreas => Set<FocusArea>();

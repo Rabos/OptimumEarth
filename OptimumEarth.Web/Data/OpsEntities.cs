@@ -46,6 +46,15 @@ public class SiteSettings
     public string CaseStudyCaption { get; set; } = string.Empty;
     public string ServicesCtaImagePath { get; set; } = string.Empty;
 
+    // Projects page text. The project counts in the hero are worked out from the projects themselves.
+    public string ProjectsHeadline { get; set; } = string.Empty;
+    public string ProjectsLede { get; set; } = string.Empty;
+
+    /// <summary>The one hero figure that is not counted, e.g. "150+" over "Groundwater development assignments".</summary>
+    public string ProjectsStatFigure { get; set; } = string.Empty;
+    public string ProjectsStatLabel { get; set; } = string.Empty;
+    public string ProjectsCtaImagePath { get; set; } = string.Empty;
+
     /// <summary>The client logo strip stays hidden until permission to show the logos is confirmed.</summary>
     public bool ShowClientLogos { get; set; }
 

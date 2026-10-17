@@ -16,6 +16,8 @@ public static class AdminNav
         new("Work", new NavItem[]
         {
             new("Projects", "/admin/content/projects", AdminAreas.Projects),
+            new("Projects page text", "/admin/content/projects-page", AdminAreas.Projects),
+            new("Hero photos", "/admin/content/field-photos", AdminAreas.Projects),
             new("Services", "/admin/content/services", AdminAreas.Services),
             new("Services page text", "/admin/content/services-page", AdminAreas.Services),
             new("Sectors", "/admin/content/sectors", AdminAreas.Services),

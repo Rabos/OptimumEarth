@@ -63,6 +63,7 @@ public sealed class DatabaseInitializer : IHostedService
             };
             SeedData.ApplyWhoWeAreText(settings);
             SeedData.ApplyServicesText(settings);
+            SeedData.ApplyProjectsText(settings);
             db.Settings.Add(settings);
         }
 
@@ -76,6 +77,7 @@ public sealed class DatabaseInitializer : IHostedService
         await SeedListAsync(db, db.Sectors, SeedData.Sectors(), ct);
         await SeedListAsync(db, db.Clients, SeedData.Clients(), ct);
         await SeedListAsync(db, db.AerialPhotos, SeedData.AerialPhotos(), ct);
+        await SeedListAsync(db, db.FieldPhotos, SeedData.FieldPhotos(), ct);
         await SeedListAsync(db, db.Pillars, SeedData.Pillars(), ct);
         await SeedListAsync(db, db.Principles, SeedData.Principles(), ct);
         await SeedListAsync(db, db.FocusAreas, SeedData.FocusAreas(), ct);
@@ -201,6 +203,10 @@ public sealed class DatabaseInitializer : IHostedService
         ["drone-camp-01.jpg"] = "Dry-season woodland canopy, near Orom, northern Uganda",
         ["drone-camp-02.jpg"] = "Access track through bushland, near Orom, northern Uganda",
         ["drone-camp-03.jpg"] = "Bushland toward the escarpment, near Orom, northern Uganda",
+        ["drainage-works-p.jpg"] = "Drainage channel excavation under Optimum Earth supervision",
+        ["drilling-rig.jpg"] = "Borehole drilling rig on site",
+        ["pump-test.jpg"] = "Pumping test on a production borehole",
+        ["imatong-landcover.jpg"] = "Imatong landscape land cover map, 2025",
     };
 
     private async Task SeedMediaAsync(AppDbContext db, IWebHostEnvironment env, CancellationToken ct)
