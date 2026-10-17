@@ -6,6 +6,7 @@
    ========================================================================= */
 
 .prj {
+    --prj-gutter: var(--gutter);
     --prj-bg: #F5F7FB;
     --prj-line: #E2E7F1;
     --prj-soft: #EDF1F9;
@@ -32,10 +33,9 @@
     color: var(--navy-ink);
 }
 
+/* Side padding matches the Uganda, Zambia and Foundation pages: the site gutter, 24px on small screens. */
 .prj-wrap {
-    max-width: 1240px;
-    margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 var(--prj-gutter);
 }
 
 .prj-section {
@@ -413,8 +413,8 @@
     position: sticky;
     top: var(--prj-sticky-top);
     z-index: 15;
-    margin: 0 -24px 24px;
-    padding: 14px 24px 10px;
+    margin: 0 calc(-1 * var(--prj-gutter)) 24px;
+    padding: 14px var(--prj-gutter) 10px;
     border-bottom: 1px solid var(--prj-line);
     background: rgba(245, 247, 251, .95);
     backdrop-filter: blur(10px);
@@ -1319,11 +1319,13 @@
 
 /* ---------- Phone ---------- */
 
-@media (max-width: 760px) {
-    .prj-wrap {
-        padding: 0 16px;
+@media (max-width: 780px) {
+    .prj {
+        --prj-gutter: 24px;
     }
+}
 
+@media (max-width: 760px) {
     .prj-section {
         padding: 64px 0;
     }
@@ -1336,8 +1338,8 @@
        which would otherwise trap the bottom-sheet dropdowns inside the bar. */
     .prj-filters {
         position: static;
-        margin: 0 -16px 20px;
-        padding: 10px 16px 8px;
+        margin: 0 calc(-1 * var(--prj-gutter)) 20px;
+        padding: 10px var(--prj-gutter) 8px;
         backdrop-filter: none;
         background: var(--prj-bg);
     }

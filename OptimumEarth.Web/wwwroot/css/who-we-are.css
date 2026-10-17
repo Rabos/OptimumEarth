@@ -5,6 +5,7 @@
    ========================================================================= */
 
 .who {
+    --who-gutter: var(--gutter);
     --who-bg: #F5F7FB;
     --who-line: #E2E7F1;
     --who-soft: #EDF1F9;
@@ -30,10 +31,9 @@
 /* Type scale: 68 hero, 44 section headings, 22 card titles and leads,
    17 body, 15 supporting text, 13 labels. The stat numbers and SCALES
    letters are graphic display sizes outside the scale. */
+/* Side padding matches the Uganda, Zambia and Foundation pages: the site gutter, 24px on small screens. */
 .who-wrap {
-    max-width: 1240px;
-    margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 var(--who-gutter);
 }
 
 .who-section {
@@ -809,11 +809,13 @@
     }
 }
 
-@media (max-width: 560px) {
-    .who-wrap {
-        padding: 0 16px;
+@media (max-width: 780px) {
+    .who {
+        --who-gutter: 24px;
     }
+}
 
+@media (max-width: 560px) {
     .who-services,
     .who-timeline,
     .who-stats__grid {

@@ -7,6 +7,7 @@
    ========================================================================= */
 
 .svc {
+    --svc-gutter: var(--gutter);
     --svc-deep: #0B1A40;
     --svc-soft: #F4F6FB;
     --svc-line: #E5E7EB;
@@ -28,10 +29,9 @@
     line-height: 1.12;
 }
 
+/* Side padding matches the Uganda, Zambia and Foundation pages: the site gutter, 24px on small screens. */
 .svc-wrap {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 var(--svc-gutter);
 }
 
 .svc-eyebrow {
@@ -657,12 +657,11 @@
 }
 
 .svc-aerial__track {
-    --svc-edge: max(24px, calc((100vw - 1200px) / 2 + 24px));
     display: flex;
     gap: 16px;
     overflow-x: auto;
-    padding: 0 var(--svc-edge);
-    scroll-padding: 0 var(--svc-edge);
+    padding: 0 var(--svc-gutter);
+    scroll-padding: 0 var(--svc-gutter);
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
 }
@@ -1294,11 +1293,13 @@
 
 /* ---------- Phone and small tablet ---------- */
 
-@media (max-width: 860px) {
-    .svc-wrap {
-        padding: 0 20px;
+@media (max-width: 780px) {
+    .svc {
+        --svc-gutter: 24px;
     }
+}
 
+@media (max-width: 860px) {
     .svc-hero__inner {
         padding-top: 72px;
         padding-bottom: 96px;
@@ -1316,8 +1317,8 @@
     .svc-tiles {
         display: flex;
         gap: 12px;
-        margin: -48px -20px 0;
-        padding: 4px 20px 18px;
+        margin: -48px calc(-1 * var(--svc-gutter)) 0;
+        padding: 4px var(--svc-gutter) 18px;
         overflow-x: auto;
         scroll-snap-type: x mandatory;
         scrollbar-width: none;
@@ -1424,7 +1425,6 @@
     }
 
     .svc-aerial__track {
-        --svc-edge: 20px;
         gap: 12px;
     }
 
@@ -1453,7 +1453,7 @@
     .svc-map {
         max-width: none;
         min-width: 0;
-        margin: 0 -20px;
+        margin: 0 calc(-1 * var(--svc-gutter));
         padding: 12px 10px;
         border-radius: 0;
     }
