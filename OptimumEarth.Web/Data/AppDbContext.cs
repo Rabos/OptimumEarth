@@ -22,6 +22,9 @@ public class AppDbContext : IdentityDbContext<AppUser, Microsoft.AspNetCore.Iden
     public DbSet<GroupCompany> GroupCompanies => Set<GroupCompany>();
     public DbSet<Stat> Stats => Set<Stat>();
     public DbSet<Office> Offices => Set<Office>();
+    public DbSet<Sector> Sectors => Set<Sector>();
+    public DbSet<Client> Clients => Set<Client>();
+    public DbSet<AerialPhoto> AerialPhotos => Set<AerialPhoto>();
     public DbSet<Pillar> Pillars => Set<Pillar>();
     public DbSet<Principle> Principles => Set<Principle>();
     public DbSet<FocusArea> FocusAreas => Set<FocusArea>();
@@ -60,6 +63,9 @@ public class AppDbContext : IdentityDbContext<AppUser, Microsoft.AspNetCore.Iden
             e.HasMany(p => p.Services).WithOne(s => s.CountryPage).HasForeignKey(s => s.CountryPageId).OnDelete(DeleteBehavior.Cascade);
             e.HasMany(p => p.Projects).WithOne(s => s.CountryPage).HasForeignKey(s => s.CountryPageId).OnDelete(DeleteBehavior.Cascade);
         });
+
+        // Deleting a project only clears it from a service's "In practice" slot.
+        b.Entity<Service>().HasOne(s => s.PracticeProject).WithMany().HasForeignKey(s => s.PracticeProjectId).OnDelete(DeleteBehavior.SetNull);
 
         // Deleting a service or project removes it from every page it was placed on.
         b.Entity<CountryPageService>().HasOne(s => s.Service).WithMany().HasForeignKey(s => s.ServiceId).OnDelete(DeleteBehavior.Cascade);

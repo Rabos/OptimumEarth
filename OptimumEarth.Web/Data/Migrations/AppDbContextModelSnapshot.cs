@@ -174,6 +174,36 @@ namespace OptimumEarth.Web.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("OptimumEarth.Web.Data.AerialPhoto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Caption")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AerialPhotos");
+                });
+
             modelBuilder.Entity("OptimumEarth.Web.Data.AppUser", b =>
                 {
                     b.Property<int>("Id")
@@ -450,6 +480,10 @@ namespace OptimumEarth.Web.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("LinkUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
 
@@ -466,6 +500,36 @@ namespace OptimumEarth.Web.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Capabilities");
+                });
+
+            modelBuilder.Entity("OptimumEarth.Web.Data.Client", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("LogoPath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Clients");
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.CoreValue", b =>
@@ -1175,6 +1239,44 @@ namespace OptimumEarth.Web.Data.Migrations
                     b.ToTable("SdgGoals");
                 });
 
+            modelBuilder.Entity("OptimumEarth.Web.Data.Sector", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Blurb")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Sectors");
+                });
+
             modelBuilder.Entity("OptimumEarth.Web.Data.Service", b =>
                 {
                     b.Property<int>("Id")
@@ -1195,18 +1297,57 @@ namespace OptimumEarth.Web.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<List<string>>("Highlights")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
                     b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Layout")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("OnListPage")
                         .HasColumnType("boolean");
 
+                    b.Property<int?>("PracticeProjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ShortTitle")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
 
+                    b.Property<string>("StatLabel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("StatValue")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Tagline")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TileImagePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<List<string>>("TileItems")
+                        .IsRequired()
+                        .HasColumnType("text[]");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -1216,6 +1357,8 @@ namespace OptimumEarth.Web.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PracticeProjectId");
 
                     b.ToTable("Services");
                 });
@@ -1228,12 +1371,32 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AerialBody")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("AerialHeadline")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("BlogIntro")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("BlogPageSize")
                         .HasColumnType("integer");
+
+                    b.Property<string>("CaseStudyCaption")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CaseStudyStat")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CaseStudyStatText")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("ContentVersion")
                         .ValueGeneratedOnAdd()
@@ -1245,6 +1408,26 @@ namespace OptimumEarth.Web.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("text")
                         .HasDefaultValue("Uganda");
+
+                    b.Property<string>("FleetBody")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FleetHeadline")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FleetImagePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FleetInsetImagePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<List<string>>("FleetItems")
+                        .IsRequired()
+                        .HasColumnType("text[]");
 
                     b.Property<string>("FoundationTo")
                         .IsRequired()
@@ -1264,6 +1447,25 @@ namespace OptimumEarth.Web.Data.Migrations
 
                     b.Property<int>("RetentionMonths")
                         .HasColumnType("integer");
+
+                    b.Property<string>("ServicesCtaImagePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ServicesHeadline")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ServicesLede")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ServicesPosterPath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("ShowClientLogos")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("StoryBody")
                         .IsRequired()
@@ -1572,6 +1774,16 @@ namespace OptimumEarth.Web.Data.Migrations
                     b.Navigation("CountryPage");
 
                     b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("OptimumEarth.Web.Data.Service", b =>
+                {
+                    b.HasOne("OptimumEarth.Web.Data.Project", "PracticeProject")
+                        .WithMany()
+                        .HasForeignKey("PracticeProjectId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("PracticeProject");
                 });
 
             modelBuilder.Entity("OptimumEarth.Web.Data.UserAreaAccess", b =>

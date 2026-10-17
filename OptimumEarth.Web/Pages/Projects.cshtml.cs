@@ -20,6 +20,7 @@ public class ProjectsModel : PageModel
         new("zambia", "Zambia"),
         new("burundi", "Burundi"),
         new("drc", "DRC"),
+        new("southsudan", "South Sudan"),
         new("construction", "Construction Services"),
         new("technical", "Technical Studies"),
         new("engineering", "Engineering Design"),

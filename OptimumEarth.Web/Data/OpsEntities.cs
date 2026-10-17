@@ -28,6 +28,27 @@ public class SiteSettings
     public string WhoCtaBody { get; set; } = string.Empty;
     public string WhoCtaImagePath { get; set; } = string.Empty;
 
+    // Services page text. The hero video itself is a fixed file (wwwroot/video); the poster shows until it loads.
+    public string ServicesHeadline { get; set; } = string.Empty;
+    public string ServicesLede { get; set; } = string.Empty;
+    public string ServicesPosterPath { get; set; } = string.Empty;
+    public string AerialHeadline { get; set; } = string.Empty;
+    public string AerialBody { get; set; } = string.Empty;
+    public string FleetHeadline { get; set; } = string.Empty;
+    public string FleetBody { get; set; } = string.Empty;
+    public List<string> FleetItems { get; set; } = new();
+    public string FleetImagePath { get; set; } = string.Empty;
+    public string FleetInsetImagePath { get; set; } = string.Empty;
+
+    /// <summary>The headline figure beside the Imatong map, e.g. "198,350 ha", and the sentence under it.</summary>
+    public string CaseStudyStat { get; set; } = string.Empty;
+    public string CaseStudyStatText { get; set; } = string.Empty;
+    public string CaseStudyCaption { get; set; } = string.Empty;
+    public string ServicesCtaImagePath { get; set; } = string.Empty;
+
+    /// <summary>The client logo strip stays hidden until permission to show the logos is confirmed.</summary>
+    public bool ShowClientLogos { get; set; }
+
     /// <summary>How many projects a country page may show (the layout fits three across).</summary>
     public int ProjectSlots { get; set; } = 3;
     public int BlogPageSize { get; set; } = 9;

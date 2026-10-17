@@ -14,7 +14,7 @@ public static class SeedData
     private const string Img = "/img/optimum-earth-images/";
 
     /// <summary>The content version a freshly seeded database starts at. See <see cref="ContentUpgrades"/>.</summary>
-    public const int CurrentContentVersion = 5;
+    public const int CurrentContentVersion = 6;
 
     public static List<Slide> Slides() => new()
     {
@@ -23,10 +23,23 @@ public static class SeedData
         new() { Eyebrow = "Optimum Earth Foundation", Headline = "Communities designing the infrastructure they need.", Body = "Engineering capability channelled into community-led development, measured by results.", ImagePath = Img + "heroslide3.jpg" },
     };
 
+    private const string Field = Img + "field/";
+
     public static List<Service> Services() => new()
     {
-        new() { Title = "Technical Studies", Coverage = "Uganda · Zambia", ImagePath = Img + "services/technical-studies.jpg",
-            Description = "Know the ground before you commit capital. Good projects start with good data. We plan, collect and interpret the field and desk studies that reduce risk at concept, feasibility and bankability stage, whether the project is a single borehole or a 330 kV transmission corridor. Our geoscientists, engineers, surveyors, hydrologists and GIS specialists work in-house, so their findings go straight into design without gaps.",
+        new() { Title = "Technical Studies", ShortTitle = "Technical Studies", Slug = "technical-studies", Coverage = "Uganda · Zambia", Layout = "split",
+            Tagline = "Know the ground before you commit capital.",
+            Description = "We plan, collect and interpret the field and desk studies that reduce risk at concept, feasibility and bankability stage, from a single borehole to a 330 kV transmission corridor. Our specialists are in-house, so findings go straight into design.",
+            ImagePath = Field + "mining-geology.jpg", TileImagePath = Field + "ves-survey.jpg",
+            TileItems = new() { "Hydrogeology & groundwater modelling", "Geophysics: VES, ERT, MASW, GPR", "Geotechnical & survey" },
+            Highlights = new()
+            {
+                "Hydrogeological surveys, drilling, test pumping & modelling",
+                "Geophysics: VES, ERT, seismic refraction, MASW, GPR, logging",
+                "Geotechnical investigations & slope stability",
+                "GIS, remote sensing & drone mapping",
+            },
+            StatValue = "12 regions", StatLabel = "NWSC production well surveys, nationwide",
             Deliverables = new()
             {
                 "Hydrogeological surveys, borehole drilling, test pumping and groundwater modelling",
@@ -38,8 +51,19 @@ public static class SeedData
                 "Groundwater and water quality monitoring networks, including real-time satellite telemetry",
                 "Feasibility studies for water, energy and mining projects",
             } },
-        new() { Title = "Engineering Design", Coverage = "Uganda · Zambia", ImagePath = Img + "services/engineering-design.jpeg",
-            Description = "Designs built on real site data. We turn study findings into designs that can be priced, permitted and built. Because investigation and design sit in the same team, every design assumption is tested against measured site conditions rather than taken from a desk study. Our designs carry through to tender documents and construction supervision, so one team is accountable from first calculation to handover.",
+        new() { Title = "Engineering Design", ShortTitle = "Engineering Design", Slug = "engineering-design", Coverage = "Uganda · Zambia", Layout = "split-alt",
+            Tagline = "Designs built on real site data.",
+            Description = "We turn study findings into designs that can be priced, permitted and built. Every assumption is tested against measured site conditions, and one team stays accountable from first calculation to handover.",
+            ImagePath = Field + "tank-stand-media.jpg", TileImagePath = Field + "tank-stand-p.jpg",
+            TileItems = new() { "Water supply & treatment", "Solar PV & solar pumping", "Transmission & substation support" },
+            Highlights = new()
+            {
+                "Water supply: boreholes, mains, reservoirs & networks",
+                "Solar PV, solar pumping & grid integration",
+                "Transmission routing & substation design support",
+                "BoQs, specifications & owner's engineer services",
+            },
+            StatValue = "79 sites", StatLabel = "Solar water supply and irrigation systems designed, Uganda",
             Deliverables = new()
             {
                 "Water supply systems: production boreholes, pumping mains, reservoirs, elevated tanks and distribution networks",
@@ -52,8 +76,18 @@ public static class SeedData
                 "Mine water management and dewatering systems",
                 "Bills of quantities, specifications, tender documents and owner's engineer services",
             } },
-        new() { Title = "Construction Services", Coverage = "Uganda · Zambia", ImagePath = Img + "services/construction-services.jpg",
-            Description = "Built by the team that designed it. We build, install and commission with our own crews and equipment, and we supervise works for clients who build with other contractors. Every contract includes HSE management, quality control and as-built records as standard. We are accountable for the result, not just the activity.",
+        new() { Title = "Construction Services", ShortTitle = "Construction Services", Slug = "construction", Coverage = "Uganda · Zambia", Layout = "band",
+            Tagline = "Built by the team that designed it.",
+            Description = "Our own crews and equipment build, install and commission, and we supervise works for clients who build with other contractors. HSE management, quality control and as-built records are standard on every contract.",
+            ImagePath = Field + "drainage-wide.jpg", TileImagePath = Field + "drilling-rig-p.jpg",
+            TileItems = new() { "Borehole drilling & rehabilitation", "Pipelines & pump stations", "Supervision & QA" },
+            Highlights = new()
+            {
+                "Borehole drilling, construction & rehabilitation",
+                "Pipelines, pump stations & storage tanks",
+                "Earthworks, trenching, concrete & structures",
+                "Supervision, QA & contract administration",
+            },
             Deliverables = new()
             {
                 "Borehole drilling, construction and rehabilitation, and monitoring well installation",
@@ -65,8 +99,19 @@ public static class SeedData
                 "Construction supervision, quality assurance and contract administration",
                 "Plant and equipment hire, with or without operators",
             } },
-        new() { Title = "Environmental & Social Impact Assessments", Coverage = "Uganda · Zambia", ImagePath = Img + "services/environmental-and-social-impact-assessments.jpg",
-            Description = "Approvals that satisfy both the regulator and the lender. We take projects through the full environmental and social compliance cycle, from screening to closure. Our work meets national requirements (NEMA, ZEMA) and the international lender safeguards that financiers apply. Hydrogeology, hydrology and GIS are in-house, so the specialist baseline studies that most ESIAs subcontract are done by the same team that writes the assessment.",
+        new() { Title = "Environmental & Social Impact Assessments", ShortTitle = "Environmental & Social", Slug = "esia", Coverage = "Uganda · Zambia", Layout = "split-alt",
+            Tagline = "Approvals that satisfy both the regulator and the lender.",
+            Description = "We take projects through the full compliance cycle, from screening to closure. Hydrogeology, hydrology and GIS are in-house, so the specialist baselines most ESIAs subcontract are done by the team that writes the assessment.",
+            ImagePath = Field + "stakeholder-meeting.jpg", TileImagePath = Field + "river-survey.jpg",
+            TileItems = new() { "Full ESIAs (NEMA, ZEMA)", "In-house specialist baselines", "Audits & monitoring" },
+            Highlights = new()
+            {
+                "Full ESIAs & environmental impact statements",
+                "Specialist baselines: water, soils, air, biodiversity",
+                "Stakeholder engagement & grievance mechanisms",
+                "Compliance audits & monitoring programmes",
+            },
+            StatValue = "NEMA · ZEMA", StatLabel = "Plus international lender safeguards",
             Deliverables = new()
             {
                 "Screening, scoping and project briefs",
@@ -77,21 +122,93 @@ public static class SeedData
                 "Stakeholder engagement, public consultation and grievance mechanisms",
                 "Resettlement planning support, mine closure and rehabilitation planning",
             } },
-        new() { Title = "Climate Resilience & Natural Resources", Coverage = "Uganda · Zambia", ImagePath = Img + "services/climate-resilience-&-natural-resources.jpg",
-            Description = "Planning water and land for the climate ahead. Climate change is changing how much water is available, when rain falls and how land can be used. We help governments, development partners, conservation organisations and agribusiness plan at the scale these changes happen: the catchment, the district, the landscape. We combine satellite data, hydrological modelling and field verification to show what resources exist, how they are changing and how to manage them. Our work turns that evidence into plans, maps and investments that communities and institutions can act on.",
+        new() { Title = "Climate Resilience & Natural Resources", ShortTitle = "Climate Resilience", Slug = "climate-resilience", Coverage = "Uganda · Zambia", Layout = "case-study",
+            Tagline = "Planning water and land for the climate ahead.",
+            Description = "We help governments, development partners, conservation organisations and agribusiness plan at the scale climate change happens: the catchment, the district, the landscape. Then we turn the evidence into plans and investments people can act on.",
+            ImagePath = Field + "owen-falls-p.jpg", TileImagePath = Field + "owen-falls-p.jpg",
+            TileItems = new() { "Catchment & IWRM plans", "Land cover change analysis", "Nature-based solutions" },
+            Highlights = new()
+            {
+                "Water resources assessments & IWRM plans",
+                "Land use & land cover change analysis",
+                "Nature-based solutions & catchment management",
+                "Drought & flood monitoring dashboards",
+            },
             Deliverables = new()
             {
-                "Water resources assessments and integrated water resources management (IWRM) master plans at catchment, district and basin scale",
+                "Water resources assessments and IWRM master plans at catchment, district and basin scale",
                 "Water balance modelling with climate and demand scenarios",
                 "Climate risk and vulnerability assessments for water supply, agriculture and infrastructure",
-                "Climate-smart agriculture: irrigation suitability mapping, solar-powered irrigation, rainwater harvesting, and soil and water conservation",
+                "Climate-smart agriculture: irrigation suitability mapping, solar irrigation, rainwater harvesting, soil and water conservation",
                 "Land use and land cover change analysis from multi-date satellite imagery",
-                "Resource management mapping for forests, wetlands, rangelands and catchments, including encroachment and degradation mapping",
-                "Catchment management plans, and ecosystem-based adaptation and nature-based solutions such as wetland restoration, riparian buffers and reforestation",
+                "Resource management mapping for forests, wetlands, rangelands and catchments, including encroachment and degradation",
+                "Catchment management plans, ecosystem-based adaptation and nature-based solutions",
                 "Drought and flood monitoring systems and decision-support dashboards",
                 "Technical inputs to climate finance proposals",
             } },
     };
+
+    /// <summary>The project each service shows as "In practice", by service slug and project title.</summary>
+    public static readonly IReadOnlyDictionary<string, string> PracticeProjects = new Dictionary<string, string>
+    {
+        ["technical-studies"] = "Makuutu Bankable Feasibility Study - Hydrogeology Programme",
+        ["engineering-design"] = "Mbale Industrial Park Water & Sewage Masterplan",
+        ["construction"] = "Groundwater Monitoring Network - Kingfisher Oilfield",
+        ["esia"] = "Pivot Irrigation ESIA",
+        ["climate-resilience"] = ImatongTitle,
+    };
+
+    public const string ImatongTitle = "Imatong Forest Reserve: land cover change and management zoning";
+
+    /// <summary>Added for the Services page's climate case study; existing databases get it from the content upgrade.</summary>
+    public static Project Imatong() =>
+        P(ImatongTitle, "SOUTH SUDAN · 2025", "Client: IUCN", "southsudan", "climate", Img + "aerial/drone-orom-03.jpg",
+            "Ten-year change analysis, hot spot statistics, erosion and landslide risk, and management zoning for the reserve and its surrounding landscape.");
+
+    /// <summary>The Services page text, applied to a fresh database and to existing ones where it is still empty.</summary>
+    public static void ApplyServicesText(SiteSettings s)
+    {
+        s.ServicesHeadline = "Water, energy, mining, infrastructure and the ground beneath them all.";
+        s.ServicesLede = "Since 2017, we have delivered studies, designs and construction for utilities, energy developers, mines, oil companies and development partners, from Kampala and Lusaka across East, Central and Southern Africa.";
+        s.ServicesPosterPath = Field + "drone-poster.jpg";
+        s.AerialHeadline = "Every survey starts with the landscape.";
+        s.AerialBody = "Drone imagery from fieldwork near Orom, northern Uganda. Reading terrain, drainage and land use from the air shapes where the ground surveys go.";
+        s.FleetHeadline = "Our own fleet, on site when you need it.";
+        s.FleetBody = "From Lusaka, Optimum Earth Engineering Ltd supplies plant, haulage and site equipment to mining, energy and infrastructure projects, with or without operators. The same machines support our own construction work, so they are maintained to our HSE standards.";
+        s.FleetItems = new() { "Tipper trucks & haulage", "Backhoe loaders & excavators", "Drilling & test pumping equipment", "Operated or dry hire" };
+        s.FleetImagePath = Field + "zambia-truck-p.jpg";
+        s.FleetInsetImagePath = Field + "zambia-backhoe-p.jpg";
+        s.CaseStudyStat = "198,350 ha";
+        s.CaseStudyStatText = "of natural vegetation converted in the Imatong landscape between 2015 and 2025, close to half of what stood in 2015.";
+        s.CaseStudyCaption = "Imatong project landscape, Eastern Equatoria, South Sudan: 584,660 ha classified from 10 m Sentinel-2 imagery. Prepared for IUCN and the Ministry of Environment & Forestry.";
+        s.ServicesCtaImagePath = Field + "orom-inselberg.jpg";
+    }
+
+    public static List<Sector> Sectors() => new()
+    {
+        new() { Key = "oil", Name = "Oil & gas", Blurb = "Water supply, monitoring and ESIA for upstream developments", ImagePath = Field + "excavation-supervision.jpg" },
+        new() { Key = "mining", Name = "Mining & quarrying", Blurb = "Feasibility hydrogeology, dewatering and borefields", ImagePath = Field + "mining-geology-p.jpg" },
+        new() { Key = "energy", Name = "Power & energy", Blurb = "Solar PV, transmission corridors and site investigation", ImagePath = Field + "solar-handover-p.jpg" },
+        new() { Key = "public", Name = "Utilities & public sector", Blurb = "Production wells, piped schemes and tank stands", ImagePath = Field + "tank-stand-p.jpg" },
+        new() { Key = "community", Name = "Communities", Blurb = "Boreholes and water for schools, hospitals and settlements", ImagePath = Field + "pump-test-p.jpg" },
+        new() { Key = "private", Name = "Industry & private", Blurb = "Water, treatment and permitting for industrial sites", ImagePath = Field + "water-treatment-p.jpg" },
+    };
+
+    public static List<Client> Clients() => new[]
+    {
+        ("TotalEnergies", "totalenergies"), ("CNOOC", "cnooc"), ("EACOP", "eacop"), ("Daqing Oilfield", "daqing"), ("ATRO Engineering", "atro"),
+        ("ZESCO", "zesco"), ("Ministry of Energy, Zambia", "zambia-energy"), ("UEDCL and REA", "uedcl-rea"), ("Hima Cement", "hima-cement"), ("Holcim", "holcim"),
+        ("Rwenzori Rare Metals", "rwenzori"), ("Ionic Rare Earths", "ionic"), ("Consolidated Africa", "consolidated-africa"), ("Blencowe Resources", "blencowe"),
+        ("NASECO Seeds", "naseco"), ("Sino-Uganda Mbale Industrial Park", "mbale-park"), ("Lagan DOTT Namanve", "lagan-dott"), ("Raxio Data Centre", "raxio"),
+        ("Xsabo Group", "xsabo"), ("CAAMENIHU", "caamenihu"), ("WSS Services", "wss"), ("Studio Galli Ingegneria", "sgi"), ("ROKO Construction", "roko"),
+    }.Select(c => new Client { Name = c.Item1, LogoPath = Img + "clients/" + c.Item2 + ".png" }).ToList();
+
+    public static List<AerialPhoto> AerialPhotos() => new[]
+    {
+        ("orom-01", "Woodland and open savanna"), ("orom-02", "Drainage line through cultivated slopes"), ("orom-03", "Riparian corridor below the ridge"),
+        ("orom-04", "Seasonal stream and cultivation"), ("camp-01", "Dry-season woodland canopy"), ("camp-02", "Access track through bushland"),
+        ("camp-03", "Bushland toward the escarpment"),
+    }.Select(a => new AerialPhoto { Caption = a.Item2, ImagePath = Img + "aerial/drone-" + a.Item1 + ".jpg" }).ToList();
 
     /// <summary>The projects shown on the Projects page, in the order they appear.</summary>
     public static List<Project> ListProjects() => new()
@@ -144,6 +261,7 @@ public static class SeedData
         P("St Joseph of Nazareth School Water Programme", "UGANDA · 2023 & 2025", "Client: St Joseph of Nazareth High School", "uganda", "construction", Img + "project45.jpg", "Survey, drilling, test pumping, casing and hand-pump installation delivering safe water to a school community, in two phases."),
         P("Kitukiro Rural Water Supply - Pipeline Trenching & Fabrication", "UGANDA · 2026 (ONGOING)", "Client: Water Mission Uganda", "uganda", "construction", Img + "project46.jpg", "Trenching and backfilling of a 27 km pipeline route, plus fabrication works, for a rural community water-supply scheme."),
         P("Buliisa & Hoima Regional Water Programme", "UGANDA · 2018-2026", "Client: Multiple institutional and private clients", "uganda", "construction", Img + "borehole.jpg", "150+ borehole siting, drilling, test pumping and rehabilitation assignments completed since 2018 across households, schools, hospitals, hotels, refugee settlements and utilities nationwide."),
+        Imatong(),
     };
 
     /// <summary>
@@ -169,11 +287,11 @@ public static class SeedData
 
     public static List<Capability> Capabilities() => new()
     {
-        new() { Title = "Technical Studies", Description = "Hydrogeology, geophysics, geotechnics, survey and GIS." },
-        new() { Title = "Engineering Design", Description = "Water supply, solar PV and pumping, transmission support." },
-        new() { Title = "Construction Services", Description = "Drilling, pipelines, pump stations, supervision." },
-        new() { Title = "Environmental & Social", Description = "ESIAs, specialist baselines, audits and monitoring." },
-        new() { Title = "Climate Resilience", Description = "Catchment plans, land cover change, nature-based solutions." },
+        new() { Title = "Technical Studies", Description = "Hydrogeology, geophysics, geotechnics, survey and GIS.", LinkUrl = "/services#technical-studies" },
+        new() { Title = "Engineering Design", Description = "Water supply, solar PV and pumping, transmission support.", LinkUrl = "/services#engineering-design" },
+        new() { Title = "Construction Services", Description = "Drilling, pipelines, pump stations, supervision.", LinkUrl = "/services#construction" },
+        new() { Title = "Environmental & Social", Description = "ESIAs, specialist baselines, audits and monitoring.", LinkUrl = "/services#esia" },
+        new() { Title = "Climate Resilience", Description = "Catchment plans, land cover change, nature-based solutions.", LinkUrl = "/services#climate-resilience" },
     };
 
     // Each description's first sentence is shown as the value's lead line on the Who We Are page.

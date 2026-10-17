@@ -19,7 +19,12 @@ public static class ContentRegistry
 
     private static readonly IReadOnlyList<(string, string)> Countries = new[]
     {
-        ("uganda", "Uganda"), ("zambia", "Zambia"), ("burundi", "Burundi"), ("drc", "DRC"),
+        ("uganda", "Uganda"), ("zambia", "Zambia"), ("burundi", "Burundi"), ("drc", "DRC"), ("southsudan", "South Sudan"),
+    };
+
+    private static readonly IReadOnlyList<(string, string)> ServiceLayouts = new[]
+    {
+        ("split", "Photo left, text right"), ("split-alt", "Tinted, photo right"), ("band", "Full-width photo band"), ("case-study", "Imatong map case study"),
     };
 
     private static readonly IReadOnlyList<(string, string)> StatKinds = new[]
@@ -107,11 +112,21 @@ public static class ContentRegistry
             Set = db => db.Services, TitleOf = x => x.Title,
             Fields = new FieldDef[]
             {
-                new() { Key = nameof(Service.Title), Label = "Title", Required = true, Max = 70 },
+                new() { Key = nameof(Service.Title), Label = "Title", Required = true, Max = 70, Half = true },
+                new() { Key = nameof(Service.ShortTitle), Label = "Short title", Required = true, Max = 30, Half = true, Hint = "For the tiles, jump menu and footer." },
+                new() { Key = nameof(Service.Slug), Label = "Anchor", Required = true, Max = 40, Half = true, Pattern = KeyPattern, PatternMessage = KeyMessage, Hint = "Links to the section as /services#anchor." },
                 new() { Key = nameof(Service.Coverage), Label = "Coverage", Half = true, Max = 60, Hint = "e.g. Uganda · Zambia" },
-                new() { Key = nameof(Service.ImagePath), Label = "Image", Kind = FieldKind.Image, Required = true, Half = true },
-                new() { Key = nameof(Service.Description), Label = "Description", Kind = FieldKind.Area, Required = true, Max = 1000, Rows = 6 },
-                new() { Key = nameof(Service.Deliverables), Label = "What we deliver", Kind = FieldKind.Lines, Rows = 8, Hint = "One bullet per line, shown on the Services page." },
+                new() { Key = nameof(Service.Tagline), Label = "Headline", Required = true, Max = 80 },
+                new() { Key = nameof(Service.Description), Label = "Intro", Kind = FieldKind.Area, Required = true, Max = 1000, Rows = 4 },
+                new() { Key = nameof(Service.Highlights), Label = "Headline capabilities", Kind = FieldKind.Lines, Rows = 4, Hint = "Four short lines, shown with icons." },
+                new() { Key = nameof(Service.Deliverables), Label = "All capabilities", Kind = FieldKind.Lines, Rows = 8, Hint = "One per line, shown under \"See all\"." },
+                new() { Key = nameof(Service.Layout), Label = "Section layout", Kind = FieldKind.Select, Options = ServiceLayouts, Half = true, Group = "Services page section" },
+                new() { Key = nameof(Service.ImagePath), Label = "Section photo", Kind = FieldKind.Image, Required = true, Half = true },
+                new() { Key = nameof(Service.StatValue), Label = "Photo badge figure", Max = 20, Half = true, Hint = "e.g. 12 regions. Leave empty for no badge." },
+                new() { Key = nameof(Service.StatLabel), Label = "Photo badge text", Max = 80, Half = true },
+                new() { Key = nameof(Service.PracticeProjectId), Label = "\"In practice\" project", Kind = FieldKind.Select, OptionsSource = "projects", Hint = "Its photo, description and client show under the section." },
+                new() { Key = nameof(Service.TileImagePath), Label = "Tile photo", Kind = FieldKind.Image, Required = true, Half = true, Group = "Overview tile" },
+                new() { Key = nameof(Service.TileItems), Label = "Tile points", Kind = FieldKind.Lines, Rows = 3, Half = true, Hint = "Three short lines." },
                 new() { Key = "shownOn", Label = "Appears on", Kind = FieldKind.Placements },
             },
             Columns = new ColumnDef<Service>[]
@@ -121,6 +136,7 @@ public static class ContentRegistry
                 new() { Header = "Shown on", Html = (x, ctx) => ShownOn(x.Id, x.OnListPage, "Services", ctx) },
             },
             Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Title, Like(s)) || EF.Functions.ILike(x.Description, Like(s))),
+            Unique = new[] { nameof(Service.Slug) },
             PrepareColumns = async (db, rows) =>
             {
                 var ids = rows.Select(r => r.Id).ToList();
@@ -142,6 +158,86 @@ public static class ContentRegistry
                 new() { Key = nameof(SiteSettings.Vision), Label = "Vision", Kind = FieldKind.Area, Required = true, Max = 300, Rows = 4 },
             },
             Columns = Array.Empty<ColumnDef<SiteSettings>>(),
+        },
+
+        new ContentDescriptor<SiteSettings>
+        {
+            Slug = "services-page", Label = "Page text", Singular = "Page text", Area = AdminAreas.Services, Single = true, CanAdd = false, CanDelete = false, Orderable = false,
+            Description = "The hero, drone strip, Zambia equipment hire, Imatong case study and closing photo on the Services page.",
+            Set = db => db.Settings, TitleOf = _ => "Services page text",
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(SiteSettings.ServicesHeadline), Label = "Headline", Required = true, Max = 100, Group = "Hero" },
+                new() { Key = nameof(SiteSettings.ServicesLede), Label = "Intro", Kind = FieldKind.Area, Required = true, Max = 320, Rows = 3 },
+                new() { Key = nameof(SiteSettings.ServicesPosterPath), Label = "Still image", Kind = FieldKind.Image, Required = true, Hint = "Shown behind the hero until the drone video plays, and instead of it on phones." },
+                new() { Key = nameof(SiteSettings.AerialHeadline), Label = "Headline", Required = true, Max = 80, Group = "From the air" },
+                new() { Key = nameof(SiteSettings.AerialBody), Label = "Text", Kind = FieldKind.Area, Required = true, Max = 300, Rows = 3, Hint = "The photos are under Drone photos." },
+                new() { Key = nameof(SiteSettings.FleetHeadline), Label = "Headline", Required = true, Max = 80, Group = "Plant & equipment hire (Zambia)" },
+                new() { Key = nameof(SiteSettings.FleetBody), Label = "Text", Kind = FieldKind.Area, Required = true, Max = 400, Rows = 4 },
+                new() { Key = nameof(SiteSettings.FleetItems), Label = "Points", Kind = FieldKind.Lines, Rows = 4, Hint = "One per line." },
+                new() { Key = nameof(SiteSettings.FleetImagePath), Label = "Main photo", Kind = FieldKind.Image, Required = true, Half = true },
+                new() { Key = nameof(SiteSettings.FleetInsetImagePath), Label = "Second photo", Kind = FieldKind.Image, Required = true, Half = true },
+                new() { Key = nameof(SiteSettings.CaseStudyStat), Label = "Headline figure", Required = true, Max = 20, Half = true, Group = "Imatong case study" },
+                new() { Key = nameof(SiteSettings.CaseStudyStatText), Label = "Figure text", Kind = FieldKind.Area, Required = true, Max = 200, Rows = 2 },
+                new() { Key = nameof(SiteSettings.CaseStudyCaption), Label = "Map caption", Kind = FieldKind.Area, Required = true, Max = 300, Rows = 2 },
+                new() { Key = nameof(SiteSettings.ServicesCtaImagePath), Label = "Background photo", Kind = FieldKind.Image, Required = true, Group = "Closing \"Not sure which service\"" },
+                new() { Key = nameof(SiteSettings.ShowClientLogos), Label = "Show the client logo strip", Kind = FieldKind.Bool, Group = "Clients", Hint = "Turn on once the clients have agreed to their logos being shown. The logos are under Clients." },
+            },
+            Columns = Array.Empty<ColumnDef<SiteSettings>>(),
+        },
+
+        new ContentDescriptor<Sector>
+        {
+            Slug = "sectors", Label = "Sectors", Singular = "Sector", Area = AdminAreas.Services,
+            Description = "The \"Who we work for\" tiles on the Services page. Each opens the Projects page filtered to its key.",
+            Set = db => db.Sectors, TitleOf = x => x.Name, AutoSlug = (nameof(Sector.Name), nameof(Sector.Key)),
+            Unique = new[] { nameof(Sector.Key) },
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(Sector.Name), Label = "Name", Required = true, Max = 40, Half = true },
+                new() { Key = nameof(Sector.Key), Label = "Key", Max = 30, Half = true, Pattern = KeyPattern, PatternMessage = KeyMessage, Hint = "Filled in from the name. Used in the Projects page link." },
+                new() { Key = nameof(Sector.Blurb), Label = "Line under the name", Max = 90 },
+                new() { Key = nameof(Sector.ImagePath), Label = "Photo", Kind = FieldKind.Image, Required = true },
+            },
+            Columns = new ColumnDef<Sector>[]
+            {
+                new() { Header = "Sector", Html = (x, _) => Cell.Thumb(x.ImagePath, x.Name, x.Blurb) },
+            },
+            Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Name, Like(s)) || EF.Functions.ILike(x.Blurb, Like(s))),
+        },
+
+        new ContentDescriptor<Client>
+        {
+            Slug = "clients", Label = "Clients", Singular = "Client", Area = AdminAreas.Services,
+            Description = "The logo strip on the Services page. It only shows once it is switched on in the Services page text.",
+            Set = db => db.Clients, TitleOf = x => x.Name,
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(Client.Name), Label = "Name", Required = true, Max = 60, Hint = "Read out by screen readers in place of the logo." },
+                new() { Key = nameof(Client.LogoPath), Label = "Logo", Kind = FieldKind.Image, Required = true, Hint = "A PNG with a transparent background works best." },
+            },
+            Columns = new ColumnDef<Client>[]
+            {
+                new() { Header = "Client", Html = (x, _) => Cell.Thumb(x.LogoPath, x.Name) },
+            },
+            Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Name, Like(s))),
+        },
+
+        new ContentDescriptor<AerialPhoto>
+        {
+            Slug = "aerial", Label = "Drone photos", Singular = "Drone photo", Area = AdminAreas.Services,
+            Description = "The \"From the air\" photo strip on the Services page.",
+            Set = db => db.AerialPhotos, TitleOf = x => x.Caption,
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(AerialPhoto.Caption), Label = "Caption", Required = true, Max = 80 },
+                new() { Key = nameof(AerialPhoto.ImagePath), Label = "Photo", Kind = FieldKind.Image, Required = true },
+            },
+            Columns = new ColumnDef<AerialPhoto>[]
+            {
+                new() { Header = "Photo", Html = (x, _) => Cell.Thumb(x.ImagePath, x.Caption) },
+            },
+            Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Caption, Like(s))),
         },
 
         new ContentDescriptor<SiteSettings>
@@ -257,6 +353,7 @@ public static class ContentRegistry
             {
                 new() { Key = nameof(Capability.Title), Label = "Title", Required = true, Max = 60 },
                 new() { Key = nameof(Capability.Description), Label = "Description", Max = 120 },
+                new() { Key = nameof(Capability.LinkUrl), Label = "Explore link", Max = 200, Pattern = @"^(/\S*|https://\S+)$", PatternMessage = "Use a site path such as /services#esia, or an https:// link.", Hint = "e.g. /services#technical-studies" },
             },
             Columns = new ColumnDef<Capability>[]
             {

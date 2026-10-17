@@ -174,10 +174,10 @@
 
                 <nav class="site-footer__col" aria-label="Services">
                     <h3>Services</h3>
-                    <a href="/services">Water supply</a>
-                    <a href="/services">GIS &amp; mapping</a>
-                    <a href="/services">Groundwater monitoring</a>
-                    <a href="/services">Geothermal consulting</a>
+                    @foreach (var service in await Content.ServiceLinksAsync())
+                    {
+                        <a href="@service.Href">@service.ShortTitle</a>
+                    }
                 </nav>
 
                 <nav class="site-footer__col" aria-label="Company">

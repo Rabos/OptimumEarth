@@ -16,6 +16,15 @@ public sealed record WhoWeAreContent(
     IReadOnlyList<GroupCard> Group,
     IReadOnlyList<OfficeInfo> Offices);
 
+public sealed record ServicesPageContent(
+    ServicesPageText Text,
+    IReadOnlyList<ServiceSection> Sections,
+    IReadOnlyList<AerialShot> Aerial,
+    IReadOnlyList<StatItem> Stats,
+    DateOnly FoundedOn,
+    IReadOnlyList<SectorTile> Sectors,
+    IReadOnlyList<ClientLogo> Clients);
+
 public sealed record FoundationContent(
     IReadOnlyList<PillarDetail> Pillars,
     IReadOnlyList<string> FocusAreas,
@@ -87,14 +96,75 @@ public sealed class ContentReader
         return (IReadOnlyList<HeroSlide>)rows.Select(s => new HeroSlide(s.Eyebrow.Split(' ', StringSplitOptions.RemoveEmptyEntries).LastOrDefault() + " hero", s.Eyebrow, s.Headline, s.Body, s.ImagePath)).ToList();
     });
 
-    public Task<IReadOnlyList<ServiceLine>> ServiceLinesAsync() => _cache.GetOrCreateAsync("services", async () =>
+    private static readonly Dictionary<string, string> CountryNames = new()
     {
-        var rows = await _db.Services.AsNoTracking().Where(s => s.Status == ContentStatus.Published && s.OnListPage).OrderBy(s => s.SortOrder).ThenBy(s => s.Id).ToListAsync();
-        // The image's alt text (edited under Media) labels it for screen readers; fall back to the title.
-        var paths = rows.Select(r => r.ImagePath).ToList();
+        ["uganda"] = "Uganda", ["zambia"] = "Zambia", ["burundi"] = "Burundi", ["drc"] = "DRC", ["southsudan"] = "South Sudan",
+    };
+
+    public Task<ServicesPageContent> ServicesPageAsync() => _cache.GetOrCreateAsync("services.page", async () =>
+    {
+        var settings = await SettingsAsync();
+        var rows = await _db.Services.AsNoTracking().Include(s => s.PracticeProject)
+            .Where(s => s.Status == ContentStatus.Published && s.OnListPage).OrderBy(s => s.SortOrder).ThenBy(s => s.Id).ToListAsync();
+        var aerial = await _db.AerialPhotos.AsNoTracking().Where(x => x.Status == ContentStatus.Published).OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToListAsync();
+        var sectors = await _db.Sectors.AsNoTracking().Where(x => x.Status == ContentStatus.Published).OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToListAsync();
+        var clients = settings.ShowClientLogos
+            ? await _db.Clients.AsNoTracking().Where(x => x.Status == ContentStatus.Published).OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToListAsync()
+            : new List<Client>();
+        var stats = await _db.Stats.AsNoTracking().Where(x => x.Status == ContentStatus.Published).OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToListAsync();
+
+        // Image alt text is edited under Media; fall back to a description of the slot.
+        var paths = rows.Select(r => r.ImagePath).Concat(aerial.Select(a => a.ImagePath)).Append(settings.FleetImagePath).Append(settings.FleetInsetImagePath).ToList();
         var alts = await _db.Media.AsNoTracking().Where(m => paths.Contains(m.Path)).ToDictionaryAsync(m => m.Path, m => m.Alt);
-        return (IReadOnlyList<ServiceLine>)rows.Select((s, i) => new ServiceLine(Two(i), s.Title, s.Coverage, s.Description,
-            alts.GetValueOrDefault(s.ImagePath) is { Length: > 0 } alt ? alt : s.Title, s.Deliverables.ToList(), s.ImagePath)).ToList();
+        string Alt(string path, string fallback) => alts.GetValueOrDefault(path) is { Length: > 0 } alt ? alt : fallback;
+
+        // A published project only: a draft one stays out of the "In practice" slot.
+        PracticeCard? Practice(Project? p) => p is null || p.Status != ContentStatus.Published ? null : new PracticeCard(
+            p.Title,
+            p.Description,
+            string.Join(" · ", new[] { ClientName(p.Meta), CountryNames.GetValueOrDefault(p.Country, string.Empty) }.Where(x => x.Length > 0)),
+            p.ImagePath,
+            "/projects?filter=" + p.Service);
+
+        var text = new ServicesPageText(
+            settings.ServicesHeadline,
+            settings.ServicesLede,
+            settings.ServicesPosterPath,
+            settings.AerialHeadline,
+            settings.AerialBody,
+            settings.FleetHeadline,
+            settings.FleetBody,
+            settings.FleetItems.ToList(),
+            settings.FleetImagePath,
+            Alt(settings.FleetImagePath, "Equipment from the Optimum Earth Engineering fleet"),
+            settings.FleetInsetImagePath,
+            Alt(settings.FleetInsetImagePath, "Equipment from the Optimum Earth Engineering fleet"),
+            settings.CaseStudyStat,
+            settings.CaseStudyStatText,
+            settings.CaseStudyCaption,
+            settings.ServicesCtaImagePath);
+
+        return new ServicesPageContent(
+            text,
+            rows.Select((s, i) => new ServiceSection(Two(i), s.Slug, s.Title, s.ShortTitle.Length > 0 ? s.ShortTitle : s.Title, s.Tagline, s.Description, s.Layout,
+                s.ImagePath, Alt(s.ImagePath, s.Title), s.TileImagePath.Length > 0 ? s.TileImagePath : s.ImagePath, s.TileItems.ToList(), s.Highlights.ToList(),
+                s.Deliverables.ToList(), s.StatValue, s.StatLabel, Practice(s.PracticeProject))).ToList(),
+            aerial.Select(a => new AerialShot(a.Caption, a.ImagePath, Alt(a.ImagePath, a.Caption))).ToList(),
+            stats.Select(x => new StatItem(x.Kind == "years", x.Value, x.Suffix, x.Label)).ToList(),
+            settings.FoundedOn,
+            sectors.Select(x => new SectorTile(x.Key, x.Name, x.Blurb, x.ImagePath)).ToList(),
+            clients.Select(x => new ClientLogo(x.Name, x.LogoPath)).ToList());
+    });
+
+    /// <summary>The project meta line reads "Client: Name"; the cards only want the name.</summary>
+    private static string ClientName(string meta) =>
+        Regex.Replace(meta, @"^\s*Client\s*:\s*", string.Empty, RegexOptions.IgnoreCase).Trim();
+
+    public Task<IReadOnlyList<ServiceLink>> ServiceLinksAsync() => _cache.GetOrCreateAsync("services.links", async () =>
+    {
+        var rows = await _db.Services.AsNoTracking().Where(s => s.Status == ContentStatus.Published && s.OnListPage && s.Slug != string.Empty)
+            .OrderBy(s => s.SortOrder).ThenBy(s => s.Id).Select(s => new { s.ShortTitle, s.Title, s.Slug }).ToListAsync();
+        return (IReadOnlyList<ServiceLink>)rows.Select(s => new ServiceLink(s.ShortTitle.Length > 0 ? s.ShortTitle : s.Title, s.Slug)).ToList();
     });
 
     public Task<IReadOnlyList<ProjectCard>> ProjectCardsAsync() => _cache.GetOrCreateAsync("projects", async () =>
@@ -137,7 +207,7 @@ public sealed class ContentReader
             text,
             settings.Mission,
             settings.Vision,
-            caps.Select((c, i) => new CapabilityItem(Two(i), c.Title, c.Description)).ToList(),
+            caps.Select((c, i) => new CapabilityItem(Two(i), c.Title, c.Description, c.LinkUrl.Length > 0 ? c.LinkUrl : "/services")).ToList(),
             values.Select(v => new ValueItem(v.Title, v.Description)).ToList(),
             stats.Select(x => new StatItem(x.Kind == "years", x.Value, x.Suffix, x.Label)).ToList(),
             milestones.Select(x => new MilestoneItem(x.Year, x.Title, x.Description)).ToList(),

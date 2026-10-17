@@ -60,12 +60,66 @@ public class Service : ContentEntity
 
     /// <summary>Whether the row appears on the public Services page itself.</summary>
     public bool OnListPage { get; set; } = true;
+
+    /// <summary>The section's anchor on the Services page, e.g. "technical-studies" for /services#technical-studies.</summary>
+    public string Slug { get; set; } = string.Empty;
+
+    /// <summary>The name used where space is short: the tiles, the jump menu and the footer.</summary>
+    public string ShortTitle { get; set; } = string.Empty;
+
+    /// <summary>The section's headline, e.g. "Know the ground before you commit capital."</summary>
+    public string Tagline { get; set; } = string.Empty;
+
+    /// <summary>"split", "split-alt" (tinted, photo on the right), "band" (full-width photo) or "case-study" (the Imatong map).</summary>
+    public string Layout { get; set; } = "split";
+
+    public string TileImagePath { get; set; } = string.Empty;
+
+    /// <summary>The three short points revealed on the service's tile.</summary>
+    public List<string> TileItems { get; set; } = new();
+
+    /// <summary>The four headline capabilities; Deliverables is the full list behind "See all".</summary>
+    public List<string> Highlights { get; set; } = new();
+
+    /// <summary>The badge on the section photo, e.g. "12 regions" over "NWSC production well surveys, nationwide".</summary>
+    public string StatValue { get; set; } = string.Empty;
+    public string StatLabel { get; set; } = string.Empty;
+
+    /// <summary>The project shown as "In practice" under the section.</summary>
+    public int? PracticeProjectId { get; set; }
+    public Project? PracticeProject { get; set; }
 }
 
 public class Capability : ContentEntity
 {
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
+
+    /// <summary>Where the card's "Explore" link goes, e.g. /services#technical-studies.</summary>
+    public string LinkUrl { get; set; } = string.Empty;
+}
+
+/// <summary>A tile in "Who we work for" on the Services page. Key is the sector filter on the Projects page.</summary>
+public class Sector : ContentEntity
+{
+    public string Key { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Blurb { get; set; } = string.Empty;
+    public string ImagePath { get; set; } = string.Empty;
+}
+
+/// <summary>A logo in the clients strip.</summary>
+public class Client : ContentEntity
+{
+    public string Name { get; set; } = string.Empty;
+    public string LogoPath { get; set; } = string.Empty;
+}
+
+/// <summary>A photo in the "From the air" strip on the Services page.</summary>
+public class AerialPhoto : ContentEntity
+{
+    public string Caption { get; set; } = string.Empty;
+    public string ImagePath { get; set; } = string.Empty;
 }
 
 public class CoreValue : ContentEntity

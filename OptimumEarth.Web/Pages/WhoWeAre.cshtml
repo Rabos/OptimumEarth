@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="~/css/who-we-are.css" asp-append-version="true" />
 }
 
-<div class="who">
+<div class="who" data-animate-root>
     <section class="who-hero" aria-labelledby="who-hero-title">
         <div class="who-hero__bg" role="img" aria-label="@t.HeroImageAlt" image-priority="high" style="background-image: url('@t.HeroImagePath')"></div>
         <div class="who-wrap who-hero__inner">
@@ -40,7 +40,7 @@
 
     <section id="story" class="who-section">
         <div class="who-wrap who-story">
-            <div class="who-reveal">
+            <div data-reveal>
                 <span class="who-eyebrow">Our story</span>
                 <h2 class="who-story__title">@t.StoryHeadline</h2>
                 @foreach (var paragraph in t.StoryParagraphs)
@@ -48,7 +48,7 @@
                     <p>@paragraph</p>
                 }
             </div>
-            <div class="who-collage who-reveal" aria-hidden="true">
+            <div class="who-collage" data-reveal aria-hidden="true">
                 <img class="who-collage__main" src="@t.StoryImagePath" alt="" sizes="(max-width: 860px) 72vw, 40vw" />
                 <img class="who-collage__inset" src="@t.StoryInsetImagePath" alt="" sizes="(max-width: 860px) 52vw, 30vw" />
                 <div class="who-collage__tag"><b>@t.FoundedOn.Year</b>Founded in Kampala</div>
@@ -60,11 +60,11 @@
     {
         <section class="who-section who-section--white">
             <div class="who-wrap">
-                <div class="who-head who-reveal">
+                <div class="who-head" data-reveal>
                     <div><span class="who-eyebrow">Milestones</span><h2>From one borehole to a 330 kV corridor.</h2></div>
                     <p>A few of the steps that shaped the firm. The full list is on our <a href="/projects">projects page</a>.</p>
                 </div>
-                <ol class="who-timeline who-reveal">
+                <ol class="who-timeline" data-reveal>
                     @foreach (var m in c.Milestones)
                     {
                         <li><b>@m.Year</b><h3>@m.Title</h3><p>@m.Description</p></li>
@@ -78,14 +78,14 @@
     {
         <section class="who-section">
             <div class="who-wrap">
-                <div class="who-head who-reveal">
+                <div class="who-head" data-reveal>
                     <div><span class="who-eyebrow">The group</span><h2>Two companies. One foundation. One standard.</h2></div>
                     <p>The same team and the same values run through each part of the group, whether the work is a commercial contract or a community programme.</p>
                 </div>
                 <div class="who-group">
                     @foreach (var g in c.Group)
                     {
-                        <article class="who-entity who-reveal@(g.IsFoundation ? " who-entity--foundation" : "")">
+                        <article class="who-entity@(g.IsFoundation ? " who-entity--foundation" : "")" data-reveal>
                             <div class="who-entity__photo"><img src="@g.ImagePath" alt="@g.ImageAlt" sizes="(max-width: 860px) 100vw, 33vw" /></div>
                             <div class="who-entity__body">
                                 @if (!string.IsNullOrWhiteSpace(g.Kind))
@@ -119,8 +119,8 @@
         <div class="who-wrap">
             <span class="who-eyebrow">Vision &amp; mission</span>
             <div class="who-purpose__grid">
-                <div class="who-reveal"><h2>Our vision</h2><p>@c.Vision</p></div>
-                <div class="who-purpose__mission who-reveal"><h2>Our mission</h2><p>@c.Mission</p></div>
+                <div data-reveal><h2>Our vision</h2><p>@c.Vision</p></div>
+                <div class="who-purpose__mission" data-reveal><h2>Our mission</h2><p>@c.Mission</p></div>
             </div>
         </div>
     </section>
@@ -129,7 +129,7 @@
     {
         <section id="values" class="who-section" data-values>
             <div class="who-wrap">
-                <div class="who-head who-reveal">
+                <div class="who-head" data-reveal>
                     <div><span class="who-eyebrow">Our values</span><h2>The SCALES we measure ourselves against.</h2></div>
                     <p>They set the standard for how our staff, associates and volunteers work, in our companies and in our Foundation. Select a letter.</p>
                 </div>
@@ -160,14 +160,14 @@
     {
         <section class="who-section who-section--white">
             <div class="who-wrap">
-                <div class="who-head who-reveal">
+                <div class="who-head" data-reveal>
                     <div><span class="who-eyebrow">What we do</span><h2>Five service lines, one team.</h2></div>
                     <p>Our specialists are in-house, so what we learn in the field goes straight into design and construction.</p>
                 </div>
-                <div class="who-services who-reveal">
+                <div class="who-services" data-reveal>
                     @foreach (var cap in c.Capabilities)
                     {
-                        <a href="/services"><i>@cap.Index</i><h3>@cap.Title</h3><span>@cap.Description</span><b>Explore <span aria-hidden="true">&rarr;</span></b></a>
+                        <a href="@cap.LinkUrl"><i>@cap.Index</i><h3>@cap.Title</h3><span>@cap.Description</span><b>Explore <span aria-hidden="true">&rarr;</span></b></a>
                     }
                 </div>
             </div>
@@ -176,7 +176,7 @@
 
     <section class="who-section">
         <div class="who-wrap who-where">
-            <div class="who-reveal">
+            <div data-reveal>
                 <span class="who-eyebrow">Where we work</span>
                 <h2>Based in Kampala and Lusaka. Working across the region.</h2>
                 <ul class="who-countries">
@@ -187,7 +187,7 @@
                 </ul>
                 <a class="who-btn who-btn--solid" href="/projects">See our projects <span aria-hidden="true">&rarr;</span></a>
             </div>
-            <div class="who-offices who-reveal">
+            <div class="who-offices" data-reveal>
                 @foreach (var office in c.Offices)
                 {
                     <div class="who-office">
@@ -218,7 +218,7 @@
             <p>@t.CtaBody</p>
             <div class="who-btns">
                 <a class="who-btn who-btn--light" href="/contact">Start a project</a>
-                <a class="who-btn who-btn--outline" href="/contact">Careers</a>
+                <a class="who-btn who-btn--outline" href="/contact?project=careers">Careers</a>
             </div>
         </div>
     </section>

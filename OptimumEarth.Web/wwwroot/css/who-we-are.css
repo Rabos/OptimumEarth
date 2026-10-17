@@ -54,19 +54,6 @@
     color: var(--blue);
 }
 
-/* Fades sections in as they scroll into view. The class is only hidden once
-   the script has marked the page, so without JavaScript everything shows. */
-.who.is-animated .who-reveal {
-    opacity: 0;
-    transform: translateY(18px);
-    transition: opacity .7s ease, transform .7s ease;
-}
-
-.who.is-animated .who-reveal.is-in {
-    opacity: 1;
-    transform: none;
-}
-
 /* ---------- Buttons ---------- */
 
 .who-btns {
@@ -843,11 +830,6 @@
 @media (prefers-reduced-motion: reduce) {
     .who-hero__bg {
         animation: none;
-        transform: none;
-    }
-
-    .who.is-animated .who-reveal {
-        opacity: 1;
         transform: none;
     }
 }

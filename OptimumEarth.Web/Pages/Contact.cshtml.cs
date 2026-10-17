@@ -34,8 +34,24 @@ public class ContactModel : PageModel
         "General enquiry",
     };
 
-    public void OnGet()
+    // The Services and Who We Are pages link here with ?project= to say what the visitor is after;
+    // the message box starts with that line so they only have to add the details.
+    private static readonly Dictionary<string, string> ProjectOpeners = new(StringComparer.OrdinalIgnoreCase)
     {
+        ["borehole"] = "We're planning a borehole or water supply. ",
+        ["power"] = "We're planning a substation or power line. ",
+        ["mining"] = "We're planning work for a mine or an oil and gas development. ",
+        ["climate"] = "We're planning a catchment or climate project. ",
+        ["equipment"] = "We'd like to hire plant or equipment in Zambia. ",
+        ["careers"] = "I'd like to work with Optimum Earth. ",
+    };
+
+    public void OnGet(string? project)
+    {
+        if (project is not null && ProjectOpeners.TryGetValue(project, out var opener))
+        {
+            Contact.Message = opener;
+        }
     }
 
     public async Task<IActionResult> OnPostAsync()
