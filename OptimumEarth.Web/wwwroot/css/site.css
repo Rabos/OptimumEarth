@@ -1331,6 +1331,10 @@ img {
     color: rgba(255, 255, 255, .86);
 }
 
+.dest-hero__sub:last-child {
+    margin-bottom: 0;
+}
+
 .dest-hero__btns {
     display: flex;
     flex-wrap: wrap;
