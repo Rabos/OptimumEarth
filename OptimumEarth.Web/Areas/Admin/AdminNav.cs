@@ -20,9 +20,14 @@ public static class AdminNav
         }),
         new("Who we are", new NavItem[]
         {
+            new("Page text", "/admin/content/who-page", AdminAreas.About),
+            new("Stats", "/admin/content/stats", AdminAreas.About),
+            new("Milestones", "/admin/content/milestones", AdminAreas.About),
+            new("Group companies", "/admin/content/group", AdminAreas.About),
             new("Mission & vision", "/admin/content/mission", AdminAreas.About),
-            new("Capabilities", "/admin/content/capabilities", AdminAreas.About),
             new("Values", "/admin/content/values", AdminAreas.About),
+            new("Service lines", "/admin/content/capabilities", AdminAreas.About),
+            new("Offices", "/admin/content/offices", AdminAreas.About),
         }),
         new("Foundation", new NavItem[]
         {

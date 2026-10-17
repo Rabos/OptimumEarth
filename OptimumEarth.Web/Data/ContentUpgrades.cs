@@ -12,6 +12,9 @@ namespace OptimumEarth.Web.Data;
 ///
 /// Version 3 normalizes the Zambia country-page contact line to match the footer.
 /// Version 4 fills the confirmed Zambia office address.
+/// Version 5 is the Who We Are redesign: shorter service-line blurbs, values that open with a
+/// lead sentence, the revised mission, and the new page text (the new milestone, group, stat
+/// and office lists are filled by the seeder, as for any empty table).
 ///
 /// Each section is replaced only if it still matches the original seeded content exactly;
 /// a section someone has edited in the dashboard is left alone and reported in the log, so
@@ -42,6 +45,24 @@ public static class ContentUpgrades
     private const string V2ZambiaCtaBody = "Office address to be confirmed · zambia@optimum-earth.com";
     private const string V3ZambiaCtaBody = "Lusaka, Zambia · Office address to be confirmed · zambia@optimum-earth.com";
 
+    private static readonly (string Title, string Description)[] V4Capabilities =
+    {
+        ("Technical Studies", "Know the ground before you commit capital."),
+        ("Engineering Design", "Designs built on real site data."),
+        ("Construction Services", "Built by the team that designed it."),
+        ("Environmental & Social Impact Assessments", "Approvals that satisfy both the regulator and the lender"),
+        ("Climate Resilience & Natural Resources", "Planning water and land for the climate ahead."),
+    };
+
+    // Only these two values were reworded in version 5; the others are compared with the current seed.
+    private static readonly Dictionary<string, string> V4ValueText = new()
+    {
+        ["Accountability & Integrity"] = "We act with honesty and the highest ethics in every dealing, commercial or charitable, and we do the right thing even when no one is watching. We do not tolerate bribery, fraud or undeclared conflicts of interest. We own our commitments, decisions and results, raise problems early, and answer to our clients, donors, regulators and the communities we serve.",
+        ["Stewardship"] = "We take responsibility for everything entrusted to us: client assets, company resources, donor and grant funds, and the communities and environments where we work. We use resources responsibly, account for them transparently, create lasting value, and leave people, communities and the planet better than we found them.",
+    };
+
+    private const string V4Mission = "We are committed to value-driven partnerships with our clients by providing services of the highest quality, safety, and integrity while focusing on customer satisfaction and innovative solutions. We strive to be the company that clients want to work with and employees want to work for, by providing excellent results and rewarding careers.";
+
     public static async Task ApplyAsync(AppDbContext db, ILogger logger, CancellationToken ct)
     {
         var settings = await db.Settings.FirstOrDefaultAsync(ct);
@@ -54,6 +75,39 @@ public static class ContentUpgrades
         var skipped = new List<string>();
         void Report(string section, bool done) => (done ? upgraded : skipped).Add(section);
 
+        if (settings.ContentVersion < 2)
+        {
+            await ApplyV2Async(db, upgraded, skipped, Report, ct);
+        }
+
+        var zambia = await db.CountryPages.FirstOrDefaultAsync(p => p.Slug == "zambia", ct);
+        if (zambia is not null && (zambia.CtaBody == V2ZambiaCtaBody || zambia.CtaBody == V3ZambiaCtaBody))
+        {
+            zambia.CtaBody = SeedData.Zambia().CtaBody;
+            upgraded.Add("Zambia CTA contact line");
+        }
+
+        if (settings.ContentVersion < 5)
+        {
+            await ApplyV5Async(db, settings, Report, ct);
+        }
+
+        settings.ContentVersion = SeedData.CurrentContentVersion;
+        await db.SaveChangesAsync(ct);
+
+        if (upgraded.Count > 0)
+        {
+            logger.LogInformation("Content refresh applied to: {Sections}.", string.Join(", ", upgraded));
+        }
+
+        if (skipped.Count > 0)
+        {
+            logger.LogWarning("Content refresh skipped for {Sections} because they have been edited since they were seeded. Update them in the dashboard if you want the new wording.", string.Join(", ", skipped));
+        }
+    }
+
+    private static async Task ApplyV2Async(AppDbContext db, List<string> upgraded, List<string> skipped, Action<string, bool> Report, CancellationToken ct)
+    {
         var services = await db.Services.OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToListAsync(ct);
         var servicesPristine = services.Select(x => x.Title).SequenceEqual(V1Services);
         if (servicesPristine)
@@ -197,25 +251,50 @@ public static class ContentUpgrades
         {
             upgraded.Add("Country pages");
         }
+    }
 
-        if (zambia is not null && (zambia.CtaBody == V2ZambiaCtaBody || zambia.CtaBody == V3ZambiaCtaBody))
+    private static async Task ApplyV5Async(AppDbContext db, SiteSettings settings, Action<string, bool> report, CancellationToken ct)
+    {
+        var capabilities = await db.Capabilities.OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToListAsync(ct);
+        var capabilitiesPristine = capabilities.Select(x => (x.Title, x.Description)).SequenceEqual(V4Capabilities);
+        if (capabilitiesPristine)
         {
-            zambia.CtaBody = SeedData.Zambia().CtaBody;
-            upgraded.Add("Zambia CTA contact line");
+            var next = SeedData.Capabilities();
+            for (var i = 0; i < capabilities.Count; i++)
+            {
+                capabilities[i].Title = next[i].Title;
+                capabilities[i].Description = next[i].Description;
+                capabilities[i].UpdatedUtc = DateTime.UtcNow;
+            }
         }
 
-        settings.ContentVersion = SeedData.CurrentContentVersion;
-        await db.SaveChangesAsync(ct);
+        report("Service lines (Who We Are)", capabilitiesPristine);
 
-        if (upgraded.Count > 0)
+        var values = await db.CoreValues.OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToListAsync(ct);
+        var nextValues = SeedData.Values();
+        var valuesPristine = values.Count == nextValues.Count && values.Zip(nextValues).All(p =>
+            p.First.Title == p.Second.Title && p.First.Description == V4ValueText.GetValueOrDefault(p.Second.Title, p.Second.Description));
+        if (valuesPristine)
         {
-            logger.LogInformation("Content refresh applied to: {Sections}.", string.Join(", ", upgraded));
+            for (var i = 0; i < values.Count; i++)
+            {
+                values[i].Description = nextValues[i].Description;
+                values[i].UpdatedUtc = DateTime.UtcNow;
+            }
         }
 
-        if (skipped.Count > 0)
+        report("Values", valuesPristine);
+
+        var missionPristine = settings.Mission == V4Mission;
+        if (missionPristine)
         {
-            logger.LogWarning("Content refresh skipped for {Sections} because they have been edited since they were seeded. Update them in the dashboard if you want the new wording.", string.Join(", ", skipped));
+            settings.Mission = SeedData.Mission;
         }
+
+        report("Mission", missionPristine);
+
+        // The page text is new, so there is nothing to overwrite.
+        SeedData.ApplyWhoWeAreText(settings);
     }
 
     private static void Apply(Project target, Project source)

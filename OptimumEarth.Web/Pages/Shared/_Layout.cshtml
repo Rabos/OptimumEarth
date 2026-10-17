@@ -29,6 +29,7 @@
 
     var breadcrumbNames = new Dictionary<string, string>
     {
+        ["who-we-are"] = "Who We Are",
         ["uganda"] = "Uganda",
         ["zambia"] = "Zambia",
         ["foundation"] = "Foundation",
@@ -114,6 +115,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300&amp;display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
 
     <script type="application/ld+json">@Html.Raw(organizationJsonLd)</script>
     @if (breadcrumbJsonLd != null)
@@ -146,25 +148,23 @@
     {
         <footer class="site-footer">
             <div class="shell site-footer__upper">
-                <section class="site-footer__office" aria-label="Uganda office">
-                    <span class="site-footer__wordmark">OPTIMUM EARTH Uganda</span>
-                    <address class="site-footer__address">
-                        <span>Roston House, Plot 56/57</span>
-                        <span>Chorley Crescent Rd</span>
-                        <span>Luzira, Uganda</span>
-                        <a href="tel:+256784080551">+256 784 080551</a>
-                        <a href="mailto:uganda@optimum-earth.com">uganda@optimum-earth.com</a>
-                    </address>
-                </section>
-                <section class="site-footer__office" aria-label="Zambia office">
-                    <span class="site-footer__wordmark">OPTIMUM EARTH Zambia</span>
-                    <address class="site-footer__address">
-                        <span>Oilfield Garden, Plot 12 - Flat 4</span>
-                        <span>Kabulonga, Kudu Rd</span>
-                        <span>Lusaka, Zambia</span>
-                        <a href="mailto:zambia@optimum-earth.com">zambia@optimum-earth.com</a>
-                    </address>
-                </section>
+                @foreach (var office in await Content.OfficesAsync())
+                {
+                    <section class="site-footer__office" aria-label="@office.Country office">
+                        <span class="site-footer__wordmark">OPTIMUM EARTH @office.Country</span>
+                        <address class="site-footer__address">
+                            @foreach (var line in office.AddressLines)
+                            {
+                                <span>@line</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(office.Phone))
+                            {
+                                <a href="@office.PhoneHref">@office.Phone</a>
+                            }
+                            <a href="mailto:@office.Email">@office.Email</a>
+                        </address>
+                    </section>
+                }
                 <nav class="site-footer__col" aria-label="Destinations">
                     <h3>Destinations</h3>
                     <a href="/uganda">Uganda</a>
@@ -183,6 +183,7 @@
                 <nav class="site-footer__col" aria-label="Company">
                     <h3>Company</h3>
                     <a href="/">Home</a>
+                    <a href="/who-we-are">Who We Are</a>
                     <a href="/projects">Projects</a>
                     @if (await Content.HasBlogAsync())
                     {

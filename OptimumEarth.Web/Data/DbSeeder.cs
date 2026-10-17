@@ -51,7 +51,7 @@ public sealed class DatabaseInitializer : IHostedService
     {
         if (!await db.Settings.AnyAsync(ct))
         {
-            db.Settings.Add(new SiteSettings
+            var settings = new SiteSettings
             {
                 Mission = SeedData.Mission,
                 Vision = SeedData.Vision,
@@ -60,12 +60,18 @@ public sealed class DatabaseInitializer : IHostedService
                 ZambiaTo = "zambia@optimum-earth.com",
                 FoundationTo = "foundation@optimum-earth.com",
                 ContentVersion = SeedData.CurrentContentVersion,
-            });
+            };
+            SeedData.ApplyWhoWeAreText(settings);
+            db.Settings.Add(settings);
         }
 
         await SeedListAsync(db, db.Slides, SeedData.Slides(), ct);
         await SeedListAsync(db, db.Capabilities, SeedData.Capabilities(), ct);
         await SeedListAsync(db, db.CoreValues, SeedData.Values(), ct);
+        await SeedListAsync(db, db.Milestones, SeedData.Milestones(), ct);
+        await SeedListAsync(db, db.GroupCompanies, SeedData.GroupCompanies(), ct);
+        await SeedListAsync(db, db.Stats, SeedData.Stats(), ct);
+        await SeedListAsync(db, db.Offices, SeedData.Offices(), ct);
         await SeedListAsync(db, db.Pillars, SeedData.Pillars(), ct);
         await SeedListAsync(db, db.Principles, SeedData.Principles(), ct);
         await SeedListAsync(db, db.FocusAreas, SeedData.FocusAreas(), ct);
@@ -148,6 +154,11 @@ public sealed class DatabaseInitializer : IHostedService
         ["servicepanel3.jpg"] = "Environmental services",
         ["servicepanel4.jpg"] = "GIS, mapping and remote sensing",
         ["servicepanel5.jpg"] = "Mines, oil and gas",
+        ["hero.jpg"] = "Optimum Earth and client team on site at Tilenga, Buliisa",
+        ["field.jpg"] = "Optimum Earth team and partners on a site walkover",
+        ["team.jpg"] = "Optimum Earth field team outside the Giteranyi commune office, Burundi",
+        ["energy.jpg"] = "Technicians installing a solar PV array",
+        ["community.jpg"] = "Collecting a water sample at a community tap stand",
     };
 
     private async Task SeedMediaAsync(AppDbContext db, IWebHostEnvironment env, CancellationToken ct)

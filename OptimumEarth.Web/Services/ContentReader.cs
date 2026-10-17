@@ -1,10 +1,20 @@
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using OptimumEarth.Web.Data;
 using OptimumEarth.Web.Models;
 
 namespace OptimumEarth.Web.Services;
 
-public sealed record WhoWeAreContent(string Mission, string Vision, IReadOnlyList<CapabilityItem> Capabilities, IReadOnlyList<ValueItem> Values);
+public sealed record WhoWeAreContent(
+    WhoPageText Text,
+    string Mission,
+    string Vision,
+    IReadOnlyList<CapabilityItem> Capabilities,
+    IReadOnlyList<ValueItem> Values,
+    IReadOnlyList<StatItem> Stats,
+    IReadOnlyList<MilestoneItem> Milestones,
+    IReadOnlyList<GroupCard> Group,
+    IReadOnlyList<OfficeInfo> Offices);
 
 public sealed record FoundationContent(
     IReadOnlyList<PillarDetail> Pillars,
@@ -98,11 +108,47 @@ public sealed class ContentReader
         var settings = await SettingsAsync();
         var caps = await _db.Capabilities.AsNoTracking().Where(c => c.Status == ContentStatus.Published).OrderBy(c => c.SortOrder).ThenBy(c => c.Id).ToListAsync();
         var values = await _db.CoreValues.AsNoTracking().Where(c => c.Status == ContentStatus.Published).OrderBy(c => c.SortOrder).ThenBy(c => c.Id).ToListAsync();
+        var stats = await _db.Stats.AsNoTracking().Where(x => x.Status == ContentStatus.Published).OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToListAsync();
+        var milestones = await _db.Milestones.AsNoTracking().Where(x => x.Status == ContentStatus.Published).OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToListAsync();
+        var group = await _db.GroupCompanies.AsNoTracking().Where(x => x.Status == ContentStatus.Published).OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToListAsync();
+
+        // Image alt text is edited under Media; fall back to a description of the slot.
+        var paths = group.Select(g => g.ImagePath).Append(settings.WhoHeroImagePath).ToList();
+        var alts = await _db.Media.AsNoTracking().Where(m => paths.Contains(m.Path)).ToDictionaryAsync(m => m.Path, m => m.Alt);
+        string Alt(string path, string fallback) => alts.GetValueOrDefault(path) is { Length: > 0 } alt ? alt : fallback;
+
+        var text = new WhoPageText(
+            settings.WhoHeadline,
+            settings.WhoHighlight,
+            settings.WhoLede,
+            settings.WhoHeroImagePath,
+            Alt(settings.WhoHeroImagePath, "Optimum Earth team on site"),
+            settings.StoryHeadline,
+            Regex.Split(settings.StoryBody, @"\n\s*\n").Select(p => p.Trim()).Where(p => p.Length > 0).ToList(),
+            settings.StoryImagePath,
+            settings.StoryInsetImagePath,
+            settings.FoundedOn,
+            settings.WorkCountries.ToList(),
+            settings.WhoCtaHeadline,
+            settings.WhoCtaBody,
+            settings.WhoCtaImagePath);
+
         return new WhoWeAreContent(
+            text,
             settings.Mission,
             settings.Vision,
             caps.Select((c, i) => new CapabilityItem(Two(i), c.Title, c.Description)).ToList(),
-            values.Select(v => new ValueItem(v.Title, v.Description)).ToList());
+            values.Select(v => new ValueItem(v.Title, v.Description)).ToList(),
+            stats.Select(x => new StatItem(x.Kind == "years", x.Value, x.Suffix, x.Label)).ToList(),
+            milestones.Select(x => new MilestoneItem(x.Year, x.Title, x.Description)).ToList(),
+            group.Select(x => new GroupCard(x.Kind, x.Name, x.Description, x.Tags.ToList(), x.LinkText, x.LinkUrl, x.ImagePath, Alt(x.ImagePath, x.Name), x.IsFoundation)).ToList(),
+            await OfficesAsync());
+    });
+
+    public Task<IReadOnlyList<OfficeInfo>> OfficesAsync() => _cache.GetOrCreateAsync("offices", async () =>
+    {
+        var rows = await _db.Offices.AsNoTracking().Where(x => x.Status == ContentStatus.Published).OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToListAsync();
+        return (IReadOnlyList<OfficeInfo>)rows.Select(x => new OfficeInfo(x.Name, x.Country, x.AddressLines.ToList(), x.Phone, x.Email)).ToList();
     });
 
     private static readonly Dictionary<string, string> StoryPhotoLabels = new()

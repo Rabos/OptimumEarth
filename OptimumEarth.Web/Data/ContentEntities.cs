@@ -74,6 +74,54 @@ public class CoreValue : ContentEntity
     public string Description { get; set; } = string.Empty;
 }
 
+/// <summary>A point on the Who We Are timeline.</summary>
+public class Milestone : ContentEntity
+{
+    public string Year { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+}
+
+/// <summary>A card in the Who We Are "group" section: one of the companies, or the Foundation.</summary>
+public class GroupCompany : ContentEntity
+{
+    /// <summary>The small line above the name, e.g. "Uganda · Since 2017".</summary>
+    public string Kind { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public List<string> Tags { get; set; } = new();
+    public string LinkText { get; set; } = string.Empty;
+    public string LinkUrl { get; set; } = string.Empty;
+    public string ImagePath { get; set; } = string.Empty;
+
+    /// <summary>Shows the card in the Foundation's green instead of the company style.</summary>
+    public bool IsFoundation { get; set; }
+}
+
+/// <summary>A counter in the Who We Are stats band.</summary>
+public class Stat : ContentEntity
+{
+    /// <summary>"number" shows Value; "years" counts whole years since the founding date in the page text.</summary>
+    public string Kind { get; set; } = "number";
+    public int Value { get; set; }
+
+    /// <summary>Shown after the number, e.g. "+".</summary>
+    public string Suffix { get; set; } = string.Empty;
+    public string Label { get; set; } = string.Empty;
+}
+
+/// <summary>An office, listed in the footer and on the Who We Are page.</summary>
+public class Office : ContentEntity
+{
+    public string Name { get; set; } = string.Empty;
+
+    /// <summary>Marks this country as a base in the Who We Are country list.</summary>
+    public string Country { get; set; } = string.Empty;
+    public List<string> AddressLines { get; set; } = new();
+    public string Phone { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+}
+
 public class Pillar : ContentEntity
 {
     public string Key { get; set; } = string.Empty;

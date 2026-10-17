@@ -22,6 +22,11 @@ public static class ContentRegistry
         ("uganda", "Uganda"), ("zambia", "Zambia"), ("burundi", "Burundi"), ("drc", "DRC"),
     };
 
+    private static readonly IReadOnlyList<(string, string)> StatKinds = new[]
+    {
+        ("number", "A fixed number"), ("years", "Years since founding"),
+    };
+
     private const string KeyPattern = "^[a-z0-9-]+$";
     private const string KeyMessage = "Use lowercase letters, numbers and hyphens only.";
 
@@ -139,10 +144,114 @@ public static class ContentRegistry
             Columns = Array.Empty<ColumnDef<SiteSettings>>(),
         },
 
+        new ContentDescriptor<SiteSettings>
+        {
+            Slug = "who-page", Label = "Page text", Singular = "Page text", Area = AdminAreas.About, Single = true, CanAdd = false, CanDelete = false, Orderable = false,
+            Description = "The hero, story, \"Where we work\" and closing call to action on the Who We Are page.",
+            Set = db => db.Settings, TitleOf = _ => "Who We Are page text",
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(SiteSettings.WhoHeadline), Label = "Headline", Required = true, Max = 80, Half = true, Group = "Hero" },
+                new() { Key = nameof(SiteSettings.WhoHighlight), Label = "Highlighted line", Max = 80, Half = true, Hint = "Follows the headline in the accent colour." },
+                new() { Key = nameof(SiteSettings.WhoLede), Label = "Intro", Kind = FieldKind.Area, Required = true, Max = 320, Rows = 3 },
+                new() { Key = nameof(SiteSettings.WhoHeroImagePath), Label = "Hero image", Kind = FieldKind.Image, Required = true },
+                new() { Key = nameof(SiteSettings.StoryHeadline), Label = "Headline", Required = true, Max = 90, Group = "Our story" },
+                new() { Key = nameof(SiteSettings.StoryBody), Label = "Story", Kind = FieldKind.Area, Required = true, Max = 1500, Rows = 8, Hint = "Leave a blank line between paragraphs." },
+                new() { Key = nameof(SiteSettings.StoryImagePath), Label = "Main photo", Kind = FieldKind.Image, Required = true, Half = true },
+                new() { Key = nameof(SiteSettings.StoryInsetImagePath), Label = "Inset photo", Kind = FieldKind.Image, Required = true, Half = true },
+                new() { Key = nameof(SiteSettings.FoundedOn), Label = "Founded on", Kind = FieldKind.Date, Required = true, Half = true, Hint = "Shown on the story photo, and counts the \"years\" stat." },
+                new() { Key = nameof(SiteSettings.WorkCountries), Label = "Countries we work in", Kind = FieldKind.Lines, Required = true, Rows = 6, Group = "Where we work", Hint = "One per line. Countries with an office (see Offices) are highlighted." },
+                new() { Key = nameof(SiteSettings.WhoCtaHeadline), Label = "Headline", Required = true, Max = 80, Group = "Closing call to action" },
+                new() { Key = nameof(SiteSettings.WhoCtaBody), Label = "Body", Kind = FieldKind.Area, Required = true, Max = 320, Rows = 3 },
+                new() { Key = nameof(SiteSettings.WhoCtaImagePath), Label = "Background image", Kind = FieldKind.Image, Required = true },
+            },
+            Columns = Array.Empty<ColumnDef<SiteSettings>>(),
+        },
+
+        new ContentDescriptor<Stat>
+        {
+            Slug = "stats", Label = "Stats", Singular = "Stat", Area = AdminAreas.About,
+            Description = "The counters under the Who We Are hero. Five fit on one row.",
+            Set = db => db.Stats, TitleOf = x => x.Label,
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(Stat.Label), Label = "Label", Required = true, Max = 50 },
+                new() { Key = nameof(Stat.Kind), Label = "Number", Kind = FieldKind.Select, Options = StatKinds, Half = true },
+                new() { Key = nameof(Stat.Value), Label = "Value", Kind = FieldKind.Number, Min = 0, MaxValue = 100000, Half = true, Hint = "Ignored for years since founding." },
+                new() { Key = nameof(Stat.Suffix), Label = "Suffix", Max = 3, Half = true, Hint = "e.g. +" },
+            },
+            Columns = new ColumnDef<Stat>[]
+            {
+                new() { Header = "Stat", Html = (x, _) => Cell.Title(x.Label, x.Kind == "years" ? "Years since founding" : x.Value + x.Suffix) },
+            },
+            Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Label, Like(s))),
+        },
+
+        new ContentDescriptor<Milestone>
+        {
+            Slug = "milestones", Label = "Milestones", Singular = "Milestone", Area = AdminAreas.About,
+            Description = "The timeline on the Who We Are page, oldest first. Six fit on one row.",
+            Set = db => db.Milestones, TitleOf = x => x.Year + " " + x.Title,
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(Milestone.Year), Label = "Year", Required = true, Max = 4, Half = true, Pattern = @"^\d{4}$", PatternMessage = "Use a four-digit year." },
+                new() { Key = nameof(Milestone.Title), Label = "Title", Required = true, Max = 40, Half = true },
+                new() { Key = nameof(Milestone.Description), Label = "Description", Kind = FieldKind.Area, Required = true, Max = 140, Rows = 2 },
+            },
+            Columns = new ColumnDef<Milestone>[]
+            {
+                new() { Header = "Milestone", Html = (x, _) => $"<span class=\"mono\">{Cell.E(x.Year)}</span> &nbsp;<b>{Cell.E(x.Title)}</b>" },
+            },
+            Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Title, Like(s)) || x.Year == s),
+        },
+
+        new ContentDescriptor<GroupCompany>
+        {
+            Slug = "group", Label = "Group companies", Singular = "Company", Area = AdminAreas.About,
+            Description = "The company and Foundation cards in \"The group\" on the Who We Are page.",
+            Set = db => db.GroupCompanies, TitleOf = x => x.Name,
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(GroupCompany.Name), Label = "Name", Required = true, Max = 60, Half = true },
+                new() { Key = nameof(GroupCompany.Kind), Label = "Small line above", Max = 40, Half = true, Hint = "e.g. Uganda · Since 2017" },
+                new() { Key = nameof(GroupCompany.Description), Label = "Description", Kind = FieldKind.Area, Required = true, Max = 260, Rows = 3 },
+                new() { Key = nameof(GroupCompany.Tags), Label = "Tags", Kind = FieldKind.Lines, Rows = 4, Hint = "One per line." },
+                new() { Key = nameof(GroupCompany.LinkText), Label = "Link text", Max = 40, Half = true },
+                new() { Key = nameof(GroupCompany.LinkUrl), Label = "Link", Max = 200, Half = true, Pattern = @"^(/\S*|https://\S+)$", PatternMessage = "Use a site path such as /uganda, or an https:// link.", Hint = "e.g. /uganda" },
+                new() { Key = nameof(GroupCompany.ImagePath), Label = "Image", Kind = FieldKind.Image, Required = true, Half = true },
+                new() { Key = nameof(GroupCompany.IsFoundation), Label = "Foundation style (green card)", Kind = FieldKind.Bool, Half = true },
+            },
+            Columns = new ColumnDef<GroupCompany>[]
+            {
+                new() { Header = "Company", Html = (x, _) => Cell.Thumb(x.ImagePath, x.Name, x.Kind) },
+            },
+            Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Name, Like(s)) || EF.Functions.ILike(x.Description, Like(s))),
+        },
+
+        new ContentDescriptor<Office>
+        {
+            Slug = "offices", Label = "Offices", Singular = "Office", Area = AdminAreas.About,
+            Description = "The offices in the site footer and under \"Where we work\" on the Who We Are page.",
+            Set = db => db.Offices, TitleOf = x => x.Name,
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(Office.Name), Label = "Name", Required = true, Max = 60, Half = true },
+                new() { Key = nameof(Office.Country), Label = "Country", Required = true, Max = 40, Half = true, Hint = "The footer shows OPTIMUM EARTH and this country." },
+                new() { Key = nameof(Office.AddressLines), Label = "Address", Kind = FieldKind.Lines, Required = true, Rows = 4, Hint = "One line per row." },
+                new() { Key = nameof(Office.Phone), Label = "Phone", Max = 30, Half = true, Pattern = @"^\+?[0-9 ]+$", PatternMessage = "Use digits and spaces, optionally starting with +." },
+                new() { Key = nameof(Office.Email), Label = "Email", Required = true, Max = 180, Half = true, Pattern = @"^\S+@\S+\.\S+$", PatternMessage = "Enter an email address." },
+            },
+            Columns = new ColumnDef<Office>[]
+            {
+                new() { Header = "Office", Html = (x, _) => Cell.Title(x.Name, x.Email) },
+            },
+            Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Name, Like(s)) || EF.Functions.ILike(x.Country, Like(s))),
+        },
+
         new ContentDescriptor<Capability>
         {
-            Slug = "capabilities", Label = "Capabilities", Singular = "Capability", Area = AdminAreas.About,
-            Description = "The numbered capability strip on the Who We Are page. Numbers follow the order.",
+            Slug = "capabilities", Label = "Service lines", Singular = "Service line", Area = AdminAreas.About,
+            Description = "The numbered \"What we do\" cards on the Who We Are page. Numbers follow the order.",
             Set = db => db.Capabilities, TitleOf = x => x.Title,
             Fields = new FieldDef[]
             {

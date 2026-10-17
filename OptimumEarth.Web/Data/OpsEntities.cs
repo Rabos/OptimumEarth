@@ -7,6 +7,27 @@ public class SiteSettings
     public string Mission { get; set; } = string.Empty;
     public string Vision { get; set; } = string.Empty;
 
+    // Who We Are page text. The headline is shown as WhoHeadline then WhoHighlight in the accent colour.
+    public string WhoHeadline { get; set; } = string.Empty;
+    public string WhoHighlight { get; set; } = string.Empty;
+    public string WhoLede { get; set; } = string.Empty;
+    public string WhoHeroImagePath { get; set; } = string.Empty;
+    public string StoryHeadline { get; set; } = string.Empty;
+
+    /// <summary>The story's paragraphs, separated by blank lines.</summary>
+    public string StoryBody { get; set; } = string.Empty;
+    public string StoryImagePath { get; set; } = string.Empty;
+    public string StoryInsetImagePath { get; set; } = string.Empty;
+
+    /// <summary>Drives the "years in operation" counter and the founding badge on the story photo.</summary>
+    public DateOnly FoundedOn { get; set; } = new(2017, 8, 7);
+
+    /// <summary>Countries shown under "Where we work"; ones with an office are highlighted.</summary>
+    public List<string> WorkCountries { get; set; } = new();
+    public string WhoCtaHeadline { get; set; } = string.Empty;
+    public string WhoCtaBody { get; set; } = string.Empty;
+    public string WhoCtaImagePath { get; set; } = string.Empty;
+
     /// <summary>How many projects a country page may show (the layout fits three across).</summary>
     public int ProjectSlots { get; set; } = 3;
     public int BlogPageSize { get; set; } = 9;

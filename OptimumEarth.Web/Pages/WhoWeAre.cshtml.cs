@@ -13,20 +13,21 @@ public class WhoWeAreModel : PageModel
         _content = content;
     }
 
-    public IReadOnlyList<CapabilityItem> Capabilities { get; private set; } = Array.Empty<CapabilityItem>();
+    public WhoWeAreContent Who { get; private set; } = null!;
 
-    public string Mission { get; private set; } = string.Empty;
-
-    public string Vision { get; private set; } = string.Empty;
-
-    public IReadOnlyList<ValueItem> Values { get; private set; } = Array.Empty<ValueItem>();
+    /// <summary>Whole years since the founding date, for the "years" stat.</summary>
+    public int YearsInOperation { get; private set; }
 
     public async Task OnGetAsync()
     {
-        var content = await _content.WhoWeAreAsync();
-        Capabilities = content.Capabilities;
-        Mission = content.Mission;
-        Vision = content.Vision;
-        Values = content.Values;
+        Who = await _content.WhoWeAreAsync();
+        var founded = Who.Text.FoundedOn;
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        YearsInOperation = Math.Max(0, today.Year - founded.Year - (today < founded.AddYears(today.Year - founded.Year) ? 1 : 0));
     }
+
+    public int StatValue(StatItem stat) => stat.CountsYears ? YearsInOperation : stat.Value;
+
+    /// <summary>Countries with an office are highlighted in the "Where we work" list.</summary>
+    public bool IsBase(string country) => Who.Offices.Any(o => string.Equals(o.Country, country, StringComparison.OrdinalIgnoreCase));
 }

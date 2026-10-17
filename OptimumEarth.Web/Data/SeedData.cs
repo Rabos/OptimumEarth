@@ -14,7 +14,7 @@ public static class SeedData
     private const string Img = "/img/optimum-earth-images/";
 
     /// <summary>The content version a freshly seeded database starts at. See <see cref="ContentUpgrades"/>.</summary>
-    public const int CurrentContentVersion = 4;
+    public const int CurrentContentVersion = 5;
 
     public static List<Slide> Slides() => new()
     {
@@ -169,26 +169,89 @@ public static class SeedData
 
     public static List<Capability> Capabilities() => new()
     {
-        new() { Title = "Technical Studies", Description = "Know the ground before you commit capital." },
-        new() { Title = "Engineering Design", Description = "Designs built on real site data." },
-        new() { Title = "Construction Services", Description = "Built by the team that designed it." },
-        new() { Title = "Environmental & Social Impact Assessments", Description = "Approvals that satisfy both the regulator and the lender" },
-        new() { Title = "Climate Resilience & Natural Resources", Description = "Planning water and land for the climate ahead." },
+        new() { Title = "Technical Studies", Description = "Hydrogeology, geophysics, geotechnics, survey and GIS." },
+        new() { Title = "Engineering Design", Description = "Water supply, solar PV and pumping, transmission support." },
+        new() { Title = "Construction Services", Description = "Drilling, pipelines, pump stations, supervision." },
+        new() { Title = "Environmental & Social", Description = "ESIAs, specialist baselines, audits and monitoring." },
+        new() { Title = "Climate Resilience", Description = "Catchment plans, land cover change, nature-based solutions." },
     };
 
+    // Each description's first sentence is shown as the value's lead line on the Who We Are page.
     public static List<CoreValue> Values() => new()
     {
         new() { Title = "Safety", Description = "Safety comes first, always. Everyone is responsible for their own health and safety and that of their colleagues, the public and the communities where we work. No deadline, task or budget justifies compromising it, and anyone may stop work they believe is unsafe. We protect the dignity and wellbeing of everyone our work touches, especially children and vulnerable people." },
         new() { Title = "Collaboration", Description = "Better solutions are built together. We work with colleagues, clients, donors, communities, partners and government with respect, inclusion and openness. We value the contributions of a diverse and talented team and seek out people who are passionate, curious and committed to those we serve. We invest in one another's professional development." },
-        new() { Title = "Accountability & Integrity", Description = "We act with honesty and the highest ethics in every dealing, commercial or charitable, and we do the right thing even when no one is watching. We do not tolerate bribery, fraud or undeclared conflicts of interest. We own our commitments, decisions and results, raise problems early, and answer to our clients, donors, regulators and the communities we serve." },
+        new() { Title = "Accountability & Integrity", Description = "We do the right thing, even when no one is watching. We act with honesty and the highest ethics in every dealing, commercial or charitable. We do not tolerate bribery, fraud or undeclared conflicts of interest. We own our commitments, decisions and results, raise problems early, and answer to our clients, donors, regulators and the communities we serve." },
         new() { Title = "Learning & Innovation", Description = "We stay curious and challenge complacency. We learn from experience and from those we serve, apply appropriate technology, and continually adapt our solutions to meet changing needs." },
         new() { Title = "Excellence", Description = "We aim to do our work right the first time. From technical services and engineering delivery to community programmes and partnerships, we hold high standards of quality. We treat quality as a shared responsibility and deliver work that is reliable, measurable and fit for purpose." },
-        new() { Title = "Stewardship", Description = "We take responsibility for everything entrusted to us: client assets, company resources, donor and grant funds, and the communities and environments where we work. We use resources responsibly, account for them transparently, create lasting value, and leave people, communities and the planet better than we found them." },
+        new() { Title = "Stewardship", Description = "We leave people and places better than we found them. We take responsibility for everything entrusted to us: client assets, company resources, donor and grant funds, and the communities and environments where we work. We use resources responsibly, account for them transparently and create lasting value." },
     };
 
-    public const string Mission = "We are committed to value-driven partnerships with our clients by providing services of the highest quality, safety, and integrity while focusing on customer satisfaction and innovative solutions. We strive to be the company that clients want to work with and employees want to work for, by providing excellent results and rewarding careers.";
+    public const string Mission = "We are committed to value-driven partnerships with our clients, providing services of the highest quality, safety and integrity while focusing on customer satisfaction and innovative solutions. We strive to be the company that clients want to work with and employees want to work for, by providing excellent results and rewarding careers.";
 
     public const string Vision = "To be the leading global engineering and environmental services provider, focused on creating value and success for our clients.";
+
+    private const string Who = Img + "who/";
+
+    /// <summary>The Who We Are page text, applied to a fresh database and to existing ones where it is still empty.</summary>
+    public static void ApplyWhoWeAreText(SiteSettings s)
+    {
+        s.WhoHeadline = "Engineering solutions for industry.";
+        s.WhoHighlight = "Resilience for communities.";
+        s.WhoLede = "Two engineering companies and a foundation, working across East, Central and Southern Africa since 2017. We study the ground, design what goes on it, build it, and stay accountable for how it performs.";
+        s.WhoHeroImagePath = Who + "hero.jpg";
+        s.StoryHeadline = "It began with a friendship and a shared ambition.";
+        s.StoryBody = "Optimum Earth was founded in Kampala in August 2017 by four students from Makerere University, who believed young Africans could build solutions that matter.\n\n"
+            + "That belief became a firm of hydrogeologists, geophysicists, engineers, surveyors and environmental specialists. Today we support oil and gas developers, mines, utilities, power projects, development partners and the communities around them.\n\n"
+            + "We have kept the habit we started with: practical problem-solving, done by people who go to site themselves.";
+        s.StoryImagePath = Who + "field.jpg";
+        s.StoryInsetImagePath = Who + "team.jpg";
+        s.FoundedOn = new DateOnly(2017, 8, 7);
+        s.WorkCountries = new() { "Uganda", "Zambia", "South Sudan", "DRC", "Burundi", "Rwanda" };
+        s.WhoCtaHeadline = "Work with us, or work for us.";
+        s.WhoCtaBody = "Tell us what you're planning and we'll scope it with you. If you're an engineer, scientist or field technician who wants to build things that last, we'd like to hear from you too.";
+        s.WhoCtaImagePath = Who + "field.jpg";
+    }
+
+    public static List<Milestone> Milestones() => new()
+    {
+        new() { Year = "2017", Title = "Founded in Kampala", Description = "Four Makerere University students start Optimum Earth (U) Ltd." },
+        new() { Year = "2018", Title = "Groundwater programme", Description = "Siting, drilling and testing work begins across Buliisa and Hoima." },
+        new() { Year = "2021", Title = "Mining clients", Description = "Quarry dewatering and water supply for Hima Cement." },
+        new() { Year = "2022", Title = "Oil and gas", Description = "Groundwater monitoring network for CNOOC at Kingfisher." },
+        new() { Year = "2025", Title = "Zambia", Description = "Optimum Earth Engineering Ltd opens in Lusaka." },
+        new() { Year = "2026", Title = "Power", Description = "Pensulo–Mansa 330 kV corridor and 50 MW Kasempa solar studies." },
+    };
+
+    public static List<GroupCompany> GroupCompanies() => new()
+    {
+        new() { Kind = "Uganda · Since 2017", Name = "Optimum Earth (U) Ltd", ImagePath = Who + "hero.jpg", LinkText = "Optimum Earth Uganda", LinkUrl = "/uganda",
+            Description = "Our founding company, headquartered in Luzira, Kampala. It delivers studies, design and construction for water, oil and gas, mining and infrastructure across the region.",
+            Tags = new() { "Hydrogeology", "Geophysics", "Water supply", "ESIA" } },
+        new() { Kind = "Zambia · Since 2025", Name = "Optimum Earth Engineering Ltd", ImagePath = Who + "energy.jpg", LinkText = "Optimum Earth Zambia", LinkUrl = "/zambia",
+            Description = "Our Lusaka company, focused on energy and infrastructure in Southern Africa, from utility-scale solar to high-voltage transmission corridors, plus equipment hire.",
+            Tags = new() { "Solar PV", "Transmission", "Equipment hire" } },
+        new() { Kind = "Not-for-profit", Name = "Optimum Earth Foundation", ImagePath = Who + "community.jpg", LinkText = "Our Foundation", LinkUrl = "/foundation", IsFoundation = true,
+            Description = "Our not-for-profit arm brings partners, knowledge and finance together to create lasting change across Africa.",
+            Tags = new() { "Access", "Resilience", "Impact" } },
+    };
+
+    public static List<Stat> Stats() => new()
+    {
+        new() { Kind = "years", Label = "Years in operation" },
+        new() { Value = 100, Suffix = "+", Label = "Organisations served" },
+        new() { Value = 150, Suffix = "+", Label = "Groundwater development assignments" },
+        new() { Value = 6, Label = "Countries delivered in" },
+        new() { Value = 2, Label = "Offices: Kampala & Lusaka" },
+    };
+
+    public static List<Office> Offices() => new()
+    {
+        new() { Name = "Optimum Earth Uganda", Country = "Uganda", AddressLines = new() { "Roston House, Plot 56/57", "Chorley Crescent Rd", "Luzira, Uganda" },
+            Phone = "+256 784 080551", Email = "uganda@optimum-earth.com" },
+        new() { Name = "Optimum Earth Zambia", Country = "Zambia", AddressLines = new() { "Oilfield Garden, Plot 12 - Flat 4", "Kabulonga, Kudu Rd", "Lusaka, Zambia" },
+            Email = "zambia@optimum-earth.com" },
+    };
 
     public static List<Pillar> Pillars() => new()
     {
