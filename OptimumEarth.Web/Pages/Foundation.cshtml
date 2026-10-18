@@ -305,9 +305,10 @@
                         {
                             var item = items[j];
                             <figure class="lightbox__slide @(j == 0 ? "is-current" : "")" data-lightbox-slide>
-                                @* lazy so a closed dialog costs nothing; these are still
-                                   the full-size originals, several megabytes each *@
-                                <img src="@item.ImageUrl" alt="@item.Title" loading="lazy" decoding="async" />
+                                @* lazy so a closed dialog costs nothing. The sizes are needed because the image
+                                   sizes itself to fit the frame: without them the browser cannot tell how wide it
+                                   will be, falls back to the smallest file and shows it at that size. *@
+                                <img src="@item.ImageUrl" alt="@item.Title" loading="lazy" decoding="async" sizes="(max-width: 780px) 92vw, 1200px" />
                             </figure>
                         }
                     </div>
