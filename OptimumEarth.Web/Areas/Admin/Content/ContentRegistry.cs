@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using OptimumEarth.Web.Data;
+using OptimumEarth.Web.Models;
 using OptimumEarth.Web.Services;
 
 namespace OptimumEarth.Web.Areas.Admin.Content;
@@ -7,19 +8,19 @@ namespace OptimumEarth.Web.Areas.Admin.Content;
 /// <summary>Every content type the generic list and edit pages manage, declared in one place.</summary>
 public static class ContentRegistry
 {
-    // The project categories and countries are the filters on the public Projects page.
-    private static readonly IReadOnlyList<(string, string)> Services = new[]
+    // The project services and countries are the filters on the public Projects page.
+    private static readonly IReadOnlyList<(string, string)> Services = ProjectServices.All.Select(s => (s.Key, s.Label)).ToList();
+
+    private static readonly IReadOnlyList<(string, string)> Countries = ProjectCountries.All.Select(c => (c.Key, c.Name)).ToList();
+
+    private static readonly IReadOnlyList<(string, string)> ServiceLayouts = new[]
     {
-        ("construction", "Construction Services"),
-        ("technical", "Technical Studies"),
-        ("engineering", "Engineering Design"),
-        ("environmental", "Environmental & Social Impact"),
-        ("climate", "Climate Resilience"),
+        ("split", "Photo left, text right"), ("split-alt", "Tinted, photo right"), ("band", "Full-width photo band"), ("case-study", "Imatong map case study"),
     };
 
-    private static readonly IReadOnlyList<(string, string)> Countries = new[]
+    private static readonly IReadOnlyList<(string, string)> StatKinds = new[]
     {
-        ("uganda", "Uganda"), ("zambia", "Zambia"), ("burundi", "Burundi"), ("drc", "DRC"),
+        ("number", "A fixed number"), ("years", "Years since founding"),
     };
 
     private const string KeyPattern = "^[a-z0-9-]+$";
@@ -64,22 +65,31 @@ public static class ContentRegistry
             Fields = new FieldDef[]
             {
                 new() { Key = nameof(Project.Title), Label = "Title", Required = true, Max = 90 },
-                new() { Key = nameof(Project.Tag), Label = "Tag line", Half = true, Max = 30, Hint = "e.g. UGANDA · 2022" },
-                new() { Key = nameof(Project.Country), Label = "Country", Kind = FieldKind.Select, Options = Countries, Half = true },
-                new() { Key = nameof(Project.Meta), Label = "Client / meta line", Max = 120 },
-                new() { Key = nameof(Project.Service), Label = "Category", Kind = FieldKind.Select, Options = Services, Half = true },
+                new() { Key = nameof(Project.Client), Label = "Client", Max = 120, Half = true },
+                new() { Key = nameof(Project.Country), Label = "Country", Kind = FieldKind.Select, Options = Countries, Half = true, Hint = "The map pins the project here." },
+                new() { Key = nameof(Project.Location), Label = "Location", Max = 80, Half = true, Hint = "e.g. Buliisa District" },
+                new() { Key = nameof(Project.Sector), Label = "Sector", Kind = FieldKind.Select, OptionsSource = "sectors", Half = true },
+                new() { Key = nameof(Project.Service), Label = "Main service", Kind = FieldKind.Select, Options = Services, Half = true },
+                new() { Key = nameof(Project.Ongoing), Label = "Ongoing (shows an \"Ongoing\" badge)", Kind = FieldKind.Bool, Half = true },
+                new() { Key = nameof(Project.Services), Label = "All services used", Kind = FieldKind.Checks, Options = Services, Hint = "The Projects page filters by these. The main service counts even if it is not ticked." },
                 new() { Key = nameof(Project.ImagePath), Label = "Image", Kind = FieldKind.Image, Required = true, Half = true },
-                new() { Key = nameof(Project.Description), Label = "Description", Kind = FieldKind.Area, Max = 600, Rows = 4, Hint = "The fuller write-up: shown in the project's detail dialog and under its card on the country pages." },
+                new() { Key = nameof(Project.RepresentativePhoto), Label = "Representative photo (not from this project)", Kind = FieldKind.Bool, Half = true },
+                new() { Key = nameof(Project.Description), Label = "Description", Kind = FieldKind.Area, Max = 600, Rows = 4, Hint = "Shown on the project's card, in its detail panel, and under its card on the country pages." },
+                new() { Key = nameof(Project.FlagshipOrder), Label = "Flagship position", Kind = FieldKind.Number, Min = 0, MaxValue = 99, Half = true, Group = "Flagship row (Projects page)", Hint = "0 keeps it out of the flagship row; 1 shows first." },
+                new() { Key = nameof(Project.FlagshipFigure), Label = "Headline figure", Max = 20, Half = true, Hint = "e.g. 330 kV" },
+                new() { Key = nameof(Project.FlagshipLabel), Label = "Line under the figure", Max = 80 },
+                new() { Key = nameof(Project.Tag), Label = "Tag line", Half = true, Max = 30, Group = "Country page card", Hint = "e.g. UGANDA · 2022" },
+                new() { Key = nameof(Project.Meta), Label = "Meta line", Max = 120, Half = true, Hint = "e.g. Client: CNOOC" },
                 new() { Key = "shownOn", Label = "Appears on", Kind = FieldKind.Placements },
             },
             Columns = new ColumnDef<Project>[]
             {
-                new() { Header = "Project", Html = (x, _) => Cell.Thumb(x.ImagePath, x.Title, x.Tag) },
+                new() { Header = "Project", Html = (x, _) => Cell.Thumb(x.ImagePath, x.Title, x.Client.Length > 0 ? x.Client : x.Tag) },
                 new() { Header = "Category", Html = (x, _) => Cell.E(Label(Services, x.Service)) },
                 new() { Header = "Country", Html = (x, _) => Cell.E(Label(Countries, x.Country)) },
                 new() { Header = "Shown on", Html = (x, ctx) => ShownOn(x.Id, x.OnListPage, "Projects", ctx) },
             },
-            Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Title, Like(s)) || EF.Functions.ILike(x.Meta, Like(s)) || EF.Functions.ILike(x.Tag, Like(s))),
+            Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Title, Like(s)) || EF.Functions.ILike(x.Client, Like(s)) || EF.Functions.ILike(x.Meta, Like(s)) || EF.Functions.ILike(x.Location, Like(s))),
             FilterDefs = new FilterDef<Project>[]
             {
                 new() { Key = "country", Label = "Country", Options = Countries, Apply = (q, v) => q.Where(x => x.Country == v) },
@@ -102,11 +112,21 @@ public static class ContentRegistry
             Set = db => db.Services, TitleOf = x => x.Title,
             Fields = new FieldDef[]
             {
-                new() { Key = nameof(Service.Title), Label = "Title", Required = true, Max = 70 },
+                new() { Key = nameof(Service.Title), Label = "Title", Required = true, Max = 70, Half = true },
+                new() { Key = nameof(Service.ShortTitle), Label = "Short title", Required = true, Max = 30, Half = true, Hint = "For the tiles, jump menu and footer." },
+                new() { Key = nameof(Service.Slug), Label = "Anchor", Required = true, Max = 40, Half = true, Pattern = KeyPattern, PatternMessage = KeyMessage, Hint = "Links to the section as /services#anchor." },
                 new() { Key = nameof(Service.Coverage), Label = "Coverage", Half = true, Max = 60, Hint = "e.g. Uganda · Zambia" },
-                new() { Key = nameof(Service.ImagePath), Label = "Image", Kind = FieldKind.Image, Required = true, Half = true },
-                new() { Key = nameof(Service.Description), Label = "Description", Kind = FieldKind.Area, Required = true, Max = 1000, Rows = 6 },
-                new() { Key = nameof(Service.Deliverables), Label = "What we deliver", Kind = FieldKind.Lines, Rows = 8, Hint = "One bullet per line, shown on the Services page." },
+                new() { Key = nameof(Service.Tagline), Label = "Headline", Required = true, Max = 80 },
+                new() { Key = nameof(Service.Description), Label = "Intro", Kind = FieldKind.Area, Required = true, Max = 1000, Rows = 4 },
+                new() { Key = nameof(Service.Highlights), Label = "Headline capabilities", Kind = FieldKind.Lines, Rows = 4, Hint = "Four short lines, shown with icons." },
+                new() { Key = nameof(Service.Deliverables), Label = "All capabilities", Kind = FieldKind.Lines, Rows = 8, Hint = "One per line, shown under \"See all\"." },
+                new() { Key = nameof(Service.Layout), Label = "Section layout", Kind = FieldKind.Select, Options = ServiceLayouts, Half = true, Group = "Services page section" },
+                new() { Key = nameof(Service.ImagePath), Label = "Section photo", Kind = FieldKind.Image, Required = true, Half = true },
+                new() { Key = nameof(Service.StatValue), Label = "Photo badge figure", Max = 20, Half = true, Hint = "e.g. 12 regions. Leave empty for no badge." },
+                new() { Key = nameof(Service.StatLabel), Label = "Photo badge text", Max = 80, Half = true },
+                new() { Key = nameof(Service.PracticeProjectId), Label = "\"In practice\" project", Kind = FieldKind.Select, OptionsSource = "projects", Hint = "Its photo, description and client show under the section." },
+                new() { Key = nameof(Service.TileImagePath), Label = "Tile photo", Kind = FieldKind.Image, Required = true, Half = true, Group = "Overview tile" },
+                new() { Key = nameof(Service.TileItems), Label = "Tile points", Kind = FieldKind.Lines, Rows = 3, Half = true, Hint = "Three short lines." },
                 new() { Key = "shownOn", Label = "Appears on", Kind = FieldKind.Placements },
             },
             Columns = new ColumnDef<Service>[]
@@ -116,6 +136,7 @@ public static class ContentRegistry
                 new() { Header = "Shown on", Html = (x, ctx) => ShownOn(x.Id, x.OnListPage, "Services", ctx) },
             },
             Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Title, Like(s)) || EF.Functions.ILike(x.Description, Like(s))),
+            Unique = new[] { nameof(Service.Slug) },
             PrepareColumns = async (db, rows) =>
             {
                 var ids = rows.Select(r => r.Id).ToList();
@@ -139,15 +160,234 @@ public static class ContentRegistry
             Columns = Array.Empty<ColumnDef<SiteSettings>>(),
         },
 
+        new ContentDescriptor<SiteSettings>
+        {
+            Slug = "services-page", Label = "Page text", Singular = "Page text", Area = AdminAreas.Services, Single = true, CanAdd = false, CanDelete = false, Orderable = false,
+            Description = "The hero, drone strip, Zambia equipment hire, Imatong case study and closing photo on the Services page.",
+            Set = db => db.Settings, TitleOf = _ => "Services page text",
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(SiteSettings.ServicesHeadline), Label = "Headline", Required = true, Max = 100, Group = "Hero" },
+                new() { Key = nameof(SiteSettings.ServicesLede), Label = "Intro", Kind = FieldKind.Area, Required = true, Max = 320, Rows = 3 },
+                new() { Key = nameof(SiteSettings.ServicesPosterPath), Label = "Still image", Kind = FieldKind.Image, Required = true, Hint = "Shown behind the hero until the drone video plays, and instead of it on phones." },
+                new() { Key = nameof(SiteSettings.AerialHeadline), Label = "Headline", Required = true, Max = 80, Group = "From the air" },
+                new() { Key = nameof(SiteSettings.AerialBody), Label = "Text", Kind = FieldKind.Area, Required = true, Max = 300, Rows = 3, Hint = "The photos are under Drone photos." },
+                new() { Key = nameof(SiteSettings.FleetHeadline), Label = "Headline", Required = true, Max = 80, Group = "Plant & equipment hire (Zambia)" },
+                new() { Key = nameof(SiteSettings.FleetBody), Label = "Text", Kind = FieldKind.Area, Required = true, Max = 400, Rows = 4 },
+                new() { Key = nameof(SiteSettings.FleetItems), Label = "Points", Kind = FieldKind.Lines, Rows = 4, Hint = "One per line." },
+                new() { Key = nameof(SiteSettings.FleetImagePath), Label = "Main photo", Kind = FieldKind.Image, Required = true, Half = true },
+                new() { Key = nameof(SiteSettings.FleetInsetImagePath), Label = "Second photo", Kind = FieldKind.Image, Required = true, Half = true },
+                new() { Key = nameof(SiteSettings.CaseStudyStat), Label = "Headline figure", Required = true, Max = 20, Half = true, Group = "Imatong case study" },
+                new() { Key = nameof(SiteSettings.CaseStudyStatText), Label = "Figure text", Kind = FieldKind.Area, Required = true, Max = 200, Rows = 2 },
+                new() { Key = nameof(SiteSettings.CaseStudyCaption), Label = "Map caption", Kind = FieldKind.Area, Required = true, Max = 300, Rows = 2 },
+                new() { Key = nameof(SiteSettings.ServicesCtaImagePath), Label = "Background photo", Kind = FieldKind.Image, Required = true, Group = "Closing \"Not sure which service\"" },
+                new() { Key = nameof(SiteSettings.ShowClientLogos), Label = "Show the client logo strip", Kind = FieldKind.Bool, Group = "Clients", Hint = "Turn on once the clients have agreed to their logos being shown. The logos are under Clients." },
+            },
+            Columns = Array.Empty<ColumnDef<SiteSettings>>(),
+        },
+
+        new ContentDescriptor<SiteSettings>
+        {
+            Slug = "projects-page", Label = "Page text", Singular = "Page text", Area = AdminAreas.Projects, Single = true, CanAdd = false, CanDelete = false, Orderable = false,
+            Description = "The hero and closing photo on the Projects page. The project counts are worked out from the projects.",
+            Set = db => db.Settings, TitleOf = _ => "Projects page text",
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(SiteSettings.ProjectsHeadline), Label = "Headline", Required = true, Max = 100, Group = "Hero" },
+                new() { Key = nameof(SiteSettings.ProjectsLede), Label = "Intro", Kind = FieldKind.Area, Required = true, Max = 320, Rows = 3 },
+                new() { Key = nameof(SiteSettings.ProjectsStatFigure), Label = "Extra figure", Max = 10, Half = true, Pattern = @"^\d+\+?$", PatternMessage = "Use a whole number, optionally followed by +.", Hint = "Shown beside the counted figures, e.g. 150+. Leave empty to hide." },
+                new() { Key = nameof(SiteSettings.ProjectsStatLabel), Label = "Extra figure label", Max = 50, Half = true },
+                new() { Key = nameof(SiteSettings.ProjectsCtaImagePath), Label = "Background photo", Kind = FieldKind.Image, Required = true, Group = "Closing \"Planning something similar?\"" },
+            },
+            Columns = Array.Empty<ColumnDef<SiteSettings>>(),
+        },
+
+        new ContentDescriptor<FieldPhoto>
+        {
+            Slug = "field-photos", Label = "Hero photos", Singular = "Hero photo", Area = AdminAreas.Projects,
+            Description = "The slideshow beside the Projects page hero, in the order it plays.",
+            Set = db => db.FieldPhotos, TitleOf = x => x.Caption,
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(FieldPhoto.Kicker), Label = "Small line", Max = 30, Half = true, Hint = "e.g. Groundwater" },
+                new() { Key = nameof(FieldPhoto.Caption), Label = "Caption", Required = true, Max = 90 },
+                new() { Key = nameof(FieldPhoto.ImagePath), Label = "Photo", Kind = FieldKind.Image, Required = true, Hint = "Portrait photos fit best." },
+            },
+            Columns = new ColumnDef<FieldPhoto>[]
+            {
+                new() { Header = "Photo", Html = (x, _) => Cell.Thumb(x.ImagePath, x.Caption, x.Kicker) },
+            },
+            Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Caption, Like(s)) || EF.Functions.ILike(x.Kicker, Like(s))),
+        },
+
+        new ContentDescriptor<Sector>
+        {
+            Slug = "sectors", Label = "Sectors", Singular = "Sector", Area = AdminAreas.Services,
+            Description = "The \"Who we work for\" tiles on the Services page, and the Projects page's sector filter. A draft sector stays off the tiles but can still be given to projects.",
+            Set = db => db.Sectors, TitleOf = x => x.Name, AutoSlug = (nameof(Sector.Name), nameof(Sector.Key)),
+            Unique = new[] { nameof(Sector.Key) },
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(Sector.Name), Label = "Name", Required = true, Max = 40, Half = true },
+                new() { Key = nameof(Sector.Key), Label = "Key", Max = 30, Half = true, Pattern = KeyPattern, PatternMessage = KeyMessage, Hint = "Filled in from the name. Used in the Projects page link." },
+                new() { Key = nameof(Sector.Blurb), Label = "Line under the name", Max = 90 },
+                new() { Key = nameof(Sector.ImagePath), Label = "Photo", Kind = FieldKind.Image, Required = true },
+            },
+            Columns = new ColumnDef<Sector>[]
+            {
+                new() { Header = "Sector", Html = (x, _) => Cell.Thumb(x.ImagePath, x.Name, x.Blurb) },
+            },
+            Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Name, Like(s)) || EF.Functions.ILike(x.Blurb, Like(s))),
+        },
+
+        new ContentDescriptor<Client>
+        {
+            Slug = "clients", Label = "Clients", Singular = "Client", Area = AdminAreas.Services,
+            Description = "The logo strip on the Services page. It only shows once it is switched on in the Services page text.",
+            Set = db => db.Clients, TitleOf = x => x.Name,
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(Client.Name), Label = "Name", Required = true, Max = 60, Hint = "Read out by screen readers in place of the logo." },
+                new() { Key = nameof(Client.LogoPath), Label = "Logo", Kind = FieldKind.Image, Required = true, Hint = "A PNG with a transparent background works best." },
+            },
+            Columns = new ColumnDef<Client>[]
+            {
+                new() { Header = "Client", Html = (x, _) => Cell.Thumb(x.LogoPath, x.Name) },
+            },
+            Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Name, Like(s))),
+        },
+
+        new ContentDescriptor<AerialPhoto>
+        {
+            Slug = "aerial", Label = "Drone photos", Singular = "Drone photo", Area = AdminAreas.Services,
+            Description = "The \"From the air\" photo strip on the Services page.",
+            Set = db => db.AerialPhotos, TitleOf = x => x.Caption,
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(AerialPhoto.Caption), Label = "Caption", Required = true, Max = 80 },
+                new() { Key = nameof(AerialPhoto.ImagePath), Label = "Photo", Kind = FieldKind.Image, Required = true },
+            },
+            Columns = new ColumnDef<AerialPhoto>[]
+            {
+                new() { Header = "Photo", Html = (x, _) => Cell.Thumb(x.ImagePath, x.Caption) },
+            },
+            Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Caption, Like(s))),
+        },
+
+        new ContentDescriptor<SiteSettings>
+        {
+            Slug = "who-page", Label = "Page text", Singular = "Page text", Area = AdminAreas.About, Single = true, CanAdd = false, CanDelete = false, Orderable = false,
+            Description = "The hero, story, \"Where we work\" and closing call to action on the Who We Are page.",
+            Set = db => db.Settings, TitleOf = _ => "Who We Are page text",
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(SiteSettings.WhoHeadline), Label = "Headline", Required = true, Max = 80, Half = true, Group = "Hero" },
+                new() { Key = nameof(SiteSettings.WhoHighlight), Label = "Highlighted line", Max = 80, Half = true, Hint = "Follows the headline in the accent colour." },
+                new() { Key = nameof(SiteSettings.WhoLede), Label = "Intro", Kind = FieldKind.Area, Required = true, Max = 320, Rows = 3 },
+                new() { Key = nameof(SiteSettings.WhoHeroImagePath), Label = "Hero image", Kind = FieldKind.Image, Required = true },
+                new() { Key = nameof(SiteSettings.StoryHeadline), Label = "Headline", Required = true, Max = 90, Group = "Our story" },
+                new() { Key = nameof(SiteSettings.StoryBody), Label = "Story", Kind = FieldKind.Area, Required = true, Max = 1500, Rows = 8, Hint = "Leave a blank line between paragraphs." },
+                new() { Key = nameof(SiteSettings.StoryImagePath), Label = "Main photo", Kind = FieldKind.Image, Required = true, Half = true },
+                new() { Key = nameof(SiteSettings.StoryInsetImagePath), Label = "Inset photo", Kind = FieldKind.Image, Required = true, Half = true },
+                new() { Key = nameof(SiteSettings.FoundedOn), Label = "Founded on", Kind = FieldKind.Date, Required = true, Half = true, Hint = "Shown on the story photo, and counts the \"years\" stat." },
+                new() { Key = nameof(SiteSettings.WorkCountries), Label = "Countries we work in", Kind = FieldKind.Lines, Required = true, Rows = 6, Group = "Where we work", Hint = "One per line. Countries with an office (see Offices) are highlighted." },
+                new() { Key = nameof(SiteSettings.WhoCtaHeadline), Label = "Headline", Required = true, Max = 80, Group = "Closing call to action" },
+                new() { Key = nameof(SiteSettings.WhoCtaBody), Label = "Body", Kind = FieldKind.Area, Required = true, Max = 320, Rows = 3 },
+                new() { Key = nameof(SiteSettings.WhoCtaImagePath), Label = "Background image", Kind = FieldKind.Image, Required = true },
+            },
+            Columns = Array.Empty<ColumnDef<SiteSettings>>(),
+        },
+
+        new ContentDescriptor<Stat>
+        {
+            Slug = "stats", Label = "Stats", Singular = "Stat", Area = AdminAreas.About,
+            Description = "The counters under the Who We Are hero. Five fit on one row.",
+            Set = db => db.Stats, TitleOf = x => x.Label,
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(Stat.Label), Label = "Label", Required = true, Max = 50 },
+                new() { Key = nameof(Stat.Kind), Label = "Number", Kind = FieldKind.Select, Options = StatKinds, Half = true },
+                new() { Key = nameof(Stat.Value), Label = "Value", Kind = FieldKind.Number, Min = 0, MaxValue = 100000, Half = true, Hint = "Ignored for years since founding." },
+                new() { Key = nameof(Stat.Suffix), Label = "Suffix", Max = 3, Half = true, Hint = "e.g. +" },
+            },
+            Columns = new ColumnDef<Stat>[]
+            {
+                new() { Header = "Stat", Html = (x, _) => Cell.Title(x.Label, x.Kind == "years" ? "Years since founding" : x.Value + x.Suffix) },
+            },
+            Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Label, Like(s))),
+        },
+
+        new ContentDescriptor<Milestone>
+        {
+            Slug = "milestones", Label = "Milestones", Singular = "Milestone", Area = AdminAreas.About,
+            Description = "The timeline on the Who We Are page, oldest first. Six fit on one row.",
+            Set = db => db.Milestones, TitleOf = x => x.Year + " " + x.Title,
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(Milestone.Year), Label = "Year", Required = true, Max = 4, Half = true, Pattern = @"^\d{4}$", PatternMessage = "Use a four-digit year." },
+                new() { Key = nameof(Milestone.Title), Label = "Title", Required = true, Max = 40, Half = true },
+                new() { Key = nameof(Milestone.Description), Label = "Description", Kind = FieldKind.Area, Required = true, Max = 140, Rows = 2 },
+            },
+            Columns = new ColumnDef<Milestone>[]
+            {
+                new() { Header = "Milestone", Html = (x, _) => $"<span class=\"mono\">{Cell.E(x.Year)}</span> &nbsp;<b>{Cell.E(x.Title)}</b>" },
+            },
+            Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Title, Like(s)) || x.Year == s),
+        },
+
+        new ContentDescriptor<GroupCompany>
+        {
+            Slug = "group", Label = "Group companies", Singular = "Company", Area = AdminAreas.About,
+            Description = "The company and Foundation cards in \"The group\" on the Who We Are page.",
+            Set = db => db.GroupCompanies, TitleOf = x => x.Name,
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(GroupCompany.Name), Label = "Name", Required = true, Max = 60, Half = true },
+                new() { Key = nameof(GroupCompany.Kind), Label = "Small line above", Max = 40, Half = true, Hint = "e.g. Uganda · Since 2017" },
+                new() { Key = nameof(GroupCompany.Description), Label = "Description", Kind = FieldKind.Area, Required = true, Max = 260, Rows = 3 },
+                new() { Key = nameof(GroupCompany.Tags), Label = "Tags", Kind = FieldKind.Lines, Rows = 4, Hint = "One per line." },
+                new() { Key = nameof(GroupCompany.LinkText), Label = "Link text", Max = 40, Half = true },
+                new() { Key = nameof(GroupCompany.LinkUrl), Label = "Link", Max = 200, Half = true, Pattern = @"^(/\S*|https://\S+)$", PatternMessage = "Use a site path such as /uganda, or an https:// link.", Hint = "e.g. /uganda" },
+                new() { Key = nameof(GroupCompany.ImagePath), Label = "Image", Kind = FieldKind.Image, Required = true, Half = true },
+                new() { Key = nameof(GroupCompany.IsFoundation), Label = "Foundation style (green card)", Kind = FieldKind.Bool, Half = true },
+            },
+            Columns = new ColumnDef<GroupCompany>[]
+            {
+                new() { Header = "Company", Html = (x, _) => Cell.Thumb(x.ImagePath, x.Name, x.Kind) },
+            },
+            Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Name, Like(s)) || EF.Functions.ILike(x.Description, Like(s))),
+        },
+
+        new ContentDescriptor<Office>
+        {
+            Slug = "offices", Label = "Offices", Singular = "Office", Area = AdminAreas.About,
+            Description = "The offices in the site footer and under \"Where we work\" on the Who We Are page.",
+            Set = db => db.Offices, TitleOf = x => x.Name,
+            Fields = new FieldDef[]
+            {
+                new() { Key = nameof(Office.Name), Label = "Name", Required = true, Max = 60, Half = true },
+                new() { Key = nameof(Office.Country), Label = "Country", Required = true, Max = 40, Half = true, Hint = "The footer shows OPTIMUM EARTH and this country." },
+                new() { Key = nameof(Office.AddressLines), Label = "Address", Kind = FieldKind.Lines, Required = true, Rows = 4, Hint = "One line per row." },
+                new() { Key = nameof(Office.Phone), Label = "Phone", Max = 30, Half = true, Pattern = @"^\+?[0-9 ]+$", PatternMessage = "Use digits and spaces, optionally starting with +." },
+                new() { Key = nameof(Office.Email), Label = "Email", Required = true, Max = 180, Half = true, Pattern = @"^\S+@\S+\.\S+$", PatternMessage = "Enter an email address." },
+            },
+            Columns = new ColumnDef<Office>[]
+            {
+                new() { Header = "Office", Html = (x, _) => Cell.Title(x.Name, x.Email) },
+            },
+            Search = (q, s) => q.Where(x => EF.Functions.ILike(x.Name, Like(s)) || EF.Functions.ILike(x.Country, Like(s))),
+        },
+
         new ContentDescriptor<Capability>
         {
-            Slug = "capabilities", Label = "Capabilities", Singular = "Capability", Area = AdminAreas.About,
-            Description = "The numbered capability strip on the Who We Are page. Numbers follow the order.",
+            Slug = "capabilities", Label = "Service lines", Singular = "Service line", Area = AdminAreas.About,
+            Description = "The numbered \"What we do\" cards on the Who We Are page. Numbers follow the order.",
             Set = db => db.Capabilities, TitleOf = x => x.Title,
             Fields = new FieldDef[]
             {
                 new() { Key = nameof(Capability.Title), Label = "Title", Required = true, Max = 60 },
                 new() { Key = nameof(Capability.Description), Label = "Description", Max = 120 },
+                new() { Key = nameof(Capability.LinkUrl), Label = "Explore link", Max = 200, Pattern = @"^(/\S*|https://\S+)$", PatternMessage = "Use a site path such as /services#esia, or an https:// link.", Hint = "e.g. /services#technical-studies" },
             },
             Columns = new ColumnDef<Capability>[]
             {

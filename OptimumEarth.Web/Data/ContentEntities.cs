@@ -46,6 +46,27 @@ public class Project : ContentEntity
 
     /// <summary>Whether the card appears on the public Projects page itself.</summary>
     public bool OnListPage { get; set; } = true;
+
+    public string Client { get; set; } = string.Empty;
+
+    /// <summary>Where the work was, in words, e.g. "Buliisa District". The map pins projects by country.</summary>
+    public string Location { get; set; } = string.Empty;
+
+    /// <summary>A Sector key, for the Projects page's sector filter.</summary>
+    public string Sector { get; set; } = string.Empty;
+
+    public bool Ongoing { get; set; }
+
+    /// <summary>Every service line the project used; Service is the main one.</summary>
+    public List<string> Services { get; set; } = new();
+
+    /// <summary>The photo illustrates the kind of work rather than coming from this project.</summary>
+    public bool RepresentativePhoto { get; set; }
+
+    /// <summary>A flagship card shows a headline figure, e.g. "330 kV", over a line under it. Order 0 keeps it out of the flagship row.</summary>
+    public string FlagshipFigure { get; set; } = string.Empty;
+    public string FlagshipLabel { get; set; } = string.Empty;
+    public int FlagshipOrder { get; set; }
 }
 
 public class Service : ContentEntity
@@ -60,18 +81,129 @@ public class Service : ContentEntity
 
     /// <summary>Whether the row appears on the public Services page itself.</summary>
     public bool OnListPage { get; set; } = true;
+
+    /// <summary>The section's anchor on the Services page, e.g. "technical-studies" for /services#technical-studies.</summary>
+    public string Slug { get; set; } = string.Empty;
+
+    /// <summary>The name used where space is short: the tiles, the jump menu and the footer.</summary>
+    public string ShortTitle { get; set; } = string.Empty;
+
+    /// <summary>The section's headline, e.g. "Know the ground before you commit capital."</summary>
+    public string Tagline { get; set; } = string.Empty;
+
+    /// <summary>"split", "split-alt" (tinted, photo on the right), "band" (full-width photo) or "case-study" (the Imatong map).</summary>
+    public string Layout { get; set; } = "split";
+
+    public string TileImagePath { get; set; } = string.Empty;
+
+    /// <summary>The three short points revealed on the service's tile.</summary>
+    public List<string> TileItems { get; set; } = new();
+
+    /// <summary>The four headline capabilities; Deliverables is the full list behind "See all".</summary>
+    public List<string> Highlights { get; set; } = new();
+
+    /// <summary>The badge on the section photo, e.g. "12 regions" over "NWSC production well surveys, nationwide".</summary>
+    public string StatValue { get; set; } = string.Empty;
+    public string StatLabel { get; set; } = string.Empty;
+
+    /// <summary>The project shown as "In practice" under the section.</summary>
+    public int? PracticeProjectId { get; set; }
+    public Project? PracticeProject { get; set; }
 }
 
 public class Capability : ContentEntity
 {
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
+
+    /// <summary>Where the card's "Explore" link goes, e.g. /services#technical-studies.</summary>
+    public string LinkUrl { get; set; } = string.Empty;
+}
+
+/// <summary>A tile in "Who we work for" on the Services page. Key is the sector filter on the Projects page.</summary>
+public class Sector : ContentEntity
+{
+    public string Key { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Blurb { get; set; } = string.Empty;
+    public string ImagePath { get; set; } = string.Empty;
+}
+
+/// <summary>A logo in the clients strip.</summary>
+public class Client : ContentEntity
+{
+    public string Name { get; set; } = string.Empty;
+    public string LogoPath { get; set; } = string.Empty;
+}
+
+/// <summary>A photo in the slideshow beside the Projects page hero.</summary>
+public class FieldPhoto : ContentEntity
+{
+    /// <summary>The small line over the caption, e.g. "Groundwater".</summary>
+    public string Kicker { get; set; } = string.Empty;
+    public string Caption { get; set; } = string.Empty;
+    public string ImagePath { get; set; } = string.Empty;
+}
+
+/// <summary>A photo in the "From the air" strip on the Services page.</summary>
+public class AerialPhoto : ContentEntity
+{
+    public string Caption { get; set; } = string.Empty;
+    public string ImagePath { get; set; } = string.Empty;
 }
 
 public class CoreValue : ContentEntity
 {
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
+}
+
+/// <summary>A point on the Who We Are timeline.</summary>
+public class Milestone : ContentEntity
+{
+    public string Year { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+}
+
+/// <summary>A card in the Who We Are "group" section: one of the companies, or the Foundation.</summary>
+public class GroupCompany : ContentEntity
+{
+    /// <summary>The small line above the name, e.g. "Uganda · Since 2017".</summary>
+    public string Kind { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public List<string> Tags { get; set; } = new();
+    public string LinkText { get; set; } = string.Empty;
+    public string LinkUrl { get; set; } = string.Empty;
+    public string ImagePath { get; set; } = string.Empty;
+
+    /// <summary>Shows the card in the Foundation's green instead of the company style.</summary>
+    public bool IsFoundation { get; set; }
+}
+
+/// <summary>A counter in the Who We Are stats band.</summary>
+public class Stat : ContentEntity
+{
+    /// <summary>"number" shows Value; "years" counts whole years since the founding date in the page text.</summary>
+    public string Kind { get; set; } = "number";
+    public int Value { get; set; }
+
+    /// <summary>Shown after the number, e.g. "+".</summary>
+    public string Suffix { get; set; } = string.Empty;
+    public string Label { get; set; } = string.Empty;
+}
+
+/// <summary>An office, listed in the footer and on the Who We Are page.</summary>
+public class Office : ContentEntity
+{
+    public string Name { get; set; } = string.Empty;
+
+    /// <summary>Marks this country as a base in the Who We Are country list.</summary>
+    public string Country { get; set; } = string.Empty;
+    public List<string> AddressLines { get; set; } = new();
+    public string Phone { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
 }
 
 public class Pillar : ContentEntity

@@ -1,45 +1,364 @@
 @page
 @model OptimumEarth.Web.Pages.ServicesModel
+@using OptimumEarth.Web.Models
 @{
     ViewData["Theme"] = "services";
     ViewData["Title"] = "Services - Water, Energy, Environment, GIS & Engineering";
     ViewData["Description"] = "Five service lines across water, energy, environment and the ground beneath them, delivered by the same technical team in Uganda and Zambia.";
-}
+    var p = Model.Services;
+    var t = p.Text;
+    var today = DateOnly.FromDateTime(DateTime.UtcNow);
+    var chevron = "<svg class=\"svc-more__chev\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" aria-hidden=\"true\"><path d=\"M6 9l6 6 6-6\"/></svg>";
 
-<section class="services-hero">
-    <span class="eyebrow" style="letter-spacing:.16em;">What we do</span>
-    <h1 class="services-hero__title">Water, energy, mining, infrastructure and the ground beneath them all.</h1>
-    <p class="services-hero__lede">Since 2017, we have delivered studies, designs and construction for utilities, energy developers, mines, oil companies and development partners, from Kampala and Lusaka across East, Central and Southern Africa. </p>
-</section>
+    // The project-type buttons at the foot of the page; each opens the contact form with its topic filled in.
+    var choices = new[]
+    {
+        ("borehole", "Borehole or water supply"), ("power", "Substation or power line"), ("mining", "Mine or oil & gas"),
+        ("climate", "Catchment or climate"), ("", "Something else"),
+    };
 
-@for (var i = 0; i < Model.Rows.Count; i++)
-{
-    var row = Model.Rows[i];
-    <article class="service-row">
-        <span class="service-row__index" aria-hidden="true">@row.Index</span>
-        <div class="service-row__body">
-            <h2 class="service-row__title">@row.Title</h2>
-            <p class="service-row__desc">@row.Description</p>
-            <p class="service-row__deliver">What we deliver:</p>
-            @if (row.Deliverables.Count > 0)
-            {
-                <ul class="service-row__deliverables">
-                    @foreach (var deliverable in row.Deliverables)
+    async Task Capabilities(ServiceSection s)
+    {
+        if (s.Highlights.Count > 0)
+        {
+            <ul class="svc-caps" data-reveal>
+                @for (var i = 0; i < s.Highlights.Count; i++)
+                {
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">@Html.Raw(OptimumEarth.Web.Pages.ServicesModel.IconFor(s.Slug, i))</svg>@s.Highlights[i]</li>
+                }
+            </ul>
+        }
+
+        if (s.Capabilities.Count > 0)
+        {
+            <details class="svc-more" data-reveal>
+                <summary>See all @s.Capabilities.Count capabilities @Html.Raw(chevron)</summary>
+                <ul>
+                    @foreach (var item in s.Capabilities)
                     {
-                        <li>@deliverable</li>
+                        <li>@item</li>
                     }
                 </ul>
+            </details>
+        }
+    }
+
+    async Task Practice(ServiceSection s, string extra = "")
+    {
+        if (s.Practice is { } card)
+        {
+            <a class="svc-practice @extra" href="@card.Href" data-reveal>
+                <div class="svc-practice__thumb"><img src="@card.ImagePath" alt="" sizes="(max-width: 860px) 100vw, 300px" /></div>
+                <div>
+                    <div class="svc-practice__tag">In practice</div>
+                    <h3>@card.Title</h3>
+                    <p>@card.Description</p>
+                    <div class="svc-practice__meta">@card.ClientLine <span aria-hidden="true">&rarr;</span></div>
+                </div>
+            </a>
+        }
+    }
+
+    async Task Heading(ServiceSection s)
+    {
+        <div class="svc-eyebrow" data-reveal><span class="svc-eyebrow__n">@s.Index</span>@s.Title</div>
+        <h2 class="svc-title" data-reveal>@s.Tagline</h2>
+        await Task.CompletedTask;
+    }
+
+    async Task Media(ServiceSection s)
+    {
+        <div class="svc-media" data-reveal>
+            <img src="@s.ImagePath" alt="@s.ImageAlt" sizes="(max-width: 860px) 100vw, 50vw" />
+            @if (!string.IsNullOrWhiteSpace(s.StatValue))
+            {
+                <div class="svc-media__stat"><b>@s.StatValue</b><small>@s.StatLabel</small></div>
             }
-            <span class="service-row__where">@row.Coverage</span>
         </div>
-        <div class="service-row__media img-slot" role="img" aria-label="@row.ImageLabel" style="background-image: url('@row.ImagePath')"></div>
-    </article>
+    }
+
+    async Task Aerial()
+    {
+        if (p.Aerial.Count == 0) return;
+        <section class="svc-aerial" aria-label="Drone imagery from the field">
+            <div class="svc-wrap svc-aerial__head">
+                <div>
+                    <div class="svc-eyebrow svc-eyebrow--light" data-reveal>From the air</div>
+                    <h2 class="svc-title" data-reveal>@t.AerialHeadline</h2>
+                </div>
+                <div data-reveal>
+                    <p>@t.AerialBody</p>
+                    <div class="svc-aerial__nav">
+                        <button type="button" data-aerial-step="-1" aria-label="Previous photo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
+                        <button type="button" data-aerial-step="1" aria-label="Next photo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
+                    </div>
+                </div>
+            </div>
+            <div class="svc-aerial__track" data-aerial-track tabindex="0" aria-label="Drone photos, scroll sideways">
+                @foreach (var shot in p.Aerial)
+                {
+                    <figure class="svc-shot"><img src="@shot.ImagePath" alt="@shot.Alt" sizes="(max-width: 860px) 84vw, 560px" /><figcaption>@shot.Caption</figcaption></figure>
+                }
+            </div>
+        </section>
+    }
+
+    async Task FleetAndStats()
+    {
+        <section class="svc-fleet" id="equipment">
+            <div class="svc-wrap svc-fleet__grid">
+                <div>
+                    <div class="svc-eyebrow svc-eyebrow--warm" data-reveal>Plant &amp; equipment hire · Zambia</div>
+                    <h2 class="svc-title" data-reveal>@t.FleetHeadline</h2>
+                    <p data-reveal>@t.FleetBody</p>
+                    @if (t.FleetItems.Count > 0)
+                    {
+                        <ul data-reveal>
+                            @foreach (var item in t.FleetItems)
+                            {
+                                <li>@item</li>
+                            }
+                        </ul>
+                    }
+                    <a class="svc-btn svc-btn--light" href="/contact?project=equipment" data-reveal>Request equipment <span aria-hidden="true">&rarr;</span></a>
+                </div>
+                <div class="svc-fleet__pics" data-reveal>
+                    <img src="@t.FleetImagePath" alt="@t.FleetImageAlt" sizes="(max-width: 860px) 56vw, 30vw" />
+                    <img src="@t.FleetInsetImagePath" alt="@t.FleetInsetImageAlt" sizes="(max-width: 860px) 44vw, 22vw" />
+                </div>
+            </div>
+        </section>
+
+        if (p.Stats.Count > 0)
+        {
+            <section class="svc-counters" aria-label="Optimum Earth in numbers">
+                <div class="svc-wrap svc-counters__grid">
+                    @foreach (var stat in p.Stats)
+                    {
+                        var value = stat.ValueOn(p.FoundedOn, today);
+                        <div data-reveal><b data-count="@value" data-suffix="@stat.Suffix">@value@stat.Suffix</b><span>@stat.Label</span></div>
+                    }
+                </div>
+            </section>
+        }
+    }
+
+    async Task CaseStudy()
+    {
+        <figure class="svc-map" data-reveal>
+            <div class="svc-map__tabs" role="tablist" aria-label="Map view">
+                <button type="button" role="tab" id="map-tab-compare" aria-controls="map-compare" aria-selected="true" data-map-tab="compare">Land cover 2015 vs 2025</button>
+                <button type="button" role="tab" id="map-tab-hotspots" aria-controls="map-hotspots" aria-selected="false" tabindex="-1" data-map-tab="hotspots">Where vegetation was lost</button>
+            </div>
+            <div class="svc-map__stage">
+                <div class="svc-map__view svc-compare is-on" id="map-compare" role="tabpanel" aria-labelledby="map-tab-compare" data-map-view="compare" data-compare style="--pos: 50%">
+                    <img src="/img/imatong/landcover-2025.jpg" alt="Imatong landscape land cover map, 2025" sizes="(max-width: 1200px) 100vw, 1150px" />
+                    <div class="svc-compare__before"><img src="/img/imatong/landcover-2015.jpg" alt="Imatong landscape land cover map, 2015" sizes="(max-width: 1200px) 100vw, 1150px" /></div>
+                    <span class="svc-compare__year svc-compare__year--l">2015</span><span class="svc-compare__year svc-compare__year--r">2025</span>
+                    <div class="svc-compare__divider" aria-hidden="true"><span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6" /></svg></span></div>
+                    <input class="svc-compare__range" type="range" min="0" max="100" value="50" aria-label="Compare 2015 and 2025 land cover" data-compare-range />
+                    <div class="svc-compare__hint" aria-hidden="true">Drag to compare</div>
+                </div>
+                <div class="svc-map__view" id="map-hotspots" role="tabpanel" aria-labelledby="map-tab-hotspots" data-map-view="hotspots" hidden>
+                    <img src="/img/imatong/loss-hotspots.jpg" alt="Hot spots of natural vegetation loss in the Imatong landscape, 2015 to 2025" sizes="(max-width: 1200px) 100vw, 1150px" />
+                </div>
+            </div>
+            <div class="svc-legend" data-map-legend="compare"><span><i style="background:#12693c"></i>Closed natural vegetation</span><span><i style="background:#7fb069"></i>Open natural vegetation</span><span><i style="background:#dce38a"></i>Grassland</span><span><i style="background:#c9a87c"></i>Bareland</span><span><i style="background:#e8a33d"></i>Cropland</span><span><i style="background:#c7343b"></i>Built-up</span><span><i style="background:#4a9bd1"></i>Seasonal water</span></div>
+            <div class="svc-legend" data-map-legend="hotspots" hidden><span><i style="background:#b2182b"></i>Hot spot, 99%</span><span><i style="background:#ef8a62"></i>Hot spot, 95%</span><span><i style="background:#fddbc7"></i>Hot spot, 90%</span><span><i style="background:#f2f2f2"></i>Not significant</span><span><i style="background:#d1e5f0"></i>Cold spot, 90%</span><span><i style="background:#67a9cf"></i>Cold spot, 95%</span><span><i style="background:#2166ac"></i>Cold spot, 99%</span></div>
+            <figcaption>@t.CaseStudyCaption</figcaption>
+        </figure>
+    }
 }
 
-<section class="split-cta">
-    <div>
-        <h2 class="split-cta__title">Not sure which service you need?</h2>
-        <p class="split-cta__body">Describe the site and we will scope it with you.</p>
-    </div>
-    <a href="/contact" class="btn btn--nav btn--nav-cta" style="padding:15px 28px; font-size:15px;">Work With Us</a>
-</section>
+@section Styles {
+    <link rel="stylesheet" href="~/css/services.css" asp-append-version="true" />
+}
+
+<div class="svc" data-animate-root>
+    <section class="svc-hero" id="top">
+        <video class="svc-hero__media" muted loop playsinline preload="none" poster="@t.PosterPath" aria-hidden="true" data-hero-video>
+            <source data-src="/video/services-hero.webm" type="video/webm" />
+            <source data-src="/video/services-hero.mp4" type="video/mp4" />
+        </video>
+        <div class="svc-wrap svc-hero__inner">
+            <div class="svc-eyebrow svc-eyebrow--light">What we do</div>
+            <h1 class="svc-hero__title">@t.Headline</h1>
+            <p class="svc-hero__lede">@t.Lede</p>
+            <div class="svc-btns">
+                <a class="svc-btn svc-btn--light" href="#services">Explore our services</a>
+                <a class="svc-btn svc-btn--ghost" href="/projects">See our projects</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="svc-overview" id="services" aria-label="Service lines">
+        <div class="svc-wrap">
+            <div class="svc-tiles" data-tiles>
+                @foreach (var s in p.Sections)
+                {
+                    <a class="svc-tile" href="#@s.Slug">
+                        <img src="@s.TileImagePath" alt="" sizes="(max-width: 860px) 78vw, 240px" />
+                        <span class="svc-tile__go" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
+                        <div class="svc-tile__inner">
+                            <div class="svc-tile__num">@s.Index</div>
+                            <h3>@s.ShortTitle</h3>
+                            <p>@s.Tagline</p>
+                            @if (s.TileItems.Count > 0)
+                            {
+                                <ul>
+                                    @foreach (var item in s.TileItems)
+                                    {
+                                        <li>@item</li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </a>
+                }
+            </div>
+            <div class="svc-dots" aria-hidden="true" data-tile-dots>
+                @for (var i = 0; i < p.Sections.Count; i++)
+                {
+                    <i class="@(i == 0 ? "is-on" : null)"></i>
+                }
+            </div>
+        </div>
+    </section>
+
+    <nav class="svc-subnav" aria-label="Jump to service" data-subnav>
+        <div class="svc-wrap">
+            @foreach (var s in p.Sections)
+            {
+                <a href="#@s.Slug" data-subnav-link="@s.Slug"><span>@s.Index</span>@s.ShortTitle</a>
+            }
+        </div>
+    </nav>
+
+    @{
+        var fleetShown = false;
+    }
+    @for (var i = 0; i < p.Sections.Count; i++)
+    {
+        var s = p.Sections[i];
+        switch (s.Layout)
+        {
+            case "band":
+                <section class="svc-band" id="@s.Slug" data-service>
+                    <img class="svc-band__photo" src="@s.ImagePath" alt="@s.ImageAlt" sizes="100vw" data-parallax />
+                    <div class="svc-wrap svc-band__inner">
+                        @{ await Heading(s); }
+                        <p class="svc-band__lede" data-reveal>@s.Lead</p>
+                    </div>
+                </section>
+                <section class="svc-band-follow">
+                    <div class="svc-wrap svc-band-follow__grid">
+                        <div>@{ await Capabilities(s); }</div>
+                        @{ await Practice(s, "svc-practice--stacked"); }
+                    </div>
+                </section>
+                break;
+            case "case-study":
+                <section class="svc-service" id="@s.Slug" data-service>
+                    <div class="svc-wrap">
+                        <div class="svc-case__head">
+                            <div>
+                                @{ await Heading(s); }
+                                <p class="svc-lead" data-reveal>@s.Lead</p>
+                            </div>
+                            <div class="svc-bigstat" data-reveal>
+                                <b>@t.CaseStudyStat</b>
+                                <span>@t.CaseStudyStatText</span>
+                            </div>
+                        </div>
+                        @{ await CaseStudy(); }
+                        <div class="svc-case__foot">
+                            <div>@{ await Capabilities(s); }</div>
+                            @{ await Practice(s); }
+                        </div>
+                    </div>
+                </section>
+                break;
+            default:
+                <section class="svc-service@(s.Layout == "split-alt" ? " svc-service--alt" : "")" id="@s.Slug" data-service>
+                    <div class="svc-wrap svc-split@(s.Layout == "split-alt" ? " svc-split--rev" : "")">
+                        @{ await Media(s); }
+                        <div>
+                            @{ await Heading(s); }
+                            <p class="svc-lead" data-reveal>@s.Lead</p>
+                            @{ await Capabilities(s); await Practice(s); }
+                        </div>
+                    </div>
+                </section>
+                break;
+        }
+
+        if (i == 0)
+        {
+            await Aerial();
+        }
+
+        if (i == 2)
+        {
+            await FleetAndStats();
+            fleetShown = true;
+        }
+    }
+    @if (!fleetShown)
+    {
+        await FleetAndStats();
+    }
+
+    @if (p.Sectors.Count > 0)
+    {
+        <section class="svc-sectors" aria-labelledby="sectors-title">
+            <div class="svc-wrap">
+                <div class="svc-head">
+                    <div><div class="svc-eyebrow" data-reveal>Who we work for</div><h2 id="sectors-title" class="svc-title" data-reveal>Six sectors, one field-tested team.</h2></div>
+                    <p data-reveal>Select a sector to see the projects we have delivered in it.</p>
+                </div>
+                <div class="svc-sectors__grid">
+                    @foreach (var sector in p.Sectors)
+                    {
+                        <a class="svc-sector" href="/projects?sector=@sector.Key" data-reveal>
+                            <img src="@sector.ImagePath" alt="" sizes="(max-width: 860px) 50vw, 200px" />
+                            <span><b>@sector.Name</b><small>@sector.Blurb</small></span>
+                        </a>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+
+    @if (p.Clients.Count > 0)
+    {
+        <section class="svc-logos" aria-label="Clients and partners">
+            <div class="svc-logos__label">Clients and partners we have delivered for</div>
+            <div class="svc-logos__track">
+                @* The list runs twice so the strip can scroll in a seamless loop; the copy is hidden from screen readers. *@
+                @for (var copy = 0; copy < 2; copy++)
+                {
+                    <div class="svc-logos__set" aria-hidden="@(copy == 1 ? "true" : null)">
+                        @foreach (var client in p.Clients)
+                        {
+                            <span><img src="@client.LogoPath" alt="@(copy == 0 ? client.Name : "")" title="@client.Name" loading="lazy" /></span>
+                        }
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    <section class="svc-cta" id="start">
+        <img class="svc-cta__photo" src="@t.CtaImagePath" alt="" sizes="100vw" />
+        <div class="svc-wrap svc-cta__inner">
+            <h2 class="svc-title" data-reveal>Not sure which service you need?</h2>
+            <p data-reveal>Tell us what you're planning. We'll scope it with you.</p>
+            <div class="svc-choices" data-reveal>
+                @foreach (var (key, label) in choices)
+                {
+                    <a class="svc-choice" href="@(key.Length > 0 ? "/contact?project=" + key : "/contact")">@label <span aria-hidden="true">&rarr;</span></a>
+                }
+            </div>
+        </div>
+    </section>
+</div>

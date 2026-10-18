@@ -18,6 +18,14 @@ public class AppDbContext : IdentityDbContext<AppUser, Microsoft.AspNetCore.Iden
     public DbSet<Service> Services => Set<Service>();
     public DbSet<Capability> Capabilities => Set<Capability>();
     public DbSet<CoreValue> CoreValues => Set<CoreValue>();
+    public DbSet<Milestone> Milestones => Set<Milestone>();
+    public DbSet<GroupCompany> GroupCompanies => Set<GroupCompany>();
+    public DbSet<Stat> Stats => Set<Stat>();
+    public DbSet<Office> Offices => Set<Office>();
+    public DbSet<Sector> Sectors => Set<Sector>();
+    public DbSet<Client> Clients => Set<Client>();
+    public DbSet<AerialPhoto> AerialPhotos => Set<AerialPhoto>();
+    public DbSet<FieldPhoto> FieldPhotos => Set<FieldPhoto>();
     public DbSet<Pillar> Pillars => Set<Pillar>();
     public DbSet<Principle> Principles => Set<Principle>();
     public DbSet<FocusArea> FocusAreas => Set<FocusArea>();
@@ -57,6 +65,9 @@ public class AppDbContext : IdentityDbContext<AppUser, Microsoft.AspNetCore.Iden
             e.HasMany(p => p.Projects).WithOne(s => s.CountryPage).HasForeignKey(s => s.CountryPageId).OnDelete(DeleteBehavior.Cascade);
         });
 
+        // Deleting a project only clears it from a service's "In practice" slot.
+        b.Entity<Service>().HasOne(s => s.PracticeProject).WithMany().HasForeignKey(s => s.PracticeProjectId).OnDelete(DeleteBehavior.SetNull);
+
         // Deleting a service or project removes it from every page it was placed on.
         b.Entity<CountryPageService>().HasOne(s => s.Service).WithMany().HasForeignKey(s => s.ServiceId).OnDelete(DeleteBehavior.Cascade);
         b.Entity<CountryPageProject>().HasOne(p => p.Project).WithMany().HasForeignKey(p => p.ProjectId).OnDelete(DeleteBehavior.Cascade);
@@ -78,6 +89,7 @@ public class AppDbContext : IdentityDbContext<AppUser, Microsoft.AspNetCore.Iden
 
         b.Entity<SiteSettings>().Property(s => s.ContentVersion).HasDefaultValue(1);
         b.Entity<SiteSettings>().Property(s => s.DefaultEmailDestination).HasDefaultValue("Uganda");
+        b.Entity<SiteSettings>().Property(s => s.FoundedOn).HasDefaultValue(new DateOnly(2017, 8, 7));
 
         b.Entity<MediaAsset>().HasIndex(m => m.Path).IsUnique();
         b.Entity<Inquiry>().HasIndex(i => i.CreatedUtc);

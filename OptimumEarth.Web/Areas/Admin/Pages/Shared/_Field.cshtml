@@ -17,6 +17,21 @@
         <label class="checkrow full"><input type="checkbox" name="@name" value="true" checked="@(Model.Value == "true")" disabled="@Model.ReadOnly" /> <span>@f.Label</span></label>
         break;
 
+    case FieldKind.Checks:
+        var ticked = Model.Value.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToHashSet();
+        <div class="fld @(f.Half ? "" : "full")">
+            <span class="fl"><span>@f.Label @if (f.Required) { <i class="req">*</i> }</span></span>
+            <div class="onrow">
+                @foreach (var o in Model.Options)
+                {
+                    <label class="checkrow"><input type="checkbox" name="@name" value="@o.Value" checked="@ticked.Contains(o.Value)" disabled="@Model.ReadOnly" /> <span>@o.Label</span></label>
+                }
+            </div>
+            @if (f.Hint is not null) { <span class="hint">@f.Hint</span> }
+            @if (error is not null) { <span class="err">@error</span> }
+        </div>
+        break;
+
     case FieldKind.Placements:
         <div class="fld full">
             <span class="fl"><span>@f.Label</span></span>

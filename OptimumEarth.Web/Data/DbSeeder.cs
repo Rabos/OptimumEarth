@@ -51,7 +51,7 @@ public sealed class DatabaseInitializer : IHostedService
     {
         if (!await db.Settings.AnyAsync(ct))
         {
-            db.Settings.Add(new SiteSettings
+            var settings = new SiteSettings
             {
                 Mission = SeedData.Mission,
                 Vision = SeedData.Vision,
@@ -60,12 +60,24 @@ public sealed class DatabaseInitializer : IHostedService
                 ZambiaTo = "zambia@optimum-earth.com",
                 FoundationTo = "foundation@optimum-earth.com",
                 ContentVersion = SeedData.CurrentContentVersion,
-            });
+            };
+            SeedData.ApplyWhoWeAreText(settings);
+            SeedData.ApplyServicesText(settings);
+            SeedData.ApplyProjectsText(settings);
+            db.Settings.Add(settings);
         }
 
         await SeedListAsync(db, db.Slides, SeedData.Slides(), ct);
         await SeedListAsync(db, db.Capabilities, SeedData.Capabilities(), ct);
         await SeedListAsync(db, db.CoreValues, SeedData.Values(), ct);
+        await SeedListAsync(db, db.Milestones, SeedData.Milestones(), ct);
+        await SeedListAsync(db, db.GroupCompanies, SeedData.GroupCompanies(), ct);
+        await SeedListAsync(db, db.Stats, SeedData.Stats(), ct);
+        await SeedListAsync(db, db.Offices, SeedData.Offices(), ct);
+        await SeedListAsync(db, db.Sectors, SeedData.Sectors(), ct);
+        await SeedListAsync(db, db.Clients, SeedData.Clients(), ct);
+        await SeedListAsync(db, db.AerialPhotos, SeedData.AerialPhotos(), ct);
+        await SeedListAsync(db, db.FieldPhotos, SeedData.FieldPhotos(), ct);
         await SeedListAsync(db, db.Pillars, SeedData.Pillars(), ct);
         await SeedListAsync(db, db.Principles, SeedData.Principles(), ct);
         await SeedListAsync(db, db.FocusAreas, SeedData.FocusAreas(), ct);
@@ -84,6 +96,7 @@ public sealed class DatabaseInitializer : IHostedService
             var listed = SeedData.ListProjects();
             var featured = SeedData.CountryCardProjects();
             Number(services);
+            LinkPracticeProjects(services, listed);
 
             // One running order: the Projects page's list first, then the six country-page cards.
             Number(listed.Concat(featured).ToList());
@@ -103,6 +116,18 @@ public sealed class DatabaseInitializer : IHostedService
         }
 
         await db.SaveChangesAsync(ct);
+    }
+
+    /// <summary>Points each service's "In practice" slot at its seeded project.</summary>
+    public static void LinkPracticeProjects(List<Service> services, List<Project> projects)
+    {
+        foreach (var service in services)
+        {
+            if (SeedData.PracticeProjects.TryGetValue(service.Slug, out var title))
+            {
+                service.PracticeProject = projects.FirstOrDefault(p => p.Title == title);
+            }
+        }
     }
 
     /// <summary>Builds a country page's service cards from their specs; a spec with no service index is a custom card.</summary>
@@ -148,6 +173,40 @@ public sealed class DatabaseInitializer : IHostedService
         ["servicepanel3.jpg"] = "Environmental services",
         ["servicepanel4.jpg"] = "GIS, mapping and remote sensing",
         ["servicepanel5.jpg"] = "Mines, oil and gas",
+        ["hero.jpg"] = "Optimum Earth and client team on site at Tilenga, Buliisa",
+        ["field.jpg"] = "Optimum Earth team and partners on a site walkover",
+        ["team.jpg"] = "Optimum Earth field team outside the Giteranyi commune office, Burundi",
+        ["energy.jpg"] = "Technicians installing a solar PV array",
+        ["community.jpg"] = "Collecting a water sample at a community tap stand",
+        ["mining-geology.jpg"] = "Hydrogeology fieldwork with a mining client's geologists",
+        ["mining-geology-p.jpg"] = "Optimum Earth hydrogeologist with a mining client on site",
+        ["tank-stand-media.jpg"] = "Elevated steel tank stand designed and built by Optimum Earth",
+        ["tank-stand-p.jpg"] = "Elevated steel water tank stand",
+        ["drainage-wide.jpg"] = "Drainage channel excavation under Optimum Earth supervision",
+        ["stakeholder-meeting.jpg"] = "Stakeholder consultation during an environmental and social assessment",
+        ["ves-survey.jpg"] = "Field team taking geophysical readings for a resistivity survey",
+        ["drilling-rig-p.jpg"] = "Borehole drilling rig at work",
+        ["river-survey.jpg"] = "Field team surveying a river channel",
+        ["owen-falls-p.jpg"] = "The Nile below the Owen Falls dam",
+        ["zambia-truck-p.jpg"] = "Tipper truck from the Optimum Earth Engineering fleet, Zambia",
+        ["zambia-backhoe-p.jpg"] = "Backhoe loader working on site",
+        ["excavation-supervision.jpg"] = "Optimum Earth supervisor overseeing excavation works",
+        ["solar-handover-p.jpg"] = "Handing over a solar PV installation",
+        ["pump-test-p.jpg"] = "Water discharging during a borehole pump test",
+        ["water-treatment-p.jpg"] = "Engineers inspecting a water treatment plant",
+        ["orom-inselberg.jpg"] = "Inselberg rising above woodland near Orom, northern Uganda",
+        ["drone-poster.jpg"] = "Aerial view of the landscape near Orom, northern Uganda",
+        ["drone-orom-01.jpg"] = "Woodland and open savanna, near Orom, northern Uganda",
+        ["drone-orom-02.jpg"] = "Drainage line through cultivated slopes, near Orom, northern Uganda",
+        ["drone-orom-03.jpg"] = "Riparian corridor below the ridge, near Orom, northern Uganda",
+        ["drone-orom-04.jpg"] = "Seasonal stream and cultivation, near Orom, northern Uganda",
+        ["drone-camp-01.jpg"] = "Dry-season woodland canopy, near Orom, northern Uganda",
+        ["drone-camp-02.jpg"] = "Access track through bushland, near Orom, northern Uganda",
+        ["drone-camp-03.jpg"] = "Bushland toward the escarpment, near Orom, northern Uganda",
+        ["drainage-works-p.jpg"] = "Drainage channel excavation under Optimum Earth supervision",
+        ["drilling-rig.jpg"] = "Borehole drilling rig on site",
+        ["pump-test.jpg"] = "Pumping test on a production borehole",
+        ["imatong-landcover.jpg"] = "Imatong landscape land cover map, 2025",
     };
 
     private async Task SeedMediaAsync(AppDbContext db, IWebHostEnvironment env, CancellationToken ct)

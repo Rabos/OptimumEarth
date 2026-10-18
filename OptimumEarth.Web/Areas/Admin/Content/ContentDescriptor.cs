@@ -207,7 +207,12 @@ public sealed class ContentDescriptor<T> : IContentDescriptor where T : class, n
         var values = new Dictionary<string, string>();
         foreach (var f in Fields.Where(f => IsProperty(f)))
         {
-            values[f.Key] = f.Kind == FieldKind.Bool ? (form.IsChecked(f.Key) ? "true" : "false") : form.Get(f.Key);
+            values[f.Key] = f.Kind switch
+            {
+                FieldKind.Bool => form.IsChecked(f.Key) ? "true" : "false",
+                FieldKind.Checks => string.Join('\n', form.Many(f.Key)),
+                _ => form.Get(f.Key),
+            };
         }
 
         var key = existing is null ? "new" : StatusKey(existing);
@@ -355,6 +360,19 @@ public sealed class ContentDescriptor<T> : IContentDescriptor where T : class, n
         if (f.Kind == FieldKind.Bool)
         {
             value = form.IsChecked(f.Key);
+            return null;
+        }
+
+        if (f.Kind == FieldKind.Checks)
+        {
+            var allowed = f.Options?.Select(o => o.Value).ToHashSet() ?? new HashSet<string>();
+            var ticked = form.Many(f.Key).Where(allowed.Contains).Distinct().ToList();
+            if (f.Required && ticked.Count == 0)
+            {
+                return $"Tick at least one {f.Label.ToLowerInvariant()}.";
+            }
+
+            value = ticked;
             return null;
         }
 

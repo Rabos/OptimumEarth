@@ -118,7 +118,7 @@ public class EditModel : AdminPageModel
 
     private async Task LoadOptionsAsync()
     {
-        foreach (var field in Descriptor.Fields.Where(f => f.Kind is FieldKind.Select or FieldKind.Image))
+        foreach (var field in Descriptor.Fields.Where(f => f.Kind is FieldKind.Select or FieldKind.Image or FieldKind.Checks))
         {
             Data.Values.TryGetValue(field.Key, out var current);
             Options[field.Key] = await Descriptor.OptionsAsync(_db, field, current);

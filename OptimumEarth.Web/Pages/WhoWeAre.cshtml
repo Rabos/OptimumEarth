@@ -3,105 +3,223 @@
 @{
     ViewData["Theme"] = "who-we-are";
     ViewData["Title"] = "Who We Are";
-    ViewData["Description"] = "Optimum Earth has served the East and Southern Africa water and energy industry since 2017, across the full project lifecycle.";
+    ViewData["Description"] = "Optimum Earth Group: engineering solutions for industry and resilience for communities across East, Central and Southern Africa since 2017. Two companies, one foundation, one set of values.";
+    var c = Model.Who;
+    var t = c.Text;
 }
 
-<section class="who-we-are" aria-labelledby="who-we-are-heading">
-    <div class="who-we-are__rule-row">
-        <span class="eyebrow" id="who-we-are-heading" style="letter-spacing:.2em;">Who we are</span>
-        <span class="who-we-are__rule" aria-hidden="true"></span>
-    </div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/who-we-are.css" asp-append-version="true" />
+}
 
-    <div class="who-we-are__split">
-        <div class="who-we-are__left">
-            <h1 class="who-we-are__statement">Engineering solutions for industry and resilience for communities, across East, Central and Southern Africa since <em>2017</em></h1>
-
-            <div class="who-we-are__mission-vision">
-                <div class="mission-vision-item mission-vision-item--vision">
-                    <h2 class="mission-vision-item__title">Our Vision</h2>
-                    <p class="mission-vision-item__text">@Model.Vision</p>
-                </div>
-
-                <div class="mission-vision-item mission-vision-item--mission">
-                    <h2 class="mission-vision-item__title">Our Mission</h2>
-                    <p class="mission-vision-item__text">@Model.Mission</p>
-                </div>
+<div class="who" data-animate-root>
+    <section class="who-hero" aria-labelledby="who-hero-title">
+        <div class="who-hero__bg" role="img" aria-label="@t.HeroImageAlt" image-priority="high" style="background-image: url('@t.HeroImagePath')"></div>
+        <div class="who-wrap who-hero__inner">
+            <span class="who-eyebrow">Who we are</span>
+            <h1 id="who-hero-title" class="who-hero__title">@t.Headline @if (!string.IsNullOrWhiteSpace(t.Highlight)) { <em>@t.Highlight</em> }</h1>
+            <p class="who-hero__lede">@t.Lede</p>
+            <div class="who-btns">
+                <a class="who-btn who-btn--light" href="#story">Our story</a>
+                <a class="who-btn who-btn--outline" href="#values">Our values</a>
             </div>
         </div>
+    </section>
 
-        <div class="who-we-are__right">
-            <div class="who-we-are__support">
-                <p class="who-we-are__lede">Optimum Earth began with a friendship, a shared ambition, and a belief that young Africans could build solutions that matter. Founded by four university students from Makerere University in Kampala, Uganda, we've grown into a company committed to practical problem-solving and creating lasting value across Africa.</p>
-
-                <p class="who-we-are__lede">We develop and deliver practical solutions in energy, water, and environmental infrastructure, partnering with communities, businesses, and institutions to tackle the region's most pressing development and sustainability challenges.</p>
-
-                <p class="who-we-are__lede">As Optimum Earth has grown, so has our commitment to the communities and ecosystems we work within. Optimum Earth Foundation (OEF) is our corporate foundation, a not-for-profit arm, created to channel our experience, networks, and resources to the communities that need them most. OEF's work is organized around three pillars - Access, Resilience, and Impact - expanding access to clean water, clean energy, and climate solutions; strengthening the resilience of communities; and bringing partners, knowledge, and finance together to create lasting change across Africa.</p>
-
-                <div class="stat-pair">
-                    <div class="stat">
-                        <b>100+</b>
-                        <span>Organisations served</span>
-                    </div>
-                    <div class="stat">
-                        <b>02</b>
-                        <span>Country operations</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="values-section">
-        <h2 class="values-section__title">Values</h2>
-        <p class="values-section__intro">Across the Optimum Earth Group (Optimum Earth (U) Ltd, Optimum Earth Engineering Ltd and the Optimum Earth Foundation), what we do matters, and so does how we do it. Our core values set the standard for how our staff, associates and volunteers work, the relationships we build with clients, partners and communities, and the difference we seek to make. They are the <b>SCALES</b> we measure ourselves against, and we hold ourselves and one another to them.</p>
-
-        @{
-            var scaleItems = Model.Values
-                .Select((value, index) => new
+    @if (c.Stats.Count > 0)
+    {
+        <div class="who-stats" aria-label="Optimum Earth in numbers">
+            <div class="who-wrap who-stats__grid">
+                @foreach (var stat in c.Stats)
                 {
-                    Value = value,
-                    Index = index,
-                    Letter = string.IsNullOrWhiteSpace(value.Title) ? string.Empty : value.Title.Trim()[0].ToString().ToUpperInvariant()
-                })
-                .ToList();
-            var firstScaleItem = scaleItems.FirstOrDefault();
-        }
-
-        @if (firstScaleItem is not null)
-        {
-            <div class="values-acronym" aria-label="SCALES values">
-                @foreach (var item in scaleItems)
-                {
-                    <button type="button"
-                            class="values-acronym__bubble@(item.Index == 0 ? " is-active" : "")"
-                            data-scale-trigger
-                            data-scale-title="@item.Value.Title"
-                            data-scale-body="@item.Value.Description"
-                            aria-pressed="@(item.Index == 0 ? "true" : "false")"
-                            aria-label="Show @item.Value.Title">
-                        @item.Letter
-                    </button>
+                    <div><b data-count="@Model.StatValue(stat)" data-suffix="@stat.Suffix">@Model.StatValue(stat)@stat.Suffix</b><span>@stat.Label</span></div>
                 }
             </div>
-
-            <div class="values-tooltip" data-scale-panel role="status" aria-live="polite">
-                <h3 class="values-tooltip__title" data-scale-panel-title>@firstScaleItem.Value.Title</h3>
-                <p class="values-tooltip__body" data-scale-panel-body>@firstScaleItem.Value.Description</p>
-            </div>
-        }
-    </div>
-
-    <div class="capabilities-section">
-        <h2 class="capabilities-section__title">Services we offer</h2>
-        <div class="capability-grid">
-            @foreach (var c in Model.Capabilities)
-            {
-                <div class="capability-cell">
-                    <span class="capability-cell__index">@c.Index</span>
-                    <span class="capability-cell__title">@c.Title</span>
-                    <span class="capability-cell__desc">@c.Description</span>
-                </div>
-            }
         </div>
-    </div>
-</section>
+    }
+
+    <section id="story" class="who-section">
+        <div class="who-wrap who-story">
+            <div data-reveal>
+                <span class="who-eyebrow">Our story</span>
+                <h2 class="who-story__title">@t.StoryHeadline</h2>
+                @foreach (var paragraph in t.StoryParagraphs)
+                {
+                    <p>@paragraph</p>
+                }
+            </div>
+            <div class="who-collage" data-reveal aria-hidden="true">
+                <img class="who-collage__main" src="@t.StoryImagePath" alt="" sizes="(max-width: 860px) 72vw, 40vw" />
+                <img class="who-collage__inset" src="@t.StoryInsetImagePath" alt="" sizes="(max-width: 860px) 52vw, 30vw" />
+                <div class="who-collage__tag"><b>@t.FoundedOn.Year</b>Founded in Kampala</div>
+            </div>
+        </div>
+    </section>
+
+    @if (c.Milestones.Count > 0)
+    {
+        <section class="who-section who-section--white">
+            <div class="who-wrap">
+                <div class="who-head" data-reveal>
+                    <div><span class="who-eyebrow">Milestones</span><h2>From one borehole to a 330 kV corridor.</h2></div>
+                    <p>A few of the steps that shaped the firm. The full list is on our <a href="/projects">projects page</a>.</p>
+                </div>
+                <ol class="who-timeline" data-reveal>
+                    @foreach (var m in c.Milestones)
+                    {
+                        <li><b>@m.Year</b><h3>@m.Title</h3><p>@m.Description</p></li>
+                    }
+                </ol>
+            </div>
+        </section>
+    }
+
+    @if (c.Group.Count > 0)
+    {
+        <section class="who-section">
+            <div class="who-wrap">
+                <div class="who-head" data-reveal>
+                    <div><span class="who-eyebrow">The group</span><h2>Two companies. One foundation. One standard.</h2></div>
+                    <p>The same team and the same values run through each part of the group, whether the work is a commercial contract or a community programme.</p>
+                </div>
+                <div class="who-group">
+                    @foreach (var g in c.Group)
+                    {
+                        <article class="who-entity@(g.IsFoundation ? " who-entity--foundation" : "")" data-reveal>
+                            <div class="who-entity__photo"><img src="@g.ImagePath" alt="@g.ImageAlt" sizes="(max-width: 860px) 100vw, 33vw" /></div>
+                            <div class="who-entity__body">
+                                @if (!string.IsNullOrWhiteSpace(g.Kind))
+                                {
+                                    <span class="who-entity__kind">@g.Kind</span>
+                                }
+                                <h3>@g.Name</h3>
+                                <p>@g.Description</p>
+                                @if (g.Tags.Count > 0)
+                                {
+                                    <ul class="who-entity__tags">
+                                        @foreach (var tag in g.Tags)
+                                        {
+                                            <li>@tag</li>
+                                        }
+                                    </ul>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(g.LinkUrl))
+                                {
+                                    <a class="who-entity__link" href="@g.LinkUrl">@(string.IsNullOrWhiteSpace(g.LinkText) ? g.Name : g.LinkText) <span aria-hidden="true">&rarr;</span></a>
+                                }
+                            </div>
+                        </article>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+
+    <section class="who-section who-purpose">
+        <div class="who-wrap">
+            <span class="who-eyebrow">Vision &amp; mission</span>
+            <div class="who-purpose__grid">
+                <div data-reveal><h2>Our vision</h2><p>@c.Vision</p></div>
+                <div class="who-purpose__mission" data-reveal><h2>Our mission</h2><p>@c.Mission</p></div>
+            </div>
+        </div>
+    </section>
+
+    @if (c.Values.Count > 0)
+    {
+        <section id="values" class="who-section" data-values>
+            <div class="who-wrap">
+                <div class="who-head" data-reveal>
+                    <div><span class="who-eyebrow">Our values</span><h2>The SCALES we measure ourselves against.</h2></div>
+                    <p>They set the standard for how our staff, associates and volunteers work, in our companies and in our Foundation. Select a letter.</p>
+                </div>
+                <div class="who-scales" role="tablist" aria-label="Core values">
+                    @for (var i = 0; i < c.Values.Count; i++)
+                    {
+                        var v = c.Values[i];
+                        <button type="button" role="tab" id="value-tab-@i" aria-controls="value-panel-@i" aria-selected="@(i == 0 ? "true" : "false")" tabindex="@(i == 0 ? "0" : "-1")" aria-label="@v.Title" data-value-tab>@(v.Title.Trim().FirstOrDefault().ToString().ToUpperInvariant())</button>
+                    }
+                </div>
+                @for (var i = 0; i < c.Values.Count; i++)
+                {
+                    var v = c.Values[i];
+                    <div class="who-value" role="tabpanel" id="value-panel-@i" aria-labelledby="value-tab-@i" data-value-panel>
+                        <div>
+                            <div class="who-value__num">@((i + 1).ToString("00")) / @c.Values.Count.ToString("00")</div>
+                            <h3 class="who-value__name">@v.Title</h3>
+                            <p class="who-value__lead">@v.Lead</p>
+                        </div>
+                        <p class="who-value__body">@v.Body</p>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    @if (c.Capabilities.Count > 0)
+    {
+        <section class="who-section who-section--white">
+            <div class="who-wrap">
+                <div class="who-head" data-reveal>
+                    <div><span class="who-eyebrow">What we do</span><h2>Five service lines, one team.</h2></div>
+                    <p>Our specialists are in-house, so what we learn in the field goes straight into design and construction.</p>
+                </div>
+                <div class="who-services" data-reveal>
+                    @foreach (var cap in c.Capabilities)
+                    {
+                        <a href="@cap.LinkUrl"><i>@cap.Index</i><h3>@cap.Title</h3><span>@cap.Description</span><b>Explore <span aria-hidden="true">&rarr;</span></b></a>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+
+    <section class="who-section">
+        <div class="who-wrap who-where">
+            <div data-reveal>
+                <span class="who-eyebrow">Where we work</span>
+                <h2>Based in Kampala and Lusaka. Working across the region.</h2>
+                <ul class="who-countries">
+                    @foreach (var country in t.WorkCountries)
+                    {
+                        <li class="@(Model.IsBase(country) ? "is-base" : null)">@country</li>
+                    }
+                </ul>
+                <a class="who-btn who-btn--solid" href="/projects">See our projects <span aria-hidden="true">&rarr;</span></a>
+            </div>
+            <div class="who-offices" data-reveal>
+                @foreach (var office in c.Offices)
+                {
+                    <div class="who-office">
+                        <h3>@office.Name</h3>
+                        <address>
+                            @foreach (var line in office.AddressLines)
+                            {
+                                <span>@line</span>
+                            }
+                            <span>
+                                @if (!string.IsNullOrWhiteSpace(office.Phone))
+                                {
+                                    <a href="@office.PhoneHref">@office.Phone</a><text> &middot; </text>
+                                }
+                                <a href="mailto:@office.Email">@office.Email</a>
+                            </span>
+                        </address>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="who-cta">
+        <div class="who-cta__bg" style="background-image: url('@t.CtaImagePath')"></div>
+        <div class="who-wrap who-cta__inner">
+            <h2>@t.CtaHeadline</h2>
+            <p>@t.CtaBody</p>
+            <div class="who-btns">
+                <a class="who-btn who-btn--light" href="/contact">Start a project</a>
+                <a class="who-btn who-btn--outline" href="/contact?project=careers">Careers</a>
+            </div>
+        </div>
+    </section>
+</div>

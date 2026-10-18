@@ -7,6 +7,57 @@ public class SiteSettings
     public string Mission { get; set; } = string.Empty;
     public string Vision { get; set; } = string.Empty;
 
+    // Who We Are page text. The headline is shown as WhoHeadline then WhoHighlight in the accent colour.
+    public string WhoHeadline { get; set; } = string.Empty;
+    public string WhoHighlight { get; set; } = string.Empty;
+    public string WhoLede { get; set; } = string.Empty;
+    public string WhoHeroImagePath { get; set; } = string.Empty;
+    public string StoryHeadline { get; set; } = string.Empty;
+
+    /// <summary>The story's paragraphs, separated by blank lines.</summary>
+    public string StoryBody { get; set; } = string.Empty;
+    public string StoryImagePath { get; set; } = string.Empty;
+    public string StoryInsetImagePath { get; set; } = string.Empty;
+
+    /// <summary>Drives the "years in operation" counter and the founding badge on the story photo.</summary>
+    public DateOnly FoundedOn { get; set; } = new(2017, 8, 7);
+
+    /// <summary>Countries shown under "Where we work"; ones with an office are highlighted.</summary>
+    public List<string> WorkCountries { get; set; } = new();
+    public string WhoCtaHeadline { get; set; } = string.Empty;
+    public string WhoCtaBody { get; set; } = string.Empty;
+    public string WhoCtaImagePath { get; set; } = string.Empty;
+
+    // Services page text. The hero video itself is a fixed file (wwwroot/video); the poster shows until it loads.
+    public string ServicesHeadline { get; set; } = string.Empty;
+    public string ServicesLede { get; set; } = string.Empty;
+    public string ServicesPosterPath { get; set; } = string.Empty;
+    public string AerialHeadline { get; set; } = string.Empty;
+    public string AerialBody { get; set; } = string.Empty;
+    public string FleetHeadline { get; set; } = string.Empty;
+    public string FleetBody { get; set; } = string.Empty;
+    public List<string> FleetItems { get; set; } = new();
+    public string FleetImagePath { get; set; } = string.Empty;
+    public string FleetInsetImagePath { get; set; } = string.Empty;
+
+    /// <summary>The headline figure beside the Imatong map, e.g. "198,350 ha", and the sentence under it.</summary>
+    public string CaseStudyStat { get; set; } = string.Empty;
+    public string CaseStudyStatText { get; set; } = string.Empty;
+    public string CaseStudyCaption { get; set; } = string.Empty;
+    public string ServicesCtaImagePath { get; set; } = string.Empty;
+
+    // Projects page text. The project counts in the hero are worked out from the projects themselves.
+    public string ProjectsHeadline { get; set; } = string.Empty;
+    public string ProjectsLede { get; set; } = string.Empty;
+
+    /// <summary>The one hero figure that is not counted, e.g. "150+" over "Groundwater development assignments".</summary>
+    public string ProjectsStatFigure { get; set; } = string.Empty;
+    public string ProjectsStatLabel { get; set; } = string.Empty;
+    public string ProjectsCtaImagePath { get; set; } = string.Empty;
+
+    /// <summary>The client logo strip stays hidden until permission to show the logos is confirmed.</summary>
+    public bool ShowClientLogos { get; set; }
+
     /// <summary>How many projects a country page may show (the layout fits three across).</summary>
     public int ProjectSlots { get; set; } = 3;
     public int BlogPageSize { get; set; } = 9;

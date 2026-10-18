@@ -16,13 +16,24 @@ public static class AdminNav
         new("Work", new NavItem[]
         {
             new("Projects", "/admin/content/projects", AdminAreas.Projects),
+            new("Projects page text", "/admin/content/projects-page", AdminAreas.Projects),
+            new("Hero photos", "/admin/content/field-photos", AdminAreas.Projects),
             new("Services", "/admin/content/services", AdminAreas.Services),
+            new("Services page text", "/admin/content/services-page", AdminAreas.Services),
+            new("Sectors", "/admin/content/sectors", AdminAreas.Services),
+            new("Drone photos", "/admin/content/aerial", AdminAreas.Services),
+            new("Clients", "/admin/content/clients", AdminAreas.Services),
         }),
         new("Who we are", new NavItem[]
         {
+            new("Page text", "/admin/content/who-page", AdminAreas.About),
+            new("Stats", "/admin/content/stats", AdminAreas.About),
+            new("Milestones", "/admin/content/milestones", AdminAreas.About),
+            new("Group companies", "/admin/content/group", AdminAreas.About),
             new("Mission & vision", "/admin/content/mission", AdminAreas.About),
-            new("Capabilities", "/admin/content/capabilities", AdminAreas.About),
             new("Values", "/admin/content/values", AdminAreas.About),
+            new("Service lines", "/admin/content/capabilities", AdminAreas.About),
+            new("Offices", "/admin/content/offices", AdminAreas.About),
         }),
         new("Foundation", new NavItem[]
         {

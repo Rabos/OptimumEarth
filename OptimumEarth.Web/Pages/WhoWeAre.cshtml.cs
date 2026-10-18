@@ -13,20 +13,15 @@ public class WhoWeAreModel : PageModel
         _content = content;
     }
 
-    public IReadOnlyList<CapabilityItem> Capabilities { get; private set; } = Array.Empty<CapabilityItem>();
-
-    public string Mission { get; private set; } = string.Empty;
-
-    public string Vision { get; private set; } = string.Empty;
-
-    public IReadOnlyList<ValueItem> Values { get; private set; } = Array.Empty<ValueItem>();
+    public WhoWeAreContent Who { get; private set; } = null!;
 
     public async Task OnGetAsync()
     {
-        var content = await _content.WhoWeAreAsync();
-        Capabilities = content.Capabilities;
-        Mission = content.Mission;
-        Vision = content.Vision;
-        Values = content.Values;
+        Who = await _content.WhoWeAreAsync();
     }
+
+    public int StatValue(StatItem stat) => stat.ValueOn(Who.Text.FoundedOn, DateOnly.FromDateTime(DateTime.UtcNow));
+
+    /// <summary>Countries with an office are highlighted in the "Where we work" list.</summary>
+    public bool IsBase(string country) => Who.Offices.Any(o => string.Equals(o.Country, country, StringComparison.OrdinalIgnoreCase));
 }

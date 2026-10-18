@@ -52,6 +52,15 @@ public static class OptionSources
                 var cats = await db.BlogCategories.AsNoTracking().OrderBy(c => c.SortOrder).ThenBy(c => c.Name).Select(c => new { c.Id, c.Name }).ToListAsync();
                 list.AddRange(cats.Select(c => (c.Id.ToString(), c.Name)));
                 break;
+            case "sectors":
+                // Draft sectors are still offered: they are kept off the Services page tiles, not out of use.
+                var sectors = await db.Sectors.AsNoTracking().OrderBy(x => x.SortOrder).ThenBy(x => x.Id).Select(x => new { x.Key, x.Name }).ToListAsync();
+                list.AddRange(sectors.Select(x => (x.Key, x.Name)));
+                break;
+            case "projects":
+                var projects = await db.Projects.AsNoTracking().OrderBy(p => p.Title).Select(p => new { p.Id, p.Title }).ToListAsync();
+                list.AddRange(projects.Select(p => (p.Id.ToString(), p.Title)));
+                break;
             case "stories":
                 var stories = await db.Stories.AsNoTracking().OrderBy(s => s.SortOrder).Select(s => new { s.Key, s.Title }).ToListAsync();
                 list.AddRange(stories.Select(s => (s.Key, s.Title)));

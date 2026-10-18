@@ -1,255 +1,290 @@
 @page
 @model OptimumEarth.Web.Pages.ProjectsModel
+@using OptimumEarth.Web.Models
 @{
     ViewData["Theme"] = "projects";
-    ViewData["Title"] = "Projects - Work delivered across Uganda and Zambia";
-    ViewData["Description"] = "Optimum Earth project evidence: work delivered, with the client, service and year attached, across water supply, groundwater monitoring, environment and GIS.";
-}
+    ViewData["Title"] = "Projects - Work delivered across Uganda, Zambia and the region";
+    ViewData["Description"] = "Optimum Earth project evidence: work delivered, with the client and service attached, across water supply, groundwater, energy, mining, environment and climate resilience.";
+    var d = Model.Data;
+    var t = d.Text;
+    var flagships = d.Projects.Where(p => p.FlagshipOrder > 0 && p.FlagshipFigure.Length > 0).OrderBy(p => p.FlagshipOrder).ToList();
+    var ongoing = d.Projects.Count(p => p.Ongoing);
+    var extra = System.Text.RegularExpressions.Regex.Match(t.StatFigure, @"^(\d+)(\+?)$");
+    var chevron = "<svg width=\"12\" height=\"8\" viewBox=\"0 0 12 8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" aria-hidden=\"true\"><path d=\"M1 1l5 5 5-5\"/></svg>";
 
-<section class="projects-hero">
-    <span class="eyebrow" style="letter-spacing:.16em;">Project evidence</span>
-    <h1 class="projects-hero__title">Work delivered, with the client, service and year attached.</h1>
-</section>
-
-<nav class="projects-filter" aria-label="Filter projects">
-    <span class="projects-filter__label">Filter</span>
-    @foreach (var filter in OptimumEarth.Web.Pages.ProjectsModel.Filters)
+    // The current filters as query pairs, so each "remove" pill links to the page without its own value.
+    var current = Model.Countries.Select(v => ("country", v)).Concat(Model.Services.Select(v => ("service", v))).Concat(Model.Sectors.Select(v => ("sector", v)))
+        .Concat(Model.OngoingOnly ? new[] { ("status", "ongoing") } : Array.Empty<(string, string)>())
+        .Concat(Model.Query.Length > 0 ? new[] { ("q", Model.Query) } : Array.Empty<(string, string)>()).ToList();
+    string Without((string, string) pair)
     {
-        var isActive = filter.Key == Model.ActiveFilter;
-        <a class="filter-chip" href="/projects?filter=@filter.Key" aria-pressed="@(isActive ? "true" : "false")" aria-current="@(isActive ? "true" : null)">@filter.Label</a>
+        var rest = current.Where(c => c != pair).Select(c => Uri.EscapeDataString(c.Item1) + "=" + Uri.EscapeDataString(c.Item2));
+        var query = string.Join("&", rest);
+        return "/projects" + (query.Length > 0 ? "?" + query : "") + "#explore";
     }
-</nav>
 
-@if (Model.VisibleProjects.Count == 0)
-{
-    <p class="projects-empty">No projects match this filter yet - check back as more Zambia case studies are published, or &nbsp;<a class="text-link" href="/projects"> view all projects</a>.</p>
-}
-else
-{
-    <div class="projects-grid">
-        @for (var i = 0; i < Model.VisibleProjects.Count; i++)
-        {
-            var project = Model.VisibleProjects[i];
-            <article class="project-card project-card--lg" style="background-image: url('@project.ImagePath')">
-                <div class="project-card__body">
-                    <span class="project-card__tag">@project.Tag</span>
-                    <h2 class="project-card__title" style="font-size:19px; font-weight:600;">@project.Title</h2>
-                    <p class="project-card__meta">@project.Meta</p>
-                    @* @if (!string.IsNullOrEmpty(project.Description))
-                    {
-                        <a href="#project-dialog-@i" class="project-card__link" data-dialog="project-dialog-@i" aria-label="View project details for @project.Title">Learn more</a>
-                    } *@
-                </div>
-            </article>
-        }
-    </div>
-}
-
-<!-- Project Description Dialogs -->
-@for (var i = 0; i < Model.VisibleProjects.Count; i++)
-{
-    var project = Model.VisibleProjects[i];
-    if (!string.IsNullOrEmpty(project.Description))
+    string LabelOf(string group, string key) => group switch
     {
-        <dialog id="project-dialog-@i" class="project-dialog">
-            <div class="project-dialog__content">
-                <div class="project-dialog__header">
-                    <h2 class="project-dialog__title">@project.Title</h2>
-                    <button class="project-dialog__close" data-close-dialog="project-dialog-@i" aria-label="Close dialog">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                    </button>
+        "country" => ProjectCountries.NameOf(key),
+        "service" => ProjectServices.Find(key)?.Label ?? key,
+        "sector" => Model.SectorName(key),
+        "status" => "Ongoing only",
+        _ => "“" + key + "”",
+    };
+
+    var countryOptions = ProjectCountries.All.Where(c => d.Projects.Any(p => p.Country == c.Key)).Select(c => (c.Key, c.Name, (string?)null)).ToList();
+    var serviceOptions = ProjectServices.All.Select(s => (s.Key, s.Label, (string?)s.Color)).ToList();
+    var sectorOptions = d.Sectors.Select(s => (s.Key, s.Name, (string?)null)).ToList();
+
+    async Task Dropdown(string group, string label, List<(string Key, string Name, string? Color)> options, HashSet<string> selected)
+    {
+        <details class="prj-dd" data-dd>
+            <summary>@label <span class="prj-dd__n" data-dd-count="@group">@(selected.Count > 0 ? selected.Count.ToString() : "")</span> @Html.Raw(chevron)</summary>
+            <div class="prj-dd__panel">
+                <div class="prj-dd__head"><b>@label</b><button type="button" data-dd-close>Done</button></div>
+                @foreach (var o in options)
+                {
+                    var n = Model.CountFor(group, o.Key);
+                    <label class="prj-check">
+                        <input type="checkbox" name="@group" value="@o.Key" checked="@selected.Contains(o.Key)" data-filter="@group" />
+                        @if (o.Color is not null) { <i class="prj-dot" style="background:@o.Color"></i> }
+                        <span>@o.Name</span>
+                        <span class="prj-check__n" data-count-for="@group:@o.Key">@n</span>
+                    </label>
+                }
+            </div>
+        </details>
+        await Task.CompletedTask;
+    }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/projects.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/projects.js" asp-append-version="true"></script>
+}
+
+<div class="prj" data-animate-root data-projects-page>
+    <section class="prj-hero" aria-labelledby="prj-title">
+        <div class="prj-wrap prj-hero__grid">
+            <div>
+                <span class="prj-eyebrow prj-eyebrow--light">Project evidence</span>
+                <h1 id="prj-title" class="prj-hero__title">@t.Headline</h1>
+                <p class="prj-hero__lede">@t.Lede</p>
+                <div class="prj-btns">
+                    <a class="prj-btn prj-btn--light" href="#explore">Explore all projects</a>
+                    <a class="prj-btn prj-btn--ghost" href="/projects?view=map#explore" data-show-map>View on the map</a>
                 </div>
-                <div class="project-dialog__body">
-                    <p class="project-dialog__meta">@project.Tag</p>
-                    <p class="project-dialog__client">@project.Meta</p>
-                    <p class="project-dialog__description">@project.Description</p>
+                <div class="prj-stats">
+                    <div><b data-count="@d.Projects.Count">@d.Projects.Count</b><span>Projects listed here</span></div>
+                    @if (extra.Success)
+                    {
+                        <div><b data-count="@extra.Groups[1].Value" data-suffix="@extra.Groups[2].Value">@t.StatFigure</b><span>@t.StatLabel</span></div>
+                    }
+                    <div><b data-count="@Model.CountriesDelivered">@Model.CountriesDelivered</b><span>Countries delivered in</span></div>
+                    <div><b data-count="@ongoing">@ongoing</b><span>Projects under way now</span></div>
                 </div>
             </div>
-        </dialog>
-    }
-}
+            @if (d.HeroPhotos.Count > 0)
+            {
+                <div class="prj-slides" data-slides aria-roledescription="carousel" aria-label="From the field">
+                    <div class="prj-slides__dots" aria-hidden="true">
+                        @foreach (var _ in d.HeroPhotos) { <i></i> }
+                    </div>
+                    @for (var i = 0; i < d.HeroPhotos.Count; i++)
+                    {
+                        var photo = d.HeroPhotos[i];
+                        <figure class="@(i == 0 ? "is-on" : null)" aria-roledescription="slide" aria-label="@(i + 1) of @d.HeroPhotos.Count">
+                            <img src="@photo.ImagePath" alt="@photo.Caption" sizes="(max-width: 900px) 100vw, 520px" loading="@(i == 0 ? "eager" : "lazy")" />
+                            <figcaption>@if (photo.Kicker.Length > 0) { <b>@photo.Kicker</b> }@photo.Caption</figcaption>
+                        </figure>
+                    }
+                </div>
+            }
+        </div>
+    </section>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Open dialog
-        document.querySelectorAll('a[data-dialog]').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const dialogId = this.getAttribute('data-dialog');
-                const dialog = document.getElementById(dialogId);
-                if (dialog) {
-                    dialog.showModal();
+    @if (flagships.Count > 0)
+    {
+        <section class="prj-section" aria-labelledby="flag-title">
+            <div class="prj-wrap">
+                <div class="prj-head">
+                    <div><span class="prj-eyebrow" data-reveal>Flagship work</span><h2 id="flag-title" class="prj-title" data-reveal>From a single borehole to a 330 kV corridor.</h2></div>
+                    <div class="prj-rail-nav">
+                        <button type="button" aria-label="Previous flagship projects" data-rail="-1">&larr;</button>
+                        <button type="button" aria-label="Next flagship projects" data-rail="1">&rarr;</button>
+                    </div>
+                </div>
+                <div class="prj-rail" data-rail-track>
+                    @foreach (var p in flagships)
+                    {
+                        <a class="prj-flag" href="#@p.Slug" data-open="@p.Slug">
+                            <img src="@p.ImagePath" alt="" sizes="(max-width: 860px) 85vw, 340px" />
+                            <span class="prj-flag__in">
+                                <span class="prj-flag__big">@p.FlagshipFigure<small>@p.FlagshipLabel</small></span>
+                                <span class="prj-flag__title">@p.Title</span>
+                                <span class="prj-flag__meta">@p.Client · @ProjectCountries.NameOf(p.Country)</span>
+                                <span class="prj-flag__go">View project <span aria-hidden="true">&rarr;</span></span>
+                            </span>
+                        </a>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+
+    <section id="explore" class="prj-section prj-explore" aria-labelledby="explore-title">
+        <div class="prj-wrap">
+            <div class="prj-head">
+                <div><span class="prj-eyebrow">All projects</span><h2 id="explore-title" class="prj-title">Filter by country, service or sector.</h2></div>
+                <p>Select any project for the scope, client and services.</p>
+            </div>
+
+            <form class="prj-filters" method="get" action="/projects#explore" role="search" aria-label="Filter projects" data-filters>
+                <div class="prj-bar">
+                    <label class="prj-search">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+                        <span class="visually-hidden">Search projects</span>
+                        <input type="search" name="q" value="@Model.Query" placeholder="Search client, place or scope" autocomplete="off" data-filter-search />
+                    </label>
+                    <div class="prj-bar__filters">
+                        @{ await Dropdown("country", "Country", countryOptions, Model.Countries); }
+                        @{ await Dropdown("service", "Service", serviceOptions, Model.Services); }
+                        @if (sectorOptions.Count > 0)
+                        {
+                            await Dropdown("sector", "Sector", sectorOptions, Model.Sectors);
+                        }
+                        <label class="prj-toggle">
+                            <input type="checkbox" name="status" value="ongoing" checked="@Model.OngoingOnly" data-filter="status" />
+                            <span>Ongoing only</span>
+                        </label>
+                    </div>
+                    <div class="prj-views" role="group" aria-label="View">
+                        <button type="submit" name="view" value="grid" aria-pressed="@(!Model.MapView ? "true" : "false")" data-view="grid">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>Grid
+                        </button>
+                        <button type="submit" name="view" value="map" aria-pressed="@(Model.MapView ? "true" : "false")" data-view="map">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z" /><circle cx="12" cy="9" r="2.5" /></svg>Map
+                        </button>
+                    </div>
+                    <button type="submit" class="prj-btn prj-btn--solid prj-apply">Apply</button>
+                </div>
+
+                <div class="prj-active">
+                    <div class="prj-active__pills" data-active-pills>
+                        @foreach (var pair in current)
+                        {
+                            <a class="prj-pill" href="@Without(pair)" data-remove="@pair.Item1:@pair.Item2">@LabelOf(pair.Item1, pair.Item2) <span aria-hidden="true">&times;</span><span class="visually-hidden"> (remove)</span></a>
+                        }
+                        @if (current.Count > 0)
+                        {
+                            <a class="prj-clear" href="/projects#explore" data-clear>Clear all</a>
+                        }
+                    </div>
+                    <span class="prj-count" aria-live="polite" data-result-count>Showing <b>@Model.Visible.Count</b> of @d.Projects.Count projects</span>
+                </div>
+            </form>
+
+            <div class="prj-grid" data-grid hidden="@Model.MapView">
+                @foreach (var p in d.Projects)
+                {
+                    <a class="prj-card" href="#@p.Slug" data-project="@p.Slug" hidden="@(!Model.Matches(p))">
+                        <span class="prj-card__photo">
+                            <img src="@p.ImagePath" alt="" sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 400px" />
+                            @if (p.Ongoing) { <span class="prj-badge">Ongoing</span> }
+                            <span class="prj-card__bar" aria-hidden="true">
+                                @foreach (var s in p.Services) { <i style="background:@ProjectServices.Find(s)!.Color"></i> }
+                            </span>
+                        </span>
+                        <span class="prj-card__body">
+                            <span class="prj-card__top">@ProjectCountries.NameOf(p.Country)@(Model.SectorName(p.Sector) is { Length: > 0 } sector ? " · " + sector : "")</span>
+                            <span class="prj-card__title">@p.Title</span>
+                            @if (p.Client.Length > 0) { <span class="prj-card__client">Client: <b>@p.Client</b></span> }
+                            <span class="prj-card__desc">@p.Description</span>
+                            <span class="prj-tags">
+                                @foreach (var s in p.Services)
+                                {
+                                    var svc = ProjectServices.Find(s)!;
+                                    <span class="prj-tag"><i style="background:@svc.Color"></i>@svc.Label</span>
+                                }
+                            </span>
+                        </span>
+                    </a>
                 }
-            });
-        });
+                <p class="prj-empty" data-empty hidden="@(Model.Visible.Count > 0)">No projects match these filters. <a href="/projects#explore" data-clear>Clear filters</a></p>
+            </div>
 
-        // Close dialog
-        document.querySelectorAll('[data-close-dialog]').forEach(button => {
-            button.addEventListener('click', function() {
-                const dialogId = this.getAttribute('data-close-dialog');
-                const dialog = document.getElementById(dialogId);
-                if (dialog) {
-                    dialog.close();
+            <div class="prj-map" data-map hidden="@(!Model.MapView)">
+                <div class="prj-map__layout">
+                    <div class="prj-map__canvas" data-map-canvas role="region" aria-label="Map of the countries we have delivered in">
+                        <noscript><p class="prj-map__fallback">The map needs JavaScript. The list beside it, and the grid, show every project.</p></noscript>
+                    </div>
+                    <div class="prj-map__list" data-map-list>
+                        @foreach (var group in Model.Visible.GroupBy(p => p.Country))
+                        {
+                            <div class="prj-map__group">
+                                <h3>@ProjectCountries.NameOf(group.Key) <span>@group.Count()</span></h3>
+                                @foreach (var p in group)
+                                {
+                                    <a href="#@p.Slug" data-open="@p.Slug"><strong>@p.Title</strong><span>@p.Client@(p.Location.Length > 0 ? " · " + p.Location : "")</span></a>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+                <p class="prj-map__note">Each pin is a country, numbered with the projects that match your filters. Locations are indicative.</p>
+            </div>
+        </div>
+    </section>
+
+    @if (d.Clients.Count > 0)
+    {
+        <section class="prj-logos" aria-label="Clients and partners">
+            <div class="prj-logos__label">Clients and partners we have delivered for</div>
+            <div class="prj-logos__track">
+                @* The list runs twice so the strip can scroll in a seamless loop; the copy is hidden from screen readers. *@
+                @for (var copy = 0; copy < 2; copy++)
+                {
+                    <div class="prj-logos__set" aria-hidden="@(copy == 1 ? "true" : null)">
+                        @foreach (var client in d.Clients)
+                        {
+                            <span><img src="@client.LogoPath" alt="@(copy == 0 ? client.Name : "")" title="@client.Name" loading="lazy" /></span>
+                        }
+                    </div>
                 }
-            });
-        });
-
-        // Close dialog when clicking outside
-        document.querySelectorAll('.project-dialog').forEach(dialog => {
-            dialog.addEventListener('click', function(event) {
-                if (event.target === this) {
-                    this.close();
-                }
-            });
-        });
-    });
-</script>
-
-<style>
-    .project-card__link {
-        display: inline-block;
-        margin-top: 12px;
-        padding: 8px 16px;
-        background-color: rgba(255, 255, 255, 0.2);
-        color: white;
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 500;
-        transition: all 0.25s ease;
-        text-decoration: none;
-        align-self: flex-start;
+            </div>
+        </section>
     }
 
-    .project-card__link:hover,
-    .project-card__link:focus-visible {
-        background-color: rgba(255, 255, 255, 0.3);
-        border-color: rgba(255, 255, 255, 0.6);
-    }
+    <section class="prj-cta">
+        <div class="prj-cta__bg" style="background-image: url('@t.CtaImagePath')"></div>
+        <div class="prj-wrap prj-cta__inner">
+            <h2 class="prj-title" data-reveal>Planning something similar?</h2>
+            <p data-reveal>Tell us what you're planning and where. We'll show you the closest project we've delivered and scope yours with you.</p>
+            <div class="prj-cta__links" data-reveal>
+                <a href="/contact?project=borehole">Borehole or water supply <span aria-hidden="true">&rarr;</span></a>
+                <a href="/contact?project=power">Substation or power line <span aria-hidden="true">&rarr;</span></a>
+                <a href="/contact?project=mining">Mine or oil &amp; gas <span aria-hidden="true">&rarr;</span></a>
+                <a href="/contact?project=climate">Catchment or climate <span aria-hidden="true">&rarr;</span></a>
+                <a href="/contact">Something else <span aria-hidden="true">&rarr;</span></a>
+            </div>
+        </div>
+    </section>
 
-    .project-card__footer {
-        margin-top: auto;
-        padding-top: 12px;
-    }
+    <div class="prj-scrim" data-drawer-scrim hidden></div>
+    <aside class="prj-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" data-drawer hidden>
+        <div class="prj-drawer__media" data-drawer-media>
+            <span class="prj-drawer__cap" data-drawer-rep hidden>Representative photo</span>
+            <button type="button" class="prj-drawer__close" aria-label="Close" data-drawer-close>&times;</button>
+        </div>
+        <div class="prj-drawer__body" data-drawer-body></div>
+        <div class="prj-drawer__foot">
+            <button type="button" data-drawer-prev>&larr; Previous</button>
+            <button type="button" data-drawer-next>Next &rarr;</button>
+        </div>
+    </aside>
 
-    /* ---- Project Description Dialog (inspired by Stories & Impact lightbox) */
-    .project-dialog {
-        border: 0;
-        border-radius: 14px;
-        padding: 0;
-        width: min(1040px, calc(100vw - 48px));
-        max-width: none;
-        max-height: calc(100vh - 56px);
-        overflow: hidden;
-        background: #fff;
-        box-shadow: 0 30px 80px rgba(15, 23, 42, 0.34);
-    }
-
-    .project-dialog::backdrop {
-        background: rgba(12, 22, 8, 0.7);
-        backdrop-filter: blur(3px);
-    }
-
-    .project-dialog__content {
-        display: flex;
-        flex-direction: column;
-        max-height: calc(100vh - 56px);
-        padding: 24px 26px 22px;
-        gap: 14px;
-    }
-
-    .project-dialog__header {
-        display: flex;
-        align-items: flex-start;
-        gap: 18px;
-    }
-
-    .project-dialog__title {
-        font-family: 'Newsreader', serif;
-        font-size: 26px;
-        font-weight: 600;
-        line-height: 1.2;
-        color: var(--green-ink, #1f6644);
-        margin: 4px 0 0;
-        flex: 1;
-    }
-
-    .project-dialog__close {
-        flex: none;
-        width: 36px;
-        height: 36px;
-        padding: 0;
-        border: 0;
-        border-radius: 50%;
-        background: var(--grey-100, #f3f4f6);
-        color: var(--navy-ink, #0f1722);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: background 0.25s ease, color 0.25s ease;
-    }
-
-    .project-dialog__close:hover,
-    .project-dialog__close:focus-visible {
-        background: var(--green-wash, #d0e8df);
-        color: var(--green-ink, #1f6644);
-    }
-
-    .project-dialog__close svg {
-        width: 18px;
-        height: 18px;
-    }
-
-    .project-dialog__body {
-        flex: 1 1 auto;
-        min-height: 0;
-        overflow-y: auto;
-    }
-
-    .project-dialog__meta {
-        margin: 0 0 8px 0;
-        font-size: 13px;
-        font-weight: 600;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--grey, #7d8997);
-    }
-
-    .project-dialog__client {
-        margin: 0 0 12px 0;
-        font-size: 15px;
-        color: var(--navy-ink, #0f1722);
-        font-weight: 500;
-        line-height: 1.5;
-    }
-
-    .project-dialog__description {
-        margin: 0;
-        font-size: 15px;
-        line-height: 1.7;
-        color: var(--navy-ink, #0f1722);
-    }
-</style>
-
-<style>
-    @@media (max-width: 768px) {
-        .project-dialog {
-            width: min(100vw - 32px, 100%);
-            max-height: 85vh;
-        }
-
-        .project-dialog__title {
-            font-size: 20px;
-        }
-
-        .project-dialog__content {
-            padding: 18px 20px 16px;
-            gap: 12px;
-        }
-    }
-</style>
+    <script type="application/json" id="projects-data">@Html.Raw(Model.ClientJson())</script>
+</div>

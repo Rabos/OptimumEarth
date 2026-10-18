@@ -13,6 +13,12 @@
         @* <span class="dest-hero__eyebrow">OPTIMUM EARTH FOUNDATION</span> *@
         <h1 class="dest-hero__headline">Building resilient communities with access to practical climate solutions.</h1>
         <p class="dest-hero__sub">A corporate foundation connecting community priorities with the partnerships, knowledge and resources needed to turn practical ideas into lasting impact.</p>
+        @* Hero buttons, switched off for now:
+        <div class="dest-hero__btns">
+            <a class="dest-hero__btn dest-hero__btn--light" href="#pillars">Our pillars</a>
+            <a class="dest-hero__btn dest-hero__btn--outline" href="#connect">Connect with us</a>
+        </div>
+        *@
     </div>
 </div>
 
@@ -299,9 +305,10 @@
                         {
                             var item = items[j];
                             <figure class="lightbox__slide @(j == 0 ? "is-current" : "")" data-lightbox-slide>
-                                @* lazy so a closed dialog costs nothing; these are still
-                                   the full-size originals, several megabytes each *@
-                                <img src="@item.ImageUrl" alt="@item.Title" loading="lazy" decoding="async" />
+                                @* lazy so a closed dialog costs nothing. The sizes are needed because the image
+                                   sizes itself to fit the frame: without them the browser cannot tell how wide it
+                                   will be, falls back to the smallest file and shows it at that size. *@
+                                <img src="@item.ImageUrl" alt="@item.Title" loading="lazy" decoding="async" sizes="(max-width: 780px) 92vw, 1200px" />
                             </figure>
                         }
                     </div>

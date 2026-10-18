@@ -111,33 +111,263 @@
     start();
   }
 
-  // Values acronym: hovering a S/C/A/L/E/S bubble swaps the shared helper
-  // panel so the visitor can read each value without hunting through the grid.
-  var scaleTriggers = document.querySelectorAll("[data-scale-trigger]");
-  var scalePanelTitle = document.querySelector("[data-scale-panel-title]");
-  var scalePanelBody = document.querySelector("[data-scale-panel-body]");
-  if (scaleTriggers.length && scalePanelTitle && scalePanelBody) {
-    var setScaleActive = function (trigger) {
-      scaleTriggers.forEach(function (item) {
-        var active = item === trigger;
-        item.classList.toggle("is-active", active);
-        item.setAttribute("aria-pressed", String(active));
+  // Who We Are: the SCALES values are tabs. One panel shows at a time, the
+  // arrow keys move between letters, and while the section is on screen it
+  // advances on its own until the visitor picks a letter.
+  var valuesSection = document.querySelector("[data-values]");
+  if (valuesSection) {
+    var valueTabs = Array.prototype.slice.call(valuesSection.querySelectorAll("[data-value-tab]"));
+    var valuePanels = Array.prototype.slice.call(valuesSection.querySelectorAll("[data-value-panel]"));
+    var currentValue = 0;
+    var valueTimer = null;
+    var valuePicked = false;
+
+    var showValue = function (index, animate) {
+      currentValue = index;
+      valueTabs.forEach(function (tab, i) {
+        tab.setAttribute("aria-selected", String(i === index));
+        tab.tabIndex = i === index ? 0 : -1;
       });
-      scalePanelTitle.textContent = trigger.getAttribute("data-scale-title") || "";
-      scalePanelBody.textContent = trigger.getAttribute("data-scale-body") || "";
+      valuePanels.forEach(function (panel, i) {
+        panel.hidden = i !== index;
+        panel.classList.toggle("is-showing", animate && i === index);
+      });
     };
 
-    scaleTriggers.forEach(function (trigger) {
-      trigger.addEventListener("click", function () {
-        setScaleActive(trigger);
+    var stopValues = function () {
+      valuePicked = true;
+      clearInterval(valueTimer);
+    };
+
+    showValue(0, false);
+    valueTabs.forEach(function (tab, i) {
+      tab.addEventListener("click", function () {
+        stopValues();
+        showValue(i, true);
       });
-      trigger.addEventListener("mouseenter", function () {
-        setScaleActive(trigger);
-      });
-      trigger.addEventListener("focus", function () {
-        setScaleActive(trigger);
+      tab.addEventListener("keydown", function (e) {
+        if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+        e.preventDefault();
+        stopValues();
+        var next = (currentValue + (e.key === "ArrowRight" ? 1 : -1) + valueTabs.length) % valueTabs.length;
+        showValue(next, true);
+        valueTabs[next].focus();
       });
     });
+
+    if ("IntersectionObserver" in window && !reduceMotion) {
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          clearInterval(valueTimer);
+          if (entry.isIntersecting && !valuePicked) {
+            valueTimer = setInterval(function () { showValue((currentValue + 1) % valueTabs.length, true); }, 5500);
+          }
+        });
+      }, { threshold: 0.5 }).observe(valuesSection);
+    }
+  }
+
+  // Redesigned pages: stats count up from zero the first time they come into
+  // view (the real figures are in the markup, so they show without JavaScript),
+  // and [data-reveal] sections fade in.
+  var animateRoot = document.querySelector("[data-animate-root]");
+  if (animateRoot && "IntersectionObserver" in window && !reduceMotion) {
+    var counters = animateRoot.querySelectorAll("[data-count]");
+    var countObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        countObserver.unobserve(entry.target);
+        var el = entry.target;
+        var end = parseInt(el.getAttribute("data-count"), 10) || 0;
+        var suffix = el.getAttribute("data-suffix") || "";
+        var start = performance.now();
+        var step = function (now) {
+          var f = Math.min((now - start) / 1100, 1);
+          el.textContent = Math.round(end * (1 - Math.pow(1 - f, 3))) + suffix;
+          if (f < 1) requestAnimationFrame(step);
+        };
+        el.textContent = "0" + suffix;
+        requestAnimationFrame(step);
+      });
+    }, { threshold: 0.4 });
+    counters.forEach(function (el) { countObserver.observe(el); });
+
+    // Sections fade in as they scroll into view.
+    animateRoot.classList.add("is-animated");
+    var revealObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-in");
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    animateRoot.querySelectorAll("[data-reveal]").forEach(function (el) { revealObserver.observe(el); });
+  }
+
+  // Services: the hero video only loads on wide screens with motion allowed and
+  // no data saver; everywhere else the poster image stays.
+  var heroVideo = document.querySelector("[data-hero-video]");
+  if (heroVideo) {
+    var saveData = navigator.connection && navigator.connection.saveData;
+    if (!reduceMotion && !saveData && window.matchMedia("(min-width: 861px)").matches) {
+      heroVideo.querySelectorAll("source[data-src]").forEach(function (source) {
+        source.src = source.getAttribute("data-src");
+      });
+      heroVideo.load();
+      var playing = heroVideo.play();
+      if (playing && playing.catch) playing.catch(function () {});
+    }
+  }
+
+  // Services: dots under the swipeable tile row on phones.
+  var tileRow = document.querySelector("[data-tiles]");
+  var tileDots = document.querySelectorAll("[data-tile-dots] i");
+  if (tileRow && tileDots.length) {
+    tileRow.addEventListener("scroll", function () {
+      var middle = tileRow.scrollLeft + tileRow.clientWidth / 2;
+      var best = 0, bestDistance = Infinity;
+      Array.prototype.forEach.call(tileRow.children, function (tile, i) {
+        var distance = Math.abs(tile.offsetLeft + tile.offsetWidth / 2 - middle);
+        if (distance < bestDistance) { bestDistance = distance; best = i; }
+      });
+      tileDots.forEach(function (dot, i) { dot.classList.toggle("is-on", i === best); });
+    }, { passive: true });
+  }
+
+  // Services: the jump menu marks the section in view and, on phones, keeps it scrolled into sight.
+  var subnavLinks = document.querySelectorAll("[data-subnav-link]");
+  if (subnavLinks.length) {
+    var sections = Array.prototype.map.call(subnavLinks, function (link) {
+      return document.getElementById(link.getAttribute("data-subnav-link"));
+    });
+    var pageEnd = document.getElementById("start");
+    var lastActive = null;
+    var markActive = function () {
+      var line = window.scrollY + 180;
+      var current = null;
+      sections.forEach(function (section) {
+        if (section && section.getBoundingClientRect().top + window.scrollY <= line) current = section.id;
+      });
+      if (pageEnd && pageEnd.getBoundingClientRect().top + window.scrollY <= line) current = null;
+      if (current === lastActive) return;
+      lastActive = current;
+      subnavLinks.forEach(function (link) {
+        var on = link.getAttribute("data-subnav-link") === current;
+        link.classList.toggle("is-active", on);
+        if (on) link.parentNode.scrollTo({ left: link.offsetLeft - 16, behavior: reduceMotion ? "auto" : "smooth" });
+      });
+    };
+
+    // The construction band's photo drifts a little as it scrolls past (wide screens only).
+    var parallax = document.querySelector("[data-parallax]");
+    var wide = window.matchMedia("(min-width: 861px)");
+    var drift = function () {
+      if (!parallax || reduceMotion || !wide.matches) return;
+      var box = parallax.parentNode.getBoundingClientRect();
+      if (box.bottom < 0 || box.top > window.innerHeight) return;
+      var t = (box.top + box.height / 2 - window.innerHeight / 2) / window.innerHeight;
+      parallax.style.transform = "scale(1.15) translateY(" + (t * -40).toFixed(1) + "px)";
+    };
+
+    var ticking = false;
+    window.addEventListener("scroll", function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () { markActive(); drift(); ticking = false; });
+    }, { passive: true });
+    markActive();
+    drift();
+  }
+
+  // Services: arrows step the drone photo strip one photo at a time.
+  var aerialTrack = document.querySelector("[data-aerial-track]");
+  if (aerialTrack) {
+    document.querySelectorAll("[data-aerial-step]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        var shot = aerialTrack.querySelector("figure");
+        var step = shot ? shot.offsetWidth + 16 : aerialTrack.clientWidth;
+        aerialTrack.scrollBy({ left: step * Number(button.getAttribute("data-aerial-step")), behavior: reduceMotion ? "auto" : "smooth" });
+      });
+    });
+  }
+
+  // Services: the case-study map has two views (tabs), and the land cover view
+  // is a before/after slider driven by mouse, horizontal swipes and the keyboard.
+  var mapTabs = document.querySelectorAll("[data-map-tab]");
+  if (mapTabs.length) {
+    var showView = function (view) {
+      mapTabs.forEach(function (tab) {
+        var on = tab.getAttribute("data-map-tab") === view;
+        tab.setAttribute("aria-selected", String(on));
+        tab.tabIndex = on ? 0 : -1;
+      });
+      document.querySelectorAll("[data-map-view]").forEach(function (panel) { panel.hidden = panel.getAttribute("data-map-view") !== view; });
+      document.querySelectorAll("[data-map-legend]").forEach(function (legend) { legend.hidden = legend.getAttribute("data-map-legend") !== view; });
+    };
+    mapTabs.forEach(function (tab, i) {
+      tab.addEventListener("click", function () { showView(tab.getAttribute("data-map-tab")); });
+      tab.addEventListener("keydown", function (e) {
+        if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+        e.preventDefault();
+        var next = mapTabs[(i + (e.key === "ArrowRight" ? 1 : -1) + mapTabs.length) % mapTabs.length];
+        showView(next.getAttribute("data-map-tab"));
+        next.focus();
+      });
+    });
+  }
+
+  var compare = document.querySelector("[data-compare]");
+  if (compare) {
+    var range = compare.querySelector("[data-compare-range]");
+    var dragging = false;
+    var setPosition = function (percent) {
+      percent = Math.max(0, Math.min(100, percent));
+      compare.style.setProperty("--pos", percent + "%");
+      range.value = Math.round(percent);
+    };
+    var fromPointer = function (e) {
+      var box = compare.getBoundingClientRect();
+      setPosition((e.clientX - box.left) / box.width * 100);
+    };
+    compare.addEventListener("pointerdown", function (e) {
+      if (e.pointerType === "touch") return; // touch is handled below so vertical scrolling still works
+      dragging = true;
+      compare.classList.add("is-touched");
+      fromPointer(e);
+      compare.setPointerCapture(e.pointerId);
+    });
+    compare.addEventListener("pointermove", function (e) { if (dragging) fromPointer(e); });
+    ["pointerup", "pointercancel", "pointerleave"].forEach(function (name) {
+      compare.addEventListener(name, function () { dragging = false; });
+    });
+    var startX = 0, startY = 0, axis = null;
+    compare.addEventListener("touchstart", function (e) { startX = e.touches[0].clientX; startY = e.touches[0].clientY; axis = null; }, { passive: true });
+    compare.addEventListener("touchmove", function (e) {
+      var dx = e.touches[0].clientX - startX, dy = e.touches[0].clientY - startY;
+      if (axis === null && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+      if (axis === "x") { compare.classList.add("is-touched"); fromPointer(e.touches[0]); }
+    }, { passive: true });
+    range.addEventListener("input", function () { compare.classList.add("is-touched"); setPosition(Number(range.value)); });
+
+    // One gentle sweep the first time the map is seen, to show that it moves.
+    if (!reduceMotion && "IntersectionObserver" in window) {
+      var sweepObserver = new IntersectionObserver(function (entries) {
+        if (!entries[0].isIntersecting) return;
+        sweepObserver.disconnect();
+        var started = null;
+        var sweep = function (now) {
+          if (compare.classList.contains("is-touched")) return;
+          if (started === null) started = now;
+          var t = (now - started) / 2200;
+          if (t >= 1) { setPosition(50); return; }
+          setPosition(50 + 30 * Math.sin(t * Math.PI * 2));
+          requestAnimationFrame(sweep);
+        };
+        requestAnimationFrame(sweep);
+      }, { threshold: 0.5 });
+      sweepObserver.observe(compare);
+    }
   }
 
   // Foundation page sub-nav: highlights the section currently in view as
