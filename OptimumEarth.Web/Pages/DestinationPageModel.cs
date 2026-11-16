@@ -10,6 +10,7 @@ namespace OptimumEarth.Web.Pages;
 /// destination template from a country page managed in the dashboard, and both
 /// carry the short enquiry form in the call-to-action band.
 /// </summary>
+[RequireRecaptcha]
 public abstract class DestinationPageModel : PageModel
 {
     private readonly ContentReader _content;

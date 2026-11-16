@@ -5,6 +5,7 @@ using OptimumEarth.Web.Services;
 
 namespace OptimumEarth.Web.Pages;
 
+[RequireRecaptcha]
 public class FoundationModel : PageModel
 {
     private readonly ContentReader _content;

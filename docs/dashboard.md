@@ -17,6 +17,7 @@ Set these as environment variables (a double underscore stands for a colon) or i
 | `SuperAdmin__Email`, `SuperAdmin__Password` | Creates the hidden super admin the first time the app starts against an empty user table. Password: at least 12 characters. |
 | `Storage__UploadsPath` | Folder for uploaded images. Defaults to `uploads` under the app folder; point it somewhere that survives a redeploy and that the service user can write to. |
 | `SiteUrl` | Public site address, used in canonical URLs, the sitemap and the RSS feed. |
+| `Recaptcha__SiteKey`, `Recaptcha__SecretKey` | Google reCAPTCHA v2 Invisible keys for the anti-spam check on the enquiry forms. The site key is public and is set in `appsettings.json`; the secret key must only be set on the server. See [Spam protection](#spam-protection-recaptcha). |
 
 On startup the app applies any pending database migrations, creates the roles, and (only into empty tables) loads the content that used to be hard-coded in the page models. Public pages come out byte-for-byte the same as before the move.
 
@@ -75,3 +76,18 @@ Back up the PostgreSQL database and the uploads folder together. The database ho
 ## Not managed in the dashboard
 
 Fixed copy that lives in the `.cshtml` views is still edited in code: the Foundation page's introductory text, the Who We Are statement and stats, the Services and Projects headings, the Contact page, and the Home page's section headings. `ServicePanelContent` (the Home "what we do" panels) exists as a record but is not used by any page, so it has no screen.
+
+## Spam protection (reCAPTCHA)
+
+Every public enquiry form (Contact, Uganda, Zambia and Foundation) is protected by Google's **invisible** reCAPTCHA v2. There is no box to tick: when a visitor sends a form that passes the field checks, Google checks them in the background and only shows a picture challenge if it suspects a bot. The form then goes to the server, which sends the token to Google's `siteverify` endpoint before the enquiry is saved; a missing, expired or rejected token sends the visitor back to the form with a message, and nothing is stored or emailed. If Google cannot be reached the submission is refused with a “try again” message rather than let through.
+
+Google's floating “protected by reCAPTCHA” badge is hidden because it would cover the back-to-top button. Google allows that only when its notice (“This site is protected by reCAPTCHA and the Google Privacy Policy and Terms of Service apply.”) is shown in the form instead, so each form shows it under the fields. Keep that line if the forms are restyled.
+
+The keys come from the reCAPTCHA admin console (<https://www.google.com/recaptcha/admin>). The key must be a **reCAPTCHA v2 → “Invisible reCAPTCHA badge”** key with `optimum-earth.com` in its domain list; a “Checkbox” key does not work invisibly.
+
+- `Recaptcha:SiteKey` is public (it is written into every form page) and is committed in `appsettings.json`.
+- `Recaptcha:SecretKey` is private. Never commit it. On the server set it in the service's environment, e.g. in the systemd unit: `Environment=Recaptcha__SecretKey=...`, then `sudo systemctl daemon-reload && sudo systemctl restart optimumearth`. A server-only `appsettings.Production.json` works too; deploys do not overwrite it.
+
+The check runs only when **both** keys are set. Until the secret key is set the check is off, the forms work as before, and the app logs `reCAPTCHA is off` at startup. To try it locally, add `localhost` to the key's domain list and set the secret with `dotnet user-secrets set Recaptcha:SecretKey <secret> --project OptimumEarth.Web`.
+
+To protect another public form: add `[RequireRecaptcha]` to its page model, and `<partial name="_Recaptcha" />` inside the `<form>` before the submit button. `site.js` finds it, loads Google's script and handles sending; the handler's existing `ModelState.IsValid` check does the rest.

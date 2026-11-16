@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using OptimumEarth.Web.Data;
 using OptimumEarth.Web.Services;
 
@@ -88,7 +89,16 @@ builder.Services.AddHostedService<InquiryEmailWorker>();
 builder.Services.AddScoped<MediaService>();
 builder.Services.AddHostedService<InquiryRetentionService>();
 
+// Invisible reCAPTCHA v2 on the public enquiry forms. See RequireRecaptchaAttribute and _Recaptcha.cshtml.
+builder.Services.Configure<RecaptchaOptions>(builder.Configuration.GetSection(RecaptchaOptions.Section));
+builder.Services.AddHttpClient<RecaptchaService>(client => client.Timeout = TimeSpan.FromSeconds(10));
+
 var app = builder.Build();
+
+if (!app.Services.GetRequiredService<IOptions<RecaptchaOptions>>().Value.IsEnabled)
+{
+    app.Logger.LogWarning("reCAPTCHA is off: set Recaptcha:SiteKey and Recaptcha:SecretKey (Recaptcha__SecretKey) to protect the enquiry forms from bots.");
+}
 
 if (!app.Environment.IsDevelopment())
 {

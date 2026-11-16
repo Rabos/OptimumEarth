@@ -2297,6 +2297,44 @@ img {
     font-size: 12.5px;
 }
 
+/* Invisible reCAPTCHA v2 on the enquiry forms. Google's floating corner badge
+   is hidden (it would sit on the back-to-top button); Google allows that only
+   if its notice is shown in the form instead, which .recaptcha__notice does.
+   visibility, not display:none, which stops the check from working. */
+.grecaptcha-badge {
+    visibility: hidden;
+}
+
+.recaptcha {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.recaptcha__error:empty {
+    display: none;
+}
+
+.contact-form .recaptcha__error {
+    color: #B3261E;
+}
+
+.recaptcha__notice {
+    margin: 0;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, .65);
+}
+
+    .recaptcha__notice a {
+        color: inherit;
+        text-decoration: underline;
+    }
+
+.contact-form .recaptcha__notice {
+    color: var(--grey);
+}
+
 /* ---------- Foundation page ---------- */
 
 /* Anchors need extra clearance to land below both the sticky site header
