@@ -90,4 +90,10 @@ The keys come from the reCAPTCHA admin console (<https://www.google.com/recaptch
 
 The check runs only when **both** keys are set. Until the secret key is set the check is off, the forms work as before, and the app logs `reCAPTCHA is off` at startup. To try it locally, add `localhost` to the key's domain list and set the secret with `dotnet user-secrets set Recaptcha:SecretKey <secret> --project OptimumEarth.Web`.
 
-To protect another public form: add `[RequireRecaptcha]` to its page model, and `<partial name="_Recaptcha" />` inside the `<form>` before the submit button. `site.js` finds it, loads Google's script and handles sending; the handler's existing `ModelState.IsValid` check does the rest.
+### Spam trap (honeypot)
+
+reCAPTCHA alone does not stop every bot, so each form also carries a hidden spam trap: a text field named `website` that is moved off screen, hidden from screen readers and left out of the tab order. People never fill it in; bots that fill in every field do. When it arrives with a value the visitor sees the usual thank-you message, so the bot is not told what gave it away, but the enquiry is not saved or emailed, and the app logs `Spam trap caught a form submission`. The trap works whether or not the reCAPTCHA keys are set.
+
+### Protecting another form
+
+Add `[RequireRecaptcha]` and `[Honeypot]` to its page model, and `<partial name="_Honeypot" />` and `<partial name="_Recaptcha" />` inside the `<form>` before the submit button. `site.js` finds the reCAPTCHA box, loads Google's script and handles sending; the handler's existing `ModelState.IsValid` check does the rest. In the handler, save the enquiry only when `!HoneypotAttribute.Caught(HttpContext)`.

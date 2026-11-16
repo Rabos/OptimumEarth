@@ -6,6 +6,7 @@ using OptimumEarth.Web.Services;
 namespace OptimumEarth.Web.Pages;
 
 [RequireRecaptcha]
+[Honeypot]
 public class FoundationModel : PageModel
 {
     private readonly ContentReader _content;
@@ -60,7 +61,12 @@ public class FoundationModel : PageModel
             return Page();
         }
 
-        await _inquiries.AddQuickAsync(Quick);
+        // A bot that filled in the spam trap is shown the same thank-you but nothing is saved.
+        if (!HoneypotAttribute.Caught(HttpContext))
+        {
+            await _inquiries.AddQuickAsync(Quick);
+        }
+
         ModelState.Clear();
         Quick = new QuickInquiry { Destination = "Foundation" };
         Submitted = true;

@@ -2305,6 +2305,17 @@ img {
     visibility: hidden;
 }
 
+/* Spam trap field (Pages/Shared/_Honeypot.cshtml): off screen rather than
+   display:none, which some bots check for before filling a field in. */
+.honeypot {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
 .recaptcha {
     display: flex;
     flex-direction: column;

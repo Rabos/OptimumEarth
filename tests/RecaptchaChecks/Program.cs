@@ -1,4 +1,5 @@
 using System.Net;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using OptimumEarth.Web.Services;
@@ -55,9 +56,48 @@ foreach (var refused in new[] { RecaptchaResult.Missing, RecaptchaResult.Failed,
 
 // Every public enquiry form is protected.
 foreach (var page in new[] { typeof(OptimumEarth.Web.Pages.ContactModel), typeof(OptimumEarth.Web.Pages.FoundationModel), typeof(OptimumEarth.Web.Pages.UgandaModel), typeof(OptimumEarth.Web.Pages.ZambiaModel) })
+{
     Check(page.GetCustomAttributes(typeof(RequireRecaptchaAttribute), inherit: true).Length == 1, page.Name + " requires reCAPTCHA");
+    Check(page.GetCustomAttributes(typeof(HoneypotAttribute), inherit: true).Length == 1, page.Name + " has the spam trap");
+}
 
-Console.WriteLine($"Passed {checks} reCAPTCHA checks. No request sent to Google.");
+// The spam trap catches a filled-in trap field on a POST, and nothing else.
+Check(await Trap("POST", new() { ["website"] = "http://spam.example" }), "Filled trap field is caught");
+Check(await Trap("POST", new() { ["website"] = "  x " }), "Any text in the trap field is caught");
+Check(!await Trap("POST", new() { ["website"] = "" }), "Empty trap field is let through");
+Check(!await Trap("POST", new() { ["website"] = "   " }), "Blank trap field is let through");
+Check(!await Trap("POST", new() { ["Quick.Name"] = "Ada" }), "Missing trap field is let through");
+Check(!await Trap("GET", new() { ["website"] = "x" }), "Only POSTs are checked");
+Check(!await Trap("POST", null), "A POST without a form is let through");
+
+Console.WriteLine($"Passed {checks} reCAPTCHA and spam trap checks. No request sent to Google.");
+
+// Runs the [Honeypot] filter on a fake request and says whether the handler would be told to skip saving.
+static async Task<bool> Trap(string method, Dictionary<string, Microsoft.Extensions.Primitives.StringValues>? form)
+{
+    var http = new Microsoft.AspNetCore.Http.DefaultHttpContext
+    {
+        RequestServices = new ServiceCollection().AddLogging().BuildServiceProvider(),
+    };
+    http.Request.Method = method;
+    if (form is not null)
+    {
+        http.Request.ContentType = "application/x-www-form-urlencoded";
+        http.Request.Form = new Microsoft.AspNetCore.Http.FormCollection(form);
+    }
+
+    var action = new Microsoft.AspNetCore.Mvc.ActionContext(http, new Microsoft.AspNetCore.Routing.RouteData(), new Microsoft.AspNetCore.Mvc.RazorPages.CompiledPageActionDescriptor());
+    var executing = new Microsoft.AspNetCore.Mvc.Filters.PageHandlerExecutingContext(
+        new Microsoft.AspNetCore.Mvc.RazorPages.PageContext(action), new List<Microsoft.AspNetCore.Mvc.Filters.IFilterMetadata>(), null, new Dictionary<string, object?>(), new object());
+    var handlerRan = false;
+    await new HoneypotAttribute().OnPageHandlerExecutionAsync(executing, () =>
+    {
+        handlerRan = true;
+        return Task.FromResult<Microsoft.AspNetCore.Mvc.Filters.PageHandlerExecutedContext>(null!);
+    });
+    if (!handlerRan) throw new Exception("Failed: the spam trap must always let the handler run, so the bot sees the usual reply");
+    return HoneypotAttribute.Caught(http);
+}
 
 sealed class FakeGoogle : HttpMessageHandler
 {

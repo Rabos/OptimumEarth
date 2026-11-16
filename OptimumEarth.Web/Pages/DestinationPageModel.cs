@@ -11,6 +11,7 @@ namespace OptimumEarth.Web.Pages;
 /// carry the short enquiry form in the call-to-action band.
 /// </summary>
 [RequireRecaptcha]
+[Honeypot]
 public abstract class DestinationPageModel : PageModel
 {
     private readonly ContentReader _content;
@@ -44,7 +45,12 @@ public abstract class DestinationPageModel : PageModel
             return await RenderAsync();
         }
 
-        await _inquiries.AddQuickAsync(Quick);
+        // A bot that filled in the spam trap is shown the same thank-you but nothing is saved.
+        if (!HoneypotAttribute.Caught(HttpContext))
+        {
+            await _inquiries.AddQuickAsync(Quick);
+        }
+
         ModelState.Clear();
         Quick = new QuickInquiry { Destination = _destination };
         Submitted = true;
