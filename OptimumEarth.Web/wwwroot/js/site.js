@@ -505,6 +505,72 @@
     });
   });
 
+  // Invisible reCAPTCHA v2 on the enquiry forms (Pages/Shared/_Recaptcha.cshtml).
+  // Sending a form first lets the field validation run; only a form that
+  // passes it is held back while Google checks the visitor, which is usually
+  // instant and only shows a picture challenge to suspected bots. Google's
+  // callback then sends the form again with the token, which the server
+  // verifies before saving anything.
+  var recaptchaBoxes = document.querySelectorAll("[data-recaptcha]");
+  if (recaptchaBoxes.length) {
+    var recaptchaState = "loading"; // then "ready" or "failed"
+    var recaptchaMessages = {
+      loading: "Our anti-spam check is still loading. Please send again in a moment.",
+      failed: "Our anti-spam check couldn't load. Please check your connection and refresh the page.",
+      error: "Our anti-spam check couldn't connect. Please check your connection and send again.",
+    };
+    var showRecaptchaError = function (box, text) {
+      var el = box.querySelector("[data-recaptcha-error]");
+      if (el) el.textContent = text;
+    };
+    var formIsValid = function (form) {
+      return window.jQuery && window.jQuery.fn.valid ? window.jQuery(form).valid() : form.checkValidity();
+    };
+    var sendForm = function (form) {
+      if (form.requestSubmit) form.requestSubmit(); else form.submit();
+    };
+
+    recaptchaBoxes.forEach(function (box) {
+      var form = box.closest("form");
+      if (!form) return;
+      form.addEventListener("submit", function (e) {
+        var token = form.querySelector("[name='g-recaptcha-response']");
+        if (token && token.value) return; // checked: let it go
+        e.preventDefault();
+        if (!formIsValid(form)) return;   // field errors are shown first
+        if (recaptchaState !== "ready") {
+          showRecaptchaError(box, recaptchaMessages[recaptchaState]);
+          return;
+        }
+        showRecaptchaError(box, "");
+        window.grecaptcha.execute(box.recaptchaId);
+      });
+    });
+
+    // Google calls this (named in the script URL below) once its script is ready.
+    window.oeRecaptchaLoad = function () {
+      recaptchaBoxes.forEach(function (box) {
+        var form = box.closest("form");
+        if (!form) return;
+        box.recaptchaId = window.grecaptcha.render(box.querySelector("[data-recaptcha-widget]"), {
+          sitekey: box.getAttribute("data-sitekey"),
+          size: "invisible",
+          callback: function () { sendForm(form); },
+          "expired-callback": function () { window.grecaptcha.reset(box.recaptchaId); },
+          "error-callback": function () { showRecaptchaError(box, recaptchaMessages.error); },
+        });
+      });
+      recaptchaState = "ready";
+    };
+
+    // Loaded from here, after the callback above exists, and only on pages with a form.
+    var recaptchaScript = document.createElement("script");
+    recaptchaScript.src = "https://www.google.com/recaptcha/api.js?onload=oeRecaptchaLoad&render=explicit";
+    recaptchaScript.async = true;
+    recaptchaScript.onerror = function () { recaptchaState = "failed"; };
+    document.head.appendChild(recaptchaScript);
+  }
+
   // Back to top: appears once the page has scrolled past one viewport.
   var backToTop = document.querySelector("[data-back-to-top]");
   if (backToTop) {

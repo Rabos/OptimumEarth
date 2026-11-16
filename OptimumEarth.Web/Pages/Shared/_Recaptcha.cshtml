@@ -1,0 +1,18 @@
+@* Invisible reCAPTCHA v2 for a public enquiry form. Render it inside the <form>, before the submit
+   button. There is no box to tick: site.js loads Google's script and, once the browser's own
+   validation passes, runs the check when the visitor sends; Google only shows a picture challenge
+   if it suspects a bot. Google's corner badge is hidden (site.css), so its required notice is shown
+   here instead. The page model needs [RequireRecaptcha] so the server checks the result.
+   Nothing renders while the keys are not configured. *@
+@inject Microsoft.Extensions.Options.IOptions<OptimumEarth.Web.Services.RecaptchaOptions> RecaptchaOptions
+@{
+    var recaptcha = RecaptchaOptions.Value;
+}
+@if (recaptcha.IsEnabled)
+{
+    <div class="recaptcha" data-recaptcha data-sitekey="@recaptcha.SiteKey">
+        <div data-recaptcha-widget></div>
+        @Html.ValidationMessage(OptimumEarth.Web.Services.RequireRecaptchaAttribute.ModelStateKey, new { @class = "field-error recaptcha__error", role = "alert", data_recaptcha_error = "" })
+        <p class="recaptcha__notice">This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy</a> and <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms of Service</a> apply.</p>
+    </div>
+}
