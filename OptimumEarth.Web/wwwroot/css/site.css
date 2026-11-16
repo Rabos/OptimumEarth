@@ -2305,8 +2305,8 @@ img {
     visibility: hidden;
 }
 
-/* Spam trap field (Pages/Shared/_Honeypot.cshtml): off screen rather than
-   display:none, which some bots check for before filling a field in. */
+/* Spam trap honeypot field (Pages/Shared/_SpamTrap.cshtml): off screen rather
+   than display:none, which some bots check for before filling a field in. */
 .honeypot {
     position: absolute;
     left: -10000px;
@@ -2322,10 +2322,12 @@ img {
     gap: 6px;
 }
 
+.spam-trap__error:empty,
 .recaptcha__error:empty {
     display: none;
 }
 
+.contact-form .spam-trap__error,
 .contact-form .recaptcha__error {
     color: #B3261E;
 }

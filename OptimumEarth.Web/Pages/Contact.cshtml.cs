@@ -6,7 +6,7 @@ using OptimumEarth.Web.Services;
 namespace OptimumEarth.Web.Pages;
 
 [RequireRecaptcha]
-[Honeypot]
+[SpamTrap]
 public class ContactModel : PageModel
 {
     private readonly InquiryService _inquiries;
@@ -72,7 +72,7 @@ public class ContactModel : PageModel
         // Contact.Destination - to the Uganda team, the Zambia team or the
         // Foundation, and answered within two working days.
         // A bot that filled in the spam trap is shown the same thank-you but nothing is saved.
-        if (!HoneypotAttribute.Caught(HttpContext))
+        if (!SpamTrapAttribute.Caught(HttpContext))
         {
             await _inquiries.AddContactAsync(Contact);
         }

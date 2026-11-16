@@ -6,7 +6,7 @@ using OptimumEarth.Web.Services;
 namespace OptimumEarth.Web.Pages;
 
 [RequireRecaptcha]
-[Honeypot]
+[SpamTrap]
 public class FoundationModel : PageModel
 {
     private readonly ContentReader _content;
@@ -62,7 +62,7 @@ public class FoundationModel : PageModel
         }
 
         // A bot that filled in the spam trap is shown the same thank-you but nothing is saved.
-        if (!HoneypotAttribute.Caught(HttpContext))
+        if (!SpamTrapAttribute.Caught(HttpContext))
         {
             await _inquiries.AddQuickAsync(Quick);
         }
