@@ -1,4 +1,5 @@
 using System.Net;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -58,27 +59,50 @@ foreach (var refused in new[] { RecaptchaResult.Missing, RecaptchaResult.Failed,
 foreach (var page in new[] { typeof(OptimumEarth.Web.Pages.ContactModel), typeof(OptimumEarth.Web.Pages.FoundationModel), typeof(OptimumEarth.Web.Pages.UgandaModel), typeof(OptimumEarth.Web.Pages.ZambiaModel) })
 {
     Check(page.GetCustomAttributes(typeof(RequireRecaptchaAttribute), inherit: true).Length == 1, page.Name + " requires reCAPTCHA");
-    Check(page.GetCustomAttributes(typeof(HoneypotAttribute), inherit: true).Length == 1, page.Name + " has the spam trap");
+    Check(page.GetCustomAttributes(typeof(SpamTrapAttribute), inherit: true).Length == 1, page.Name + " has the spam traps");
 }
 
-// The spam trap catches a filled-in trap field on a POST, and nothing else.
-Check(await Trap("POST", new() { ["website"] = "http://spam.example" }), "Filled trap field is caught");
-Check(await Trap("POST", new() { ["website"] = "  x " }), "Any text in the trap field is caught");
-Check(!await Trap("POST", new() { ["website"] = "" }), "Empty trap field is let through");
-Check(!await Trap("POST", new() { ["website"] = "   " }), "Blank trap field is let through");
-Check(!await Trap("POST", new() { ["Quick.Name"] = "Ada" }), "Missing trap field is let through");
-Check(!await Trap("GET", new() { ["website"] = "x" }), "Only POSTs are checked");
-Check(!await Trap("POST", null), "A POST without a form is let through");
+// Spam traps. Stamps are made with a throwaway key, as the form partial does with the app's keys.
+var protection = new EphemeralDataProtectionProvider();
+var now = DateTimeOffset.UtcNow;
+var shownEarlier = SpamTrapAttribute.CreateStamp(protection, now.AddSeconds(-20));
+var shownJustNow = SpamTrapAttribute.CreateStamp(protection, now.AddSeconds(-1));
+
+Check(SpamTrapAttribute.ReadStamp(protection, shownEarlier) == DateTimeOffset.FromUnixTimeMilliseconds(now.AddSeconds(-20).ToUnixTimeMilliseconds()), "Stamp reads back the time the form was shown");
+Check(SpamTrapAttribute.ReadStamp(protection, "1700000000000") is null, "A plain timestamp is not accepted as a stamp");
+Check(SpamTrapAttribute.ReadStamp(new EphemeralDataProtectionProvider(), shownEarlier) is null, "A stamp from other keys is not accepted");
+Check(SpamTrapAttribute.ReadStamp(protection, shownEarlier[..^4] + "AAAA") is null, "A tampered stamp is not accepted");
+
+// A person: honeypot empty, sent after a while.
+var person = await Trap("POST", new() { ["website"] = "", ["form-shown"] = shownEarlier });
+Check(!person.Caught && person.Error is null, "A person's enquiry goes through");
+Check(await Trap("POST", new() { ["website"] = "   ", ["form-shown"] = shownEarlier }) is { Caught: false, Error: null }, "Blank honeypot goes through");
+
+// Honeypot filled: answered as if sent, with no error that would give the trap away.
+Check(await Trap("POST", new() { ["website"] = "http://spam.example", ["form-shown"] = shownEarlier }) is { Caught: true, Error: null }, "Filled honeypot is caught silently");
+Check(await Trap("POST", new() { ["website"] = "x", ["form-shown"] = shownJustNow }) is { Caught: true, Error: null }, "Filled honeypot sent quickly is still caught silently");
+Check((await Trap("POST", new() { ["website"] = " x " })).Caught, "Any text in the honeypot is caught");
+
+// Timing: refused openly, so a quick person can send again.
+Check(await Trap("POST", new() { ["website"] = "", ["form-shown"] = shownJustNow }) is { Caught: false, Error: SpamTrapAttribute.TooFastMessage }, "Sent within 3 seconds is refused");
+Check(await Trap("POST", new() { ["website"] = "", ["form-shown"] = SpamTrapAttribute.CreateStamp(protection, now.AddSeconds(-4)) }) is { Caught: false, Error: null }, "Sent after 4 seconds goes through");
+Check(await Trap("POST", new() { ["website"] = "", ["form-shown"] = SpamTrapAttribute.CreateStamp(protection, now.AddDays(-2)) }) is { Error: null }, "A page left open for days still works");
+Check(await Trap("POST", new() { ["Quick.Name"] = "Ada" }) is { Caught: false, Error: SpamTrapAttribute.NoStampMessage }, "Posting without the page's stamp is refused");
+Check(await Trap("POST", new() { ["website"] = "", ["form-shown"] = "forged" }) is { Error: SpamTrapAttribute.NoStampMessage }, "A forged stamp is refused");
+Check(await Trap("POST", new() { ["website"] = "", ["form-shown"] = SpamTrapAttribute.CreateStamp(protection, now.AddHours(1)) }) is { Error: SpamTrapAttribute.NoStampMessage }, "A stamp from the future is refused");
+
+// Only form POSTs are checked.
+Check(await Trap("GET", new() { ["website"] = "x" }) is { Caught: false, Error: null }, "GETs are not checked");
+Check(await Trap("POST", null) is { Caught: false, Error: null }, "A POST without a form is not checked");
 
 Console.WriteLine($"Passed {checks} reCAPTCHA and spam trap checks. No request sent to Google.");
 
-// Runs the [Honeypot] filter on a fake request and says whether the handler would be told to skip saving.
-static async Task<bool> Trap(string method, Dictionary<string, Microsoft.Extensions.Primitives.StringValues>? form)
+// Runs the [SpamTrap] filter on a fake request: whether the handler is told to skip saving, and the model error it adds.
+async Task<(bool Caught, string? Error)> Trap(string method, Dictionary<string, Microsoft.Extensions.Primitives.StringValues>? form)
 {
-    var http = new Microsoft.AspNetCore.Http.DefaultHttpContext
-    {
-        RequestServices = new ServiceCollection().AddLogging().BuildServiceProvider(),
-    };
+    var services = new ServiceCollection().AddLogging();
+    services.AddSingleton<IDataProtectionProvider>(protection);
+    var http = new Microsoft.AspNetCore.Http.DefaultHttpContext { RequestServices = services.BuildServiceProvider() };
     http.Request.Method = method;
     if (form is not null)
     {
@@ -90,13 +114,14 @@ static async Task<bool> Trap(string method, Dictionary<string, Microsoft.Extensi
     var executing = new Microsoft.AspNetCore.Mvc.Filters.PageHandlerExecutingContext(
         new Microsoft.AspNetCore.Mvc.RazorPages.PageContext(action), new List<Microsoft.AspNetCore.Mvc.Filters.IFilterMetadata>(), null, new Dictionary<string, object?>(), new object());
     var handlerRan = false;
-    await new HoneypotAttribute().OnPageHandlerExecutionAsync(executing, () =>
+    await new SpamTrapAttribute().OnPageHandlerExecutionAsync(executing, () =>
     {
         handlerRan = true;
         return Task.FromResult<Microsoft.AspNetCore.Mvc.Filters.PageHandlerExecutedContext>(null!);
     });
-    if (!handlerRan) throw new Exception("Failed: the spam trap must always let the handler run, so the bot sees the usual reply");
-    return HoneypotAttribute.Caught(http);
+    if (!handlerRan) throw new Exception("Failed: the spam trap must always let the handler run");
+    var errors = executing.ModelState.TryGetValue(SpamTrapAttribute.ModelStateKey, out var entry) ? entry.Errors : null;
+    return (SpamTrapAttribute.Caught(http), errors?.SingleOrDefault()?.ErrorMessage);
 }
 
 sealed class FakeGoogle : HttpMessageHandler

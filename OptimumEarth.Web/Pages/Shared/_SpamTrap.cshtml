@@ -1,0 +1,14 @@
+@* Spam traps for a public enquiry form. Render it inside the <form>. The page model needs [SpamTrap],
+   and its handler must skip saving when SpamTrapAttribute.Caught(HttpContext).
+   - Honeypot: moved off screen (not display:none, which some bots skip), hidden from screen readers
+     and left out of the tab order, so people never fill it in; bots that fill every field do.
+   - Timing: an encrypted stamp of when the form was shown, so a form sent within a few seconds,
+     or posted without the page, is refused. A fresh stamp is written each time the page renders. *@
+@using OptimumEarth.Web.Services
+@inject Microsoft.AspNetCore.DataProtection.IDataProtectionProvider DataProtection
+<div class="honeypot" aria-hidden="true">
+    <label for="hp-@SpamTrapAttribute.FieldName">Leave this field empty</label>
+    <input type="text" id="hp-@SpamTrapAttribute.FieldName" name="@SpamTrapAttribute.FieldName" value="" tabindex="-1" autocomplete="off" />
+</div>
+<input type="hidden" name="@SpamTrapAttribute.StampField" value="@SpamTrapAttribute.CreateStamp(DataProtection, DateTimeOffset.UtcNow)" />
+@Html.ValidationMessage(SpamTrapAttribute.ModelStateKey, new { @class = "field-error spam-trap__error", role = "alert" })

@@ -90,10 +90,13 @@ The keys come from the reCAPTCHA admin console (<https://www.google.com/recaptch
 
 The check runs only when **both** keys are set. Until the secret key is set the check is off, the forms work as before, and the app logs `reCAPTCHA is off` at startup. To try it locally, add `localhost` to the key's domain list and set the secret with `dotnet user-secrets set Recaptcha:SecretKey <secret> --project OptimumEarth.Web`.
 
-### Spam trap (honeypot)
+### Spam traps
 
-reCAPTCHA alone does not stop every bot, so each form also carries a hidden spam trap: a text field named `website` that is moved off screen, hidden from screen readers and left out of the tab order. People never fill it in; bots that fill in every field do. When it arrives with a value the visitor sees the usual thank-you message, so the bot is not told what gave it away, but the enquiry is not saved or emailed, and the app logs `Spam trap caught a form submission`. The trap works whether or not the reCAPTCHA keys are set.
+reCAPTCHA alone does not stop every bot, so each form also carries two hidden spam traps. Both work whether or not the reCAPTCHA keys are set.
+
+- **Honeypot.** A text field named `website` that is moved off screen, hidden from screen readers and left out of the tab order. People never fill it in; bots that fill in every field do. When it arrives with a value the visitor sees the usual thank-you message, so the bot is not told what gave it away, but the enquiry is not saved or emailed, and the app logs `Spam trap caught a form submission`.
+- **Timing.** The form carries an encrypted stamp of when it was shown. A form sent less than 3 seconds later is refused with “That was quicker than we expected. Please check your details and send again.”, and one without a valid stamp (a bot posting straight to the page) with “This form has expired. Please send again.” Nothing is saved, and the app logs `Spam trap refused a form submission`. These are refused openly rather than silently so that an unusually quick person can simply send again. The stamp is encrypted with the app's Data Protection keys, which are kept in the database, so pages left open survive a restart or redeploy. The limit is `SpamTrapAttribute.MinimumFillTime`.
 
 ### Protecting another form
 
-Add `[RequireRecaptcha]` and `[Honeypot]` to its page model, and `<partial name="_Honeypot" />` and `<partial name="_Recaptcha" />` inside the `<form>` before the submit button. `site.js` finds the reCAPTCHA box, loads Google's script and handles sending; the handler's existing `ModelState.IsValid` check does the rest. In the handler, save the enquiry only when `!HoneypotAttribute.Caught(HttpContext)`.
+Add `[RequireRecaptcha]` and `[SpamTrap]` to its page model, and `<partial name="_SpamTrap" />` and `<partial name="_Recaptcha" />` inside the `<form>` before the submit button. `site.js` finds the reCAPTCHA box, loads Google's script and handles sending; the handler's existing `ModelState.IsValid` check refuses forms that fail reCAPTCHA or the timing check. In the handler, save the enquiry only when `!SpamTrapAttribute.Caught(HttpContext)`.
